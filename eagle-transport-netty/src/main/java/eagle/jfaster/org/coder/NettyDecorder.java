@@ -48,11 +48,15 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
             int opaque = byteBuffer.getInt();
             try {
                 return codec.decode(byteBuffer,serialization,opaque,magicCode);
-            }catch (Exception e){
-                if(isRequest(magicCode)){
-                    return buildExceptionResponse(opaque,e);
-                }
+            }catch (Throwable e){
                 logger.error("Error codec decode ",e);
+                if(isRequest(magicCode)){
+                    if(e instanceof Exception){
+                        return buildExceptionResponse(opaque,(Exception)e);
+                    }else{
+                        return buildExceptionResponse(opaque,new EagleFrameException(e));
+                    }
+                }
                 return null;
             }
         } catch (Exception e){

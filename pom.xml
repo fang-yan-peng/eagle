@@ -42,7 +42,7 @@
     <hessian.version>4.0.38</hessian.version>
     <protobuf.version>3.3.1</protobuf.version>
     <hprose.version>2.0.32</hprose.version>
-    <kryo.version>2.24.0</kryo.version>
+    <kryo.version>4.0.1</kryo.version>
     <kryo.serializer.version>0.42</kryo.serializer.version>
 
     <maven.version.range>[3.0.4,)</maven.version.range>
@@ -250,8 +250,13 @@
         <version>${netty.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.esotericsoftware.kryo</groupId>
+        <groupId>com.esotericsoftware</groupId>
         <artifactId>kryo</artifactId>
+        <version>${kryo.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.esotericsoftware</groupId>
+        <artifactId>kryo-shaded</artifactId>
         <version>${kryo.version}</version>
       </dependency>
       <dependency>
