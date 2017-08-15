@@ -244,11 +244,10 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
     @Override
     public void persistEphemeral(final String key, final String value) {
         try {
-            if (!isExisted(key)) {
-                client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(key, value.getBytes(
-                        Charsets.UTF_8));
-                //client.delete().deletingChildrenIfNeeded().forPath(key);
+            if (isExisted(key)) {
+                client.delete().deletingChildrenIfNeeded().forPath(key);
             }
+            client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(key, value.getBytes(Charsets.UTF_8));
             //CHECKSTYLE:OFF
         } catch (final Exception ex) {
             //CHECKSTYLE:ON

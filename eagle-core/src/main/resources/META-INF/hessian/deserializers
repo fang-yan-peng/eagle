@@ -1,0 +1,2 @@
+java.math.BigDecimal=com.caucho.hessian.io.BigDecimalDeserializer
+java.util.Date=com.caucho.hessian.io.DateDeserializer
