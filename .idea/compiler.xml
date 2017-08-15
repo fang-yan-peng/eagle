@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <resourceExtensions />
+    <wildcardResourcePatterns>
+      <entry name="!?*.java" />
+      <entry name="!?*.form" />
+      <entry name="!?*.class" />
+      <entry name="!?*.groovy" />
+      <entry name="!?*.scala" />
+      <entry name="!?*.flex" />
+      <entry name="!?*.kt" />
+      <entry name="!?*.clj" />
+      <entry name="!?*.aj" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="eagle-core" />
+        <module name="eagle-example-spring" />
+        <module name="eagle-example-springboot" />
+        <module name="eagle-extension" />
+        <module name="eagle-registry-zookeeper" />
+        <module name="eagle-spring-support" />
+        <module name="eagle-transport-netty" />
+        <module name="eagle-ui" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="eagle" target="1.5" />
+      <module name="eagle-core" target="1.7" />
+      <module name="eagle-example" target="1.5" />
+      <module name="eagle-example-spring" target="1.5" />
+      <module name="eagle-example-springboot" target="1.6" />
+      <module name="eagle-extension" target="1.7" />
+      <module name="eagle-registry-zookeeper" target="1.7" />
+      <module name="eagle-spring-boot-starter" target="1.7" />
+      <module name="eagle-spring-support" target="1.7" />
+      <module name="eagle-springboot-support" target="1.7" />
+      <module name="eagle-springsupport" target="1.7" />
+      <module name="eagle-sprintboot-support" target="1.7" />
+      <module name="eagle-transport-netty" target="1.7" />
+      <module name="eagle-ui" target="1.7" />
+      <module name="example-spring" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

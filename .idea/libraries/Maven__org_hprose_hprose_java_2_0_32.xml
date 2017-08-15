@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.hprose:hprose-java:2.0.32">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/opt/maven-repository/org/hprose/hprose-java/2.0.32/hprose-java-2.0.32.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/opt/maven-repository/org/hprose/hprose-java/2.0.32/hprose-java-2.0.32-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/opt/maven-repository/org/hprose/hprose-java/2.0.32/hprose-java-2.0.32-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

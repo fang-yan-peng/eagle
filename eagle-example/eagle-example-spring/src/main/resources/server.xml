@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:eagle="http://eagle.jfaster.org/schema/eagle"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context.xsd
+                        http://eagle.jfaster.org/schema/eagle
+                        http://eagle.jfaster.org/schema/eagle/eagle.xsd
+                        ">
+
+    <context:component-scan base-package="eagle.jfaster.org" />
+
+    <context:annotation-config/>
+
+    <!--注册中心配置可以多个-->
+    <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+
+    <!--协议配置-->
+    <eagle:protocol id="proto1" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="400" worker-queue-size="10"/>
+
+    <eagle:base-service id="baseService1" group="eagleGroup" export="proto1:9200" registry="regCenter"/>
+
+    <eagle:service interface="eagle.jfaster.org.service.HelloWorld" ref="hello" base-service="baseService1" />
+
+    <eagle:service interface="eagle.jfaster.org.service.Calculate" ref="calculate" base-service="baseService1" export="proto1:9300"/>
+
+    <eagle:service interface="eagle.jfaster.org.service.Notify" ref="notify" base-service="baseService1" export="proto1:9300,proto1:9400"/>
+
+</beans>

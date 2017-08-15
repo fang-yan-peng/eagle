@@ -1,0 +1,45 @@
+########### Spring Boot Configuration Start ###########
+
+
+registry:
+  protocol: zookeeper
+  address: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
+  namespace: eagle
+  base-sleep-time-milliseconds: 1000
+  max-sleep-time-milliseconds: 3000
+  max-retries: 3
+
+protocol:
+  name: eagle
+  serialization: kryo
+  use-default: true
+  max-content-length: 16777216
+  max-server-connection: 20000
+  core-worker-thread: 20
+  max-worker-thread: 400
+  worker-queue-size: 10
+
+base-service:
+  group: eagleGroup
+  export: protoConf:9200
+
+service:
+  interface: eagle.jfaster.org.service.Calculate
+
+base-refer:
+  request-timeout: 300
+  actives: 20000
+  actives-wait: 300
+  loadbalance: roundrobin
+  ha-strategy: failfast
+  compress: false
+  group: eagleGroup
+  connect-timeout: 10000
+
+refer:
+  interface: eagle.jfaster.org.service.Calculate
+  max-invoke-error: 10
+  max-client-connection: 200
+
+
+########### Eagle Configuration End ###########

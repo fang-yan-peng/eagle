@@ -1,0 +1,6 @@
+# 序列化类
+eagle.jfaster.org.codec.support.FastJsonSerailization
+eagle.jfaster.org.codec.support.HessianSerialization
+eagle.jfaster.org.codec.support.HproseSerialization
+eagle.jfaster.org.codec.support.KryoSerialization
+eagle.jfaster.org.codec.support.ProtoBufSerialization

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/eagle.iml" filepath="$PROJECT_DIR$/eagle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-core/eagle-core.iml" filepath="$PROJECT_DIR$/eagle-core/eagle-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-example/eagle-example.iml" filepath="$PROJECT_DIR$/eagle-example/eagle-example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-example/eagle-example-spring/eagle-example-spring.iml" filepath="$PROJECT_DIR$/eagle-example/eagle-example-spring/eagle-example-spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-example/eagle-example-springboot/eagle-example-springboot.iml" filepath="$PROJECT_DIR$/eagle-example/eagle-example-springboot/eagle-example-springboot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-extension/eagle-extension.iml" filepath="$PROJECT_DIR$/eagle-extension/eagle-extension.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-registry-zookeeper/eagle-registry-zookeeper.iml" filepath="$PROJECT_DIR$/eagle-registry-zookeeper/eagle-registry-zookeeper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-spring-support/eagle-spring-support.iml" filepath="$PROJECT_DIR$/eagle-spring-support/eagle-spring-support.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-transport-netty/eagle-transport-netty.iml" filepath="$PROJECT_DIR$/eagle-transport-netty/eagle-transport-netty.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eagle-ui/eagle-ui.iml" filepath="$PROJECT_DIR$/eagle-ui/eagle-ui.iml" />
+    </modules>
+  </component>
+</project>
