@@ -60,8 +60,11 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         request.setParameters(args);
         request.setMethodName(method.getName());
         request.setNeedCompress(compress);
-        request.setParameterDesc(ReflectUtil.getMethodParamDesc(method));
-        request.setParameterRuntimeDesc(ReflectUtil.getMethodParamDesc(args));
+        String paramDesc = ReflectUtil.getMethodParamDesc(method);
+        request.setParameterDesc(paramDesc);
+        if(paramDesc != null){
+            request.setParameterRuntimeDesc(ReflectUtil.getMethodParamDesc(args));
+        }
         try {
             return handle(method,request);
         } catch (Exception e) {

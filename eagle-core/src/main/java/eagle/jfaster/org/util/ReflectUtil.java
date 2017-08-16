@@ -58,15 +58,10 @@ public class ReflectUtil {
     }
 
     public static String getMethodParamDesc(Object[] params) {
-        if (params == null || params.length == 0) {
-            return null;
-        }
         StringBuilder builder = new StringBuilder();
         for (Object param : params) {
-            if(params != null) {
-                String className = getName(param.getClass());
-                builder.append(className).append(PARAM_CLASS_SPLIT);
-            }
+            String className = getName(param.getClass());
+            builder.append(className).append(PARAM_CLASS_SPLIT);
         }
         return builder.substring(0, builder.length() - 1);
     }
