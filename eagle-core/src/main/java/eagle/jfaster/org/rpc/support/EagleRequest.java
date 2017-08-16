@@ -26,6 +26,9 @@ public class EagleRequest implements Request {
     private String parameterDesc;
 
     @Setter
+    private String parameterRuntimeDesc;
+
+    @Setter
     private boolean needCompress = false;
 
     @Setter
@@ -52,6 +55,11 @@ public class EagleRequest implements Request {
     @Override
     public String getParameterDesc() {
         return parameterDesc;
+    }
+
+    @Override
+    public String getparameterRuntimeDesc() {
+        return parameterRuntimeDesc;
     }
 
     @Override

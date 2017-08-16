@@ -129,8 +129,11 @@ public class EagleCodec implements Codec {
         if(!Strings.isNullOrEmpty(request.getParameterDesc())){
             magicCode |= EAGLE_REQ_PARAMETER;
             String paramDesc = request.getParameterDesc();
+            String paramRuntimeDesc = request.getparameterRuntimeDesc();
             byte[] paramDescData = paramDesc.getBytes(CHARSET_UTF8);
+            byte[] paramRuntimeDescData = paramRuntimeDesc.getBytes(CHARSET_UTF8);
             dataLen += paramDescData.length + 4;
+            dataLen += paramRuntimeDescData.length + 4;
             Object[] params = request.getParameters();
             List<byte[]> paramsData = Lists.newArrayListWithExpectedSize(8);
             for(Object param : params){
@@ -142,6 +145,8 @@ public class EagleCodec implements Codec {
             content = encodeReqCommon(dataLen,magicCode,request.getOpaque(),iNameData,mNameData);
             content.putInt(paramDescData.length);
             content.put(paramDescData);
+            content.putInt(paramRuntimeDescData.length);
+            content.put(paramRuntimeDescData);
             for(byte[] data : paramsData){
                 content.putInt(data.length);
                 content.put(data);
@@ -240,11 +245,18 @@ public class EagleCodec implements Codec {
 
          /*解码方法参数*/
         if(isRequestWithParameter(magicCode)){
+            // 方法参数描述
             int paramDescLen = buffer.getInt();
             byte[] paramDescData  = new byte[paramDescLen];
             buffer.get(paramDescData);
             String paramDesc = new String(paramDescData,CHARSET_UTF8);
             request.setParameterDesc(paramDesc);
+
+            //运行时参数描述
+            paramDescLen = buffer.getInt();
+            paramDescData  = new byte[paramDescLen];
+            buffer.get(paramDescData);
+            paramDesc = new String(paramDescData,CHARSET_UTF8);
             request.setParameters(decodeRequestParameter(buffer,paramDesc,serialization));
         }
         request.setAttachments(decodeRequestAttachments(buffer));

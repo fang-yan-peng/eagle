@@ -57,6 +57,18 @@ public class ReflectUtil {
         return builder.substring(0, builder.length() - 1);
     }
 
+    public static String getMethodParamDesc(Object[] params) {
+        if (params == null || params.length == 0) {
+            return null;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (Object param : params) {
+            String className = getName(param.getClass());
+            builder.append(className).append(PARAM_CLASS_SPLIT);
+        }
+        return builder.substring(0, builder.length() - 1);
+    }
+
     /**
      * 获取方法的标示 : method_name + "(" + paramDesc + ")"
      *
@@ -111,7 +123,6 @@ public class ReflectUtil {
 
         clz = forNameWithoutCache(className);
 
-        // 应该没有内存消耗过多的可能，除非有些代码很恶心，创建特别多的类
         name2ClassCache.putIfAbsent(className, clz);
 
         return clz;

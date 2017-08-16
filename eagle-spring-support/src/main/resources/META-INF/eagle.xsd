@@ -229,6 +229,7 @@
             <xsd:attribute name="async" type="xsd:string" use="optional"/>
             <xsd:attribute name="codec" type="xsd:string" use="optional"/>
             <xsd:attribute name="use-default" type="xsd:string" use="optional"/>
+            <xsd:attribute name="use-native" type="xsd:string" use="optional"/>
 	       </xsd:extension>
 	   </xsd:complexContent>
     </xsd:complexType>

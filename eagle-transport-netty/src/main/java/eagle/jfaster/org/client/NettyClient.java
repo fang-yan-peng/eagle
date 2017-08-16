@@ -25,6 +25,7 @@ import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -95,16 +96,17 @@ public class NettyClient implements Client {
                     int callBackWorkerThread = config.getExtInt(ConfigEnum.callBackThread.getName(),ConfigEnum.callBackThread.getIntValue());
                     callBackExecutor = Executors.newFixedThreadPool(callBackWorkerThread,new DefaultThreadFactory("Method callback exec-"+config.getInterfaceName()+"-"));
                 }
-               /* if(RemotingUtil.isLinuxPlatform()){
+                boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(),ConfigEnum.useNative.isBooleanValue());
+                if(useNative){
                     workerGroup = new EpollEventLoopGroup(GRUOUP_WORKER_THREAD,new DefaultThreadFactory("Method invoke exec-"+config.getInterfaceName()+"-"));
-                }else {*/
+                }else {
                     workerGroup = new NioEventLoopGroup(GRUOUP_WORKER_THREAD,new DefaultThreadFactory("Method invoke exec-"+config.getInterfaceName()+"-"));
-                /*}*/
+                }
                 bootstrap = new Bootstrap();
                 final int maxContentLen = config.getExtInt(ConfigEnum.maxContentLength.getName(),ConfigEnum.maxContentLength.getIntValue());
                 final Codec codec = SpiClassLoader.getClassLoader(Codec.class).getExtension(config.getExt(ConfigEnum.codec.getName(),ConfigEnum.codec.getValue()));
                 final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialize.getName(),ConfigEnum.serialize.getValue()));
-                bootstrap.group(workerGroup).channel(NioSocketChannel.class)
+                bootstrap.group(workerGroup).channel(useNative ? EpollSocketChannel.class : NioSocketChannel.class)
                         .option(ChannelOption.TCP_NODELAY,true)
                         .option(ChannelOption.SO_KEEPALIVE,false)
                         .option(ChannelOption.SO_SNDBUF,SOCKET_SNDBUF_SIZE)

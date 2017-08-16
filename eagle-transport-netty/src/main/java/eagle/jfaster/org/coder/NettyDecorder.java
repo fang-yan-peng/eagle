@@ -51,7 +51,7 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
             }catch (Throwable e){
                 logger.error("Error codec decode ",e);
                 if(isRequest(magicCode)){
-                    if(e instanceof Exception){
+                    if(e instanceof EagleFrameException){
                         return buildExceptionResponse(opaque,(Exception)e);
                     }else{
                         return buildExceptionResponse(opaque,new EagleFrameException(e));
@@ -59,7 +59,7 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
                 }
                 return null;
             }
-        } catch (Exception e){
+        } catch (Throwable e){
             logger.error("Error decode message ",e);
             RemotingUtil.closeChannel(ctx.channel(),"NettyDecorder decode");
             return null;

@@ -55,6 +55,10 @@ public class ProtocolConfig extends AbstractConfig {
     @Getter
     protected Boolean lazyInit;
 
+    @Setter
+    @Getter
+    protected Boolean useNative;
+
     // 采用哪种cluster 的实现
     @Setter
     @Getter

@@ -23,6 +23,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -95,20 +96,21 @@ public class NettyServer implements Server {
         standardThreadExecutor = new StandardThreadExecutor(coreWorker, maxWorker, workerQueueSize, new DefaultThreadFactory("NettyServer-" + config.hostPort(), true));
         standardThreadExecutor.prestartAllCoreThreads();
         connectManage = new NettyConnectManage(maxConnection);
-        groupAccept = new NioEventLoopGroup(1,new DefaultThreadFactory("NettyServer-accept-" + config.hostPort(), true));
-        /*if(RemotingUtil.isLinuxPlatform()){
-            //groupAccept = new EpollEventLoopGroup(1,new DefaultThreadFactory("NettyServer-accept-" + config.hostPort(), true));
+        boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(),ConfigEnum.useNative.isBooleanValue());
+        if(useNative){
+            groupAccept = new EpollEventLoopGroup(1,new DefaultThreadFactory("NettyServer-accept-" + config.hostPort(), true));
             groupSelector = new EpollEventLoopGroup(selectWorker,new DefaultThreadFactory("NettyServer-select-" + config.hostPort(), true));
-        }else {*/
+        }else {
+            groupAccept = new NioEventLoopGroup(1,new DefaultThreadFactory("NettyServer-accept-" + config.hostPort(), true));
             groupSelector =  new NioEventLoopGroup(selectWorker,new DefaultThreadFactory("NettyServer-select-" + config.hostPort(), true));
-        //}
+        }
         final Codec codec = SpiClassLoader.getClassLoader(Codec.class).getExtension(config.getExt(ConfigEnum.codec.getName(),ConfigEnum.codec.getValue()));
         final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialize.getName(),ConfigEnum.serialize.getValue()));
         bootstrap = new ServerBootstrap();
-        bootstrap.group(groupAccept,groupSelector).channel(NioServerSocketChannel.class)
+        bootstrap.group(groupAccept,groupSelector).channel(useNative ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE,false)
                 .option(ChannelOption.SO_REUSEADDR,true)
-                .option(ChannelOption.SO_BACKLOG,1024*10)
+                .option(ChannelOption.SO_BACKLOG,10240)
                 .option(ChannelOption.SO_SNDBUF, SOCKET_SNDBUF_SIZE)
                 .option(ChannelOption.SO_RCVBUF,SOCKET_RCVBUF_SIZE)
                 .childOption(ChannelOption.TCP_NODELAY,true)

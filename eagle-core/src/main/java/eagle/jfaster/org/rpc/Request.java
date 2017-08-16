@@ -15,6 +15,8 @@ public interface Request {
 
     String getParameterDesc();
 
+    String getparameterRuntimeDesc();
+
     Object[] getParameters();
 
     boolean isNeedCompress();

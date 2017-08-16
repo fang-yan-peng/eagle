@@ -32,7 +32,7 @@ public class NettyEncoder extends MessageToByteEncoder {
         try {
             ByteBuffer data = codec.encode(message,serialization);
             byteBuf.writeBytes(data);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             logger.error("Error encode message "+RemotingUtil.parseChannelRemoteAddr(ctx.channel()),e);
             RemotingUtil.closeChannel(ctx.channel(),"NettyEncoder encode");
         }

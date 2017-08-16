@@ -40,6 +40,7 @@ public enum ConfigEnum {
 
     group("group", "default_rpc"),
     accessLog("accessLog", false),
+    useNative("useNative",true),
 
     // 0为不做并发限制
     actives("actives", 0),
