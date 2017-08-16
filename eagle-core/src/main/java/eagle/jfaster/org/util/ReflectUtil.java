@@ -63,8 +63,10 @@ public class ReflectUtil {
         }
         StringBuilder builder = new StringBuilder();
         for (Object param : params) {
-            String className = getName(param.getClass());
-            builder.append(className).append(PARAM_CLASS_SPLIT);
+            if(params != null) {
+                String className = getName(param.getClass());
+                builder.append(className).append(PARAM_CLASS_SPLIT);
+            }
         }
         return builder.substring(0, builder.length() - 1);
     }
