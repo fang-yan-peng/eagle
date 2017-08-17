@@ -42,7 +42,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
         String serviceKey = ExploreUtil.getServiceKey(message);
         RemoteInvoke invoker = services.get(serviceKey);
         if(invoker == null){
-            logger.info("Error invoke service {} not exist ",serviceKey);
+            logger.info(String.format("Error invoke service %s not exist ",serviceKey));
             EagleResponse response = new EagleResponse();
             response.setException(new EagleFrameException("Error invoke service %s not exist",serviceKey));
             return response;

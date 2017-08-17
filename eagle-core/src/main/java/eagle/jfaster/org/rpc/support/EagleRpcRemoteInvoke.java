@@ -3,6 +3,8 @@ package eagle.jfaster.org.rpc.support;
 import com.google.common.collect.Maps;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.logging.InternalLogger;
+import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.RemoteInvoke;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
@@ -16,6 +18,8 @@ import java.util.Map;
  * Created by fangyanpeng1 on 2017/7/29.
  */
 public class EagleRpcRemoteInvoke<T> implements RemoteInvoke<T> {
+
+    private InternalLogger logger = InternalLoggerFactory.getInstance(EagleRpcRemoteInvoke.class);
 
     private final Class<T> interfaceClz;
 
@@ -45,12 +49,14 @@ public class EagleRpcRemoteInvoke<T> implements RemoteInvoke<T> {
             Object value = method.invoke(invokeImpl,request.getParameters());
             response.setValue(value);
         } catch (Exception e) {
+            logger.error("EagleRpcRemoteInvoke invoke error",e);
             if(e.getCause() != null){
                 response.setException(new EagleFrameException(e.getCause().getMessage()));
             }else {
                 response.setException(new EagleFrameException(e.getMessage()));
             }
         } catch (Throwable e) {
+            logger.error("EagleRpcRemoteInvoke invoke error",e);
             if(e.getCause() != null){
                 response.setException(new EagleFrameException(e.getCause().getMessage()));
             }else {
