@@ -308,7 +308,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     6、max-worker-thread:  处理业务的最大线程数。
     7、max-content-length: rpc调用最大传输的字节数。
     8、max-server-connection: 一个端口支持的最大连接数。
-    9、codec: 用于编码和解码的工具类，默认调用EagleRpcCodec，可以通过spi的方式自定义codec。
+    9、codec: 用于编码和解码的工具类，默认调用EagleCodec，可以通过spi的方式自定义codec。
     10、use-native: 在linux环境下，是否开启epoll。默认是true。
 
 ## 客户端配置（eagle:refer）
