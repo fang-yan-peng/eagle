@@ -9,6 +9,8 @@ import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.transport.HeartBeatFactory;
 import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -25,10 +27,12 @@ public class NettyConnectionManager extends ChannelDuplexHandler {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyConnectionManager.class);
 
-
     private final MergeConfig config;
 
     private final NettySharedConnPool connPool;
+
+    private final NettyClient client;
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
@@ -36,9 +40,15 @@ public class NettyConnectionManager extends ChannelDuplexHandler {
             if (event.state().equals(IdleState.ALL_IDLE)) {
                 final String remoteAddress = RemotingUtil.parseChannelRemoteAddr(ctx.channel());
                 logger.warn("NETTY CLIENT PIPELINE: IDLE exception [{}]", remoteAddress);
-                HeartBeatFactory heartBeatFactory = SpiClassLoader.getClassLoader(HeartBeatFactory.class).getExtension(config.getExt(
-                        ConfigEnum.heartbeatFactory.getName(),ConfigEnum.heartbeatFactory.getValue()));
-                ctx.writeAndFlush(heartBeatFactory.createRequest());
+                HeartBeatFactory heartBeatFactory = SpiClassLoader.getClassLoader(HeartBeatFactory.class).getExtension(config.getExt(ConfigEnum.heartbeatFactory.getName(),ConfigEnum.heartbeatFactory.getValue()));
+                ctx.writeAndFlush(heartBeatFactory.createRequest()).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if(future.isSuccess()){
+                            client.resetErrorCount();
+                        }
+                    }
+                });
             }
         }
         ctx.fireUserEventTriggered(evt);

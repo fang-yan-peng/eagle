@@ -117,7 +117,7 @@ public class NettyClient implements Client {
                                 sc.pipeline().addLast(new NettyEncoder(codec,serialization))
                                         .addLast(new NettyDecorder(maxContentLen,codec,serialization))
                                         .addLast(new IdleStateHandler(0,0,config.getExtInt(ConfigEnum.heartbeat.getName(),ConfigEnum.heartbeat.getIntValue())))
-                                        .addLast(new NettyConnectionManager(config,connPool))
+                                        .addLast(new NettyConnectionManager(config,connPool,NettyClient.this))
                                         .addLast(NettyClient.this.callBack == null ? new SyncMessageHandler(NettyClient.this) : new AsyncMessageHandler(NettyClient.this));
                             }
                         });
