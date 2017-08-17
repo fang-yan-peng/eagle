@@ -231,6 +231,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     ```
 
 2. 创建和启动客户端。
+
     `src/main/resources/client_async.xml`
 
     ```xml
@@ -283,20 +284,20 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
        }
    }
    ```
-   运行结果如果成功会调用MethodInvokeCallBack的onSuccess方法，否则会调用onFail方法。不要使用异步客户端返回的值，那是不正确，正确的值通过回调的onSuccess方法获取。
+   运行结果如果成功会调用MethodInvokeCallBack的onSuccess方法，否则会调用onFail方法。不要使用异步客户端返回的值，那是不正确的，正确的值通过回调的onSuccess方法获取。
 
 # eagle常用配置
 
 ## 注册中心的配置（eagle:registry）
     1、name: 注册中心的名称，如果没有配置id，会用name当id。
     2、protocol: 注册中心协议，目前只支持zookeeper。
-    3、address: 注册中心地址，如果是多个地址以都好分隔，如果是多组用|或;分隔。
+    3、address: 注册中心地址，如果是多个地址以逗号分隔，如果是多组用|或;分隔。
     4、namespace: zk上的命名空间，所有的信息都在改命名空间下。
     5、max-retries: 连接注册中心的重试次数。
     6、base-sleep-time-milliseconds: 重试时间间隔
     7、max-sleep-time-milliseconds: 最大重试时间
     8、session-timeout-milliseconds: 与注册中心的会话超时时间
-    9、digest: 连接注册中心的秘码
+    9、digest: 连接注册中心的密码
 
 ## 协议配置(eagle:protocol）
     1、name: 协议名称,目前只支持eagle，后续加入thrift，如果没有配置id，name会充当id。
@@ -318,7 +319,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     5、actives-wait: 并发达到最大后等待多长时间。
     6、check: 启动时是否检测有服务，默认false。
     7、registry: 注册中心，多个注册中心以逗号分隔。
-    8、host: ip地址，一般不需要制定，系统会自动获取，如果特殊需求可自己设定。
+    8、host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
     9、request-timeout: 请求超时时间
     10、min-client-connection: 最小连接数
     11、max-client-connection: 最大连接数
@@ -329,14 +330,14 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     16、loadbalance: 负载均衡策略，目前支持random、roundrobin、activeWeigth
     17、ha-strategy: ha策略，目前支持failover、failfast。
     18、interface: 服务的接口
-    19、callback: 回调，如果设置类回调，改服务就会变成异步。
+    19、callback: 回调，如果设置了回调，该服务就会变成异步。
     20、base-refer: 公共的refer配置。
 
 ## 服务端配置（eagle:service）
     1、group: 调用组，客户端和服务端配置要一致。
     2、version: 版本号，区分相同服务的不同版本，客户端与服务端的版本号一致才能调用成功。
     3、registry: 注册中心，多个注册中心以逗号分隔。
-    4、host: ip地址，一般不需要制定，系统会自动获取，如果特殊需求可自己设定。
+    4、host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
     5、interface: 服务的接口
     6、base-service: 公共的service配置。
     7、ref: 接口的实现类引用
