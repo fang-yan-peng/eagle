@@ -18,6 +18,8 @@ public class ReflectUtil {
 
     public static final String PARAM_CLASS_SPLIT = ",";
 
+    public static final String J_VOID = "V";
+
     private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];
 
     private static final ConcurrentMap<String, Class<?>> name2ClassCache = new ConcurrentHashMap<String, Class<?>>();
@@ -57,15 +59,6 @@ public class ReflectUtil {
         return builder.substring(0, builder.length() - 1);
     }
 
-    public static String getMethodParamDesc(Object[] params) {
-        StringBuilder builder = new StringBuilder();
-        for (Object param : params) {
-            String className = getName(param.getClass());
-            builder.append(className).append(PARAM_CLASS_SPLIT);
-        }
-        return builder.substring(0, builder.length() - 1);
-    }
-
     /**
      * 获取方法的标示 : method_name + "(" + paramDesc + ")"
      *
@@ -100,7 +93,6 @@ public class ReflectUtil {
         Class<?>[] classTypes = new Class<?>[classNames.length];
         for (int i = 0; i < classNames.length; i++) {
             String className = classNames[i];
-
             classTypes[i] = forName(className);
         }
 

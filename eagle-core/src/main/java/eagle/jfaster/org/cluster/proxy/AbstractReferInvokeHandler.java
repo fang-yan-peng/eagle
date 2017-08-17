@@ -10,6 +10,7 @@ import eagle.jfaster.org.rpc.support.OpaqueGenerator;
 import eagle.jfaster.org.util.ReflectUtil;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.List;
 
 /**
@@ -30,6 +31,8 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
     private boolean compress;
 
     private String interfaceName;
+
+    private static final Object[] NO_ARGS = {};
 
     public AbstractReferInvokeHandler(List<ReferCluster<T>> clusters, Class<T> clz) {
         this.clusters = clusters;
@@ -54,17 +57,26 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (args == null) {
+            args = NO_ARGS;
+        }
+        if (args.length == 0 && method.getName().equals("hashCode")) {
+            return hashCode();
+        }
+        if (args.length == 1 && method.getName().equals("equals") && method.getParameterTypes()[0] == Object.class) {
+            Object arg = args[0];
+            return proxy.getClass().isInstance(arg) && equals(Proxy.getInvocationHandler(arg));
+        }
+        if (args.length == 0 && method.getName().equals("toString")) {
+            return toString();
+        }
         EagleRequest request = new EagleRequest();
         request.setInterfaceName(interfaceName);
         request.setOpaque(OpaqueGenerator.getOpaque());
         request.setParameters(args);
         request.setMethodName(method.getName());
         request.setNeedCompress(compress);
-        String paramDesc = ReflectUtil.getMethodParamDesc(method);
-        request.setParameterDesc(paramDesc);
-        if(paramDesc != null){
-            request.setParameterRuntimeDesc(ReflectUtil.getMethodParamDesc(args));
-        }
+        request.setParameterDesc(ReflectUtil.getMethodParamDesc(method));
         try {
             return handle(method,request);
         } catch (Exception e) {
