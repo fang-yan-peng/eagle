@@ -4,7 +4,10 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
+import de.javakaffee.kryoserializers.SynchronizedCollectionsSerializer;
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
+import de.javakaffee.kryoserializers.cglib.CGLibProxySerializer;
+import de.javakaffee.kryoserializers.guava.*;
 import eagle.jfaster.org.codec.Serialization;
 import eagle.jfaster.org.spi.SpiInfo;
 
@@ -20,11 +23,24 @@ import java.util.Arrays;
 @SpiInfo(name = "kryo")
 public class KryoSerialization implements Serialization {
 
-    private static final ThreadLocal<Kryo> kryos = new ThreadLocal<Kryo>() {
+    protected static final ThreadLocal<Kryo> kryos = new ThreadLocal<Kryo>() {
         protected Kryo initialValue() {
             Kryo kryo = new Kryo();
+            kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer());
             UnmodifiableCollectionsSerializer.registerSerializers(kryo);
-            kryo.register(Arrays.asList("").getClass(), new ArraysAsListSerializer() );
+            SynchronizedCollectionsSerializer.registerSerializers( kryo );
+            kryo.register(Arrays.asList("").getClass(), new ArraysAsListSerializer());
+            ImmutableListSerializer.registerSerializers( kryo );
+            ImmutableSetSerializer.registerSerializers( kryo );
+            ImmutableMapSerializer.registerSerializers( kryo );
+            ImmutableMultimapSerializer.registerSerializers( kryo );
+            ReverseListSerializer.registerSerializers( kryo );
+            UnmodifiableNavigableSetSerializer.registerSerializers( kryo );
+            ArrayListMultimapSerializer.registerSerializers( kryo );
+            HashMultimapSerializer.registerSerializers( kryo );
+            LinkedHashMultimapSerializer.registerSerializers( kryo );
+            LinkedListMultimapSerializer.registerSerializers( kryo );
+            TreeMultimapSerializer.registerSerializers( kryo );
             return kryo;
         }
     };
