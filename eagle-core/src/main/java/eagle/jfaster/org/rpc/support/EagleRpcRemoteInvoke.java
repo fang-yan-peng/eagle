@@ -46,15 +46,15 @@ public class EagleRpcRemoteInvoke<T> implements RemoteInvoke<T> {
             response.setValue(value);
         } catch (Exception e) {
             if(e.getCause() != null){
-                response.setException(new EagleFrameException(e.getCause()));
+                response.setException(new EagleFrameException(e.getCause().getMessage()));
             }else {
-                response.setException(new EagleFrameException(e));
+                response.setException(new EagleFrameException(e.getMessage()));
             }
         } catch (Throwable e) {
             if(e.getCause() != null){
-                response.setException(new EagleFrameException(e.getCause()));
+                response.setException(new EagleFrameException(e.getCause().getMessage()));
             }else {
-                response.setException(new EagleFrameException(e));
+                response.setException(new EagleFrameException(e.getMessage()));
             }
         }
         return response;

@@ -54,7 +54,7 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
                     if(e instanceof EagleFrameException){
                         return buildExceptionResponse(opaque,(Exception)e);
                     }else{
-                        return buildExceptionResponse(opaque,new EagleFrameException(e));
+                        return buildExceptionResponse(opaque,new EagleFrameException(e.getMessage()));
                     }
                 }
                 return null;

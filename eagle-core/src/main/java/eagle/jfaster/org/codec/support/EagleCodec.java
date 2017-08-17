@@ -57,7 +57,7 @@ public class EagleCodec implements Codec {
         EagleResponse response = new EagleResponse();
         response.setOpaque(messageRes.getOpaque());
         response.setNeedCompress(false);
-        response.setException(new EagleFrameException(e));
+        response.setException(new EagleFrameException(e.getMessage()));
         return encodeResponse(response,serialization);
     }
 

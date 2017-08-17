@@ -57,7 +57,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
             }
         } catch (Exception e) {
             EagleResponse response = new EagleResponse();
-            response.setException(new EagleFrameException("Error invoke service",e));
+            response.setException(new EagleFrameException("Error invoke service %s",e.getMessage()));
             return response;
         }
     }

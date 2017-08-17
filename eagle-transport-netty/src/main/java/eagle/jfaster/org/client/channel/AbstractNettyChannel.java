@@ -28,7 +28,6 @@ public abstract class AbstractNettyChannel {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(AbstractNettyChannel.class);
 
-
     protected NettyClient client;
 
     @Getter
@@ -88,10 +87,7 @@ public abstract class AbstractNettyChannel {
             return handle(timeout,responseFuture);
         } catch (Exception e) {
             logger.error("send a request to channel failed",e);
-            if(e instanceof EagleFrameException){
-                throw e;
-            }
-            throw new EagleFrameException(e);
+            throw e;
         }
 
     }

@@ -219,7 +219,7 @@ public class NettyClient implements Client {
             if(channel != null){
                 connPool.invalidateConnection(channel);
             }
-            throw new EagleFrameException(e);
+            throw new EagleFrameException(e.getMessage());
         }finally {
             if(channel != null){
                 connPool.release(channel);
