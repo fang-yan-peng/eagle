@@ -349,6 +349,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     以logback为例:
 
     ```xml
+    
     <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>/letv/logs/lepay_boss_%d{yyyyMMdd}.log</FileNamePattern>
@@ -360,20 +361,18 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
         </encoder>
     </appender>
 
-    <!-- 异步输出 -->
     <appender name="rollingLogFile" class="ch.qos.logback.classic.AsyncAppender">
-        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
         <discardingThreshold>0</discardingThreshold>
-        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
         <queueSize>2048</queueSize>
-        <!-- 添加附加的appender,最多只能添加一个 -->
         <appender-ref ref="logFile"/>
     </appender>
 
     <logger name="eagle.jfaster.org"   level="debug"  additivity="false">
          <appender-ref ref="rollingLogFile" />
     </logger>
+
    ```
+
 # 贡献者
 
 * fangyanpeng([@fangyanpeng](https://github.com/fang-yan-peng))
