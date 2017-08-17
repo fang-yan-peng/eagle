@@ -344,35 +344,6 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     8、class: 如果没有配置ref，会根据class加载接口实现类。
     9、export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
 
-# 日志配置
-    `尽量制定框架日志，如果不指定框架内部会自动获取日志实现。
-    以logback为例:`
-
-    ```xml
-
-    <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>/letv/logs/lepay_boss_%d{yyyyMMdd}.log</FileNamePattern>
-            <MaxHistory>90</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <Pattern>%d{HH:mm:ss} %level [%thread] [%logger{5}] - %msg%n</Pattern>
-            <charset>utf-8</charset>
-        </encoder>
-    </appender>
-
-    <appender name="rollingLogFile" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>2048</queueSize>
-        <appender-ref ref="logFile"/>
-    </appender>
-
-    <logger name="eagle.jfaster.org"   level="debug"  additivity="false">
-         <appender-ref ref="rollingLogFile" />
-    </logger>
-
-   ```
-
 # 贡献者
 
 * fangyanpeng([@fangyanpeng](https://github.com/fang-yan-peng))
