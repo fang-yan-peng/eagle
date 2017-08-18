@@ -1,0 +1,25 @@
+########### Spring Boot Configuration Start ###########
+
+server:
+  # the server port
+  address: 127.0.0.1
+  port: 8111
+
+
+logging:
+  # logback file location
+  config: classpath:logback.xml
+
+########### Spring Boot Configuration End ###########
+
+
+########### Eagle Configuration Start ###########
+eagle:
+
+  # eagle-ui user, default is admin
+  user: admin
+
+  # eagle-ui password, default is admin
+  pass: 123456
+
+########### Eagle Configuration End ###########
