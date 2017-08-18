@@ -1,10 +1,7 @@
 package eagle.jfaster.org.handler;
 
 import eagle.jfaster.org.bean.*;
-import eagle.jfaster.org.parse.EagleBeanParser;
-import eagle.jfaster.org.parse.ReferBeanParser;
-import eagle.jfaster.org.parse.ServiceBeanParser;
-import eagle.jfaster.org.parse.SpiBeanParser;
+import eagle.jfaster.org.parse.*;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -21,5 +18,6 @@ public class EagleNamespaceHandler extends NamespaceHandlerSupport{
         registerBeanDefinitionParser("base-service", new EagleBeanParser(BaseServiceBean.class));
         registerBeanDefinitionParser("base-refer", new EagleBeanParser(BaseReferBean.class));
         registerBeanDefinitionParser("spi", new SpiBeanParser(SpiBean.class));
+        registerBeanDefinitionParser("component-scan", new EagleScanBeanParser());
     }
 }

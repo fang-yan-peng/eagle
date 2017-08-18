@@ -390,17 +390,19 @@
     </xsd:element>
 
       <xsd:complexType name="annotationType">
-          <xsd:attribute name="package" type="xsd:string" use="optional">
+          <xsd:attribute name="base-package" type="xsd:string" use="required">
               <xsd:annotation>
                   <xsd:documentation><![CDATA[ The scan package. ]]></xsd:documentation>
               </xsd:annotation>
           </xsd:attribute>
       </xsd:complexType>
 
-      <xsd:element name="annotation" type="annotationType">
+      <xsd:element name="component-scan" type="annotationType">
           <xsd:annotation>
               <xsd:documentation><![CDATA[ The annotation config ]]></xsd:documentation>
           </xsd:annotation>
       </xsd:element>
+
+
 	
 </xsd:schema>

@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static eagle.jfaster.org.util.ParserUtil.multiRef;
+
 /**
  * Created by fangyanpeng1 on 2017/8/8.
  */
@@ -78,20 +80,6 @@ public class EagleBeanParser extends AbstractBeanDefinitionParser {
             return id;
         }
         return parserContext.getReaderContext().generateBeanName(definition);
-    }
-
-    private void multiRef(String name, String value, BeanDefinitionBuilder beanBuiler) {
-        String[] values = value.split("\\s*[,]+\\s*");
-        if(values == null || values.length == 0){
-            return;
-        }
-        ManagedList list = new ManagedList();
-        for (String v : values) {
-            if (!Strings.isNullOrEmpty(v)) {
-                list.add(new RuntimeBeanReference(v));
-            }
-        }
-        beanBuiler.addPropertyValue(name, list);
     }
 
     protected void parseInterface(Element element,BeanDefinitionBuilder beanBuilder) throws ClassNotFoundException {

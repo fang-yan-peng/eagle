@@ -45,5 +45,7 @@ public class EagleConstants {
     public static final Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*");
     public static final Pattern HOST_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     public static final String RPC_HANDLER = "eagle";
+    public static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
+    public static final String PACKAGE = "base-package";
 
 }
