@@ -80,6 +80,7 @@ public class ReferClusterManage<T> implements ServiceChangeListener {
             registryManage.registerRef(config,refConfig);
             registryManage.addServiceListener(config,refConfig,this);
             registryManage.addRefListener(config,refConfig,this);
+            registryManage.addConnectionStatListener(config,refConfig,this);
             List<MergeConfig> configs = registryManage.getRegisterServices(config,refConfig);
             if(CollectionUtil.isEmpty(configs)){
                 continue;

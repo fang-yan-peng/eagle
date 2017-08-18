@@ -17,7 +17,6 @@ public class RefListener extends AbstractChildrenDataListener {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(RefListener.class);
 
-
     //zk地址配置
     private final MergeConfig registryConfig;
 
@@ -32,7 +31,7 @@ public class RefListener extends AbstractChildrenDataListener {
         if(eventType == PathChildrenCacheEvent.Type.CHILD_UPDATED){
             try {
                 String host = PathUtil.getHostByPath(path);
-                if(Strings.isNullOrEmpty(host) || !host.equals(refHost)){
+                if(Strings.isNullOrEmpty(host) || !host.equals(refHost) || Strings.isNullOrEmpty(data)){
                     return;
                 }
                 this.changeListener.refChange(registryConfig, MergeConfig.decode(data));

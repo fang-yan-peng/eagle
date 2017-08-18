@@ -22,6 +22,8 @@ public interface RegistryCenterManage {
 
     void addServiceListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener);
 
+    void addConnectionStatListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener) ;
+
     void addRefListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener);
 
     List<MergeConfig> getRegisterServices(MergeConfig regConfig,MergeConfig refConfig);

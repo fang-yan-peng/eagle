@@ -5,11 +5,13 @@ import eagle.jfaster.org.ZookeeperRegistryCenter;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.listener.RefListener;
 import eagle.jfaster.org.listener.ServiceListener;
+import eagle.jfaster.org.listener.ZkConnectionStatListener;
 import eagle.jfaster.org.registry.RegistryCenter;
 import eagle.jfaster.org.registry.ServiceChangeListener;
 import eagle.jfaster.org.registry.factory.support.AbstractRegistryManage;
 import eagle.jfaster.org.spi.SpiInfo;
 import eagle.jfaster.org.util.CollectionUtil;
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +60,16 @@ public class ZookeeperRegistryCenterManage extends AbstractRegistryManage {
     @Override
     public void addServiceListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener) {
         CoordinatorRegistryCenter registry = (CoordinatorRegistryCenter) this.getRegistry(regConfig);
-        ServiceListener serviceListener = new ServiceListener(regConfig,listener,registry);
+        ServiceListener serviceListener = new ServiceListener(regConfig,listener,registry,String.format(SERVICE_CHILDREN,refConfig.getInterfaceName(),refConfig.getProtocol()));
         addListenerCommon(registry,refConfig,SERVICE_CHILDREN,serviceListener,false);
+    }
+
+    @Override
+    public void addConnectionStatListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener) {
+        CoordinatorRegistryCenter registry = (CoordinatorRegistryCenter) this.getRegistry(regConfig);
+        ZkConnectionStatListener statListener = new ZkConnectionStatListener(regConfig,listener,registry,String.format(SERVICE_CHILDREN,refConfig.getInterfaceName(),refConfig.getProtocol()));
+        CuratorFramework client= (CuratorFramework) registry.getRawClient();
+        client.getConnectionStateListenable().addListener(statListener);
     }
 
     @Override
