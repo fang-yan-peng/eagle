@@ -1,7 +1,7 @@
 .classpath
 .project
 .settings/
-
+eagle.logPath_IS_UNDEFINED
 target/
 dependency-reduced-pom.xml
 
