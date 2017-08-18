@@ -188,8 +188,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
 ## 异步调用
 
 1. 异步调用只需在客户端注册一个MethodInvokeCallBack即可，服务端不用改动，在回调实例中可以引用任意spring容器中的实例。
-
-
+    
     `src/main/java/eagle/jfaster/org/callback/CalculateCallBack.java`
 
     ```java
@@ -286,6 +285,149 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
    ```
    运行结果如果成功会调用MethodInvokeCallBack的onSuccess方法，否则会调用onFail方法。不要使用异步客户端返回的值，那是不正确的，正确的值通过回调的onSuccess方法获取。
 
+## 注解的方式
+
+1. 创建接口，并打上Refer注解。
+
+    `src/main/java/eagle/jfaster/org/service/Hello.java`
+
+    ```java
+    
+    package eagle.jfaster.org.service;
+    
+    import eagle.jfaster.org.config.annotation.Refer;
+    
+    @Refer(id = "helloAnno",baseRefer = "baseRefer")
+    public interface Hello {
+        String hello();
+    }
+    
+    ```
+2. 实现接口，并打上Service注解。
+    
+    `src/main/java/eagle/jfaster/org/anno/HelloImpl.java`
+    
+    ```java
+    package eagle.jfaster.org.anno;
+    
+    import eagle.jfaster.org.config.annotation.Service;
+    import eagle.jfaster.org.service.Hello;
+    
+    @Service(baseService = "baseService",export = "proto:28000")
+    public class HelloImpl implements Hello {
+    
+        public String hello() {
+            return "hello eagle";
+        }
+    }
+
+    ```
+3. 创建和启动服务端。
+
+    `src/main/resources/server_annotation.xml`
+            
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:context="http://www.springframework.org/schema/context"
+           xmlns:eagle="http://eagle.jfaster.org/schema/eagle"
+           xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context.xsd
+                            http://eagle.jfaster.org/schema/eagle
+                            http://eagle.jfaster.org/schema/eagle/eagle.xsd
+                            ">
+    
+        <context:component-scan base-package="eagle.jfaster.org" />
+    
+        <context:annotation-config/>
+    
+        <!--注册中心配置可以多个-->
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+    
+        <!--协议配置-->
+        <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="400" worker-queue-size="10"/>
+    
+        <eagle:base-service id="baseService" group="eagleGroup" export="proto1:9200" registry="regCenter"/>
+    
+        <eagle:component-scan base-package="eagle.jfaster.org.anno"/>
+
+    ```
+    
+    `src/main/java/eagle/jfaster/org/server/ServerAnnotation.java`
+
+    ```java
+    package eagle.jfaster.org.server;
+    
+    import org.springframework.context.ApplicationContext;
+    import org.springframework.context.support.ClassPathXmlApplicationContext;
+    
+    import java.util.concurrent.CountDownLatch;
+    public class ServerAnnotation {
+        public static void main(String[] args) throws InterruptedException {
+            ApplicationContext appCtx = new ClassPathXmlApplicationContext("server_annotation.xml");
+            CountDownLatch latch = new CountDownLatch(1);
+            latch.await();
+        }
+    }
+
+    ```
+
+4. 创建和启动客户端。
+
+    `src/main/resources/client_annotation.xml`
+
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:eagle="http://eagle.jfaster.org/schema/eagle"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd 
+                            http://www.springframework.org/schema/context 
+                            http://www.springframework.org/schema/context/spring-context.xsd 
+                            http://eagle.jfaster.org/schema/eagle
+                            http://eagle.jfaster.org/schema/eagle/eagle.xsd
+                            ">
+    
+        <context:component-scan base-package="eagle.jfaster.org" />
+    
+        <context:annotation-config/>
+    
+        <!--注册中心配置可以多个-->
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+    
+        <!--协议配置-->
+        <eagle:protocol name="eagle" serialization="kryo" use-default="true" cluster="eagle" max-content-length="16777216"/>
+    
+        <eagle:base-refer id="baseRefer" request-timeout="300" actives="20000" actives-wait="300" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
+    
+        <eagle:component-scan base-package="eagle.jfaster.org.service"/>
+    
+    </beans>
+    ```
+
+   `src/main/java/eagle/jfaster/org/client/AnnotationClient.java`
+
+   ```java
+   package eagle.jfaster.org.client;
+   
+   import eagle.jfaster.org.service.Hello;
+   import org.springframework.context.ApplicationContext;
+   import org.springframework.context.support.ClassPathXmlApplicationContext;
+   
+   public class AnnotationClient {
+       public static void main(String[] args) {
+           ApplicationContext appCtx = new ClassPathXmlApplicationContext("client_annotation.xml");
+           Hello hello = appCtx.getBean("helloAnno",Hello.class);
+           System.out.println(hello.hello());
+       }
+   }
+
+   ```
 # eagle常用配置
 
 ## 注册中心的配置（eagle:registry）
