@@ -11,6 +11,8 @@ import static eagle.jfaster.org.constant.EagleConstants.WARMUP;
 
 
 /**
+ * 基于权重的负载算法
+ *
  * Created by fangyanpeng on 2017/8/20.
  */
 @SpiInfo(name = "weight")

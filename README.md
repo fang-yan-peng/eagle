@@ -469,7 +469,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     13、connect-timeout: 获取连接的超时时间
     14、max-invoke-error: 连续调用失败的的次数，超过这个次数，这个服务设置为不可用。
     15、compress: 是否开启gzip压缩
-    16、loadbalance: 负载均衡策略，目前支持random、roundrobin、activeWeigth
+    16、loadbalance: 负载均衡策略，目前支持random（随机）、roundrobin（轮询）、activeWeigth（以调用量小的优先）、weight（根据配置的权重选择）。
     17、ha-strategy: ha策略，目前支持failover、failfast。
     18、interface: 服务的接口
     19、callback: 回调，如果设置了回调，该服务就会变成异步。
@@ -485,6 +485,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
     7、ref: 接口的实现类引用
     8、class: 如果没有配置ref，会根据class加载接口实现类。
     9、export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
+    10、weight: 权重，与权重负载均衡算法联合使用。
 
 # 贡献者
 
