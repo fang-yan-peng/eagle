@@ -1,6 +1,7 @@
 package eagle.jfaster.org.config;
 
 import eagle.jfaster.org.config.annotation.ConfigDesc;
+import lombok.Getter;
 import lombok.Setter;
 
 /**
@@ -10,6 +11,10 @@ public class BaseServiceConfig extends AbstractInterfaceConfig {
 
     @Setter
     protected String export;
+
+    @Setter
+    @Getter
+    protected  Integer weight;
 
     @ConfigDesc(excluded = true)
     public String getExport() {

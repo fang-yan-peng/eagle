@@ -162,6 +162,11 @@
               <xsd:documentation><![CDATA[ 暴露的协议及端口，多个协议端口之间用","分隔 ]]></xsd:documentation>
             </xsd:annotation>
           </xsd:attribute>
+            <xsd:attribute name="weight" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[权重配置]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>

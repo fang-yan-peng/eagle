@@ -19,8 +19,4 @@ public interface LoadBalance<T> {
     void refresh(List<Refer<T>> referers);
 
     Refer<T> select(Request request);
-
-    List<Refer<T>> selectHaRefers(Request request);
-
-    void setWeightString(String weightString);
 }

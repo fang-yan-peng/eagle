@@ -1,3 +1,4 @@
 eagle.jfaster.org.cluster.loadbalance.ActiveWeigthLoadBalance
 eagle.jfaster.org.cluster.loadbalance.RandomLoadBalance
 eagle.jfaster.org.cluster.loadbalance.RoundRobinLoadBalance
+eagle.jfaster.org.cluster.loadbalance.RandomWeightLoadBalance

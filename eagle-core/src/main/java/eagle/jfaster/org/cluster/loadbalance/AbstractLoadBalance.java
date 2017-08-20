@@ -5,7 +5,6 @@ import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.rpc.Refer;
 import eagle.jfaster.org.rpc.Request;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,33 +39,7 @@ public abstract class AbstractLoadBalance<T> implements LoadBalance<T> {
         throw new EagleFrameException("No alive refers to request,interfaceName:%s",request.getInterfaceName());
     }
 
-    @Override
-    public List<Refer<T>> selectHaRefers(Request request) {
-        List<Refer<T>> refers = this.refers;
-        if(refers == null){
-            throw new EagleFrameException("No alive refers to request,interfaceName:%s",request.getInterfaceName());
-        }
-        List<Refer<T>> haRefers = null;
-        if(refers.size() > 1){
-            haRefers = doselectHaRefers(request);
-        }else if(refers.size() == 1 && refers.get(0).isAlive()){
-            haRefers = new ArrayList<>(1);
-            haRefers.add(refers.get(0));
-        }
-        if(haRefers != null && !haRefers.isEmpty()){
-            return haRefers;
-        }
-        throw new EagleFrameException("No alive refers to request,interfaceName:%s",request.getInterfaceName());
-    }
-
-    @Override
-    public void setWeightString(String weightString) {
-
-    }
-
     public abstract Refer<T> doSelect(Request request);
-
-    public abstract List<Refer<T>> doselectHaRefers(Request request);
 
 
 }

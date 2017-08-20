@@ -46,7 +46,7 @@ public enum ConfigEnum {
     actives("actives", 0),
     activesWait("actactiveWait", 3000l),
 
-    refreshTimestamp("refreshTimestamp", 0),
+    refreshTimestamp("refreshTimestamp", 0L),
 
     // 格式为protocol:port
     export("export", ""),
@@ -86,8 +86,7 @@ public enum ConfigEnum {
     subscribe("subscribe", true),
     throwException("throwException", "true"),
 
-    // 切换group时，各个group的权重比。默认无权重
-    weights("weights", "");
+    weight("weight", 100);
 
 
     private ConfigEnum(String name , String value){

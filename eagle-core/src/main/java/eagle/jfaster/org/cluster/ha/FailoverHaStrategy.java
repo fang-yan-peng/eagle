@@ -8,7 +8,6 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.Refer;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.spi.SpiInfo;
-import java.util.List;
 
 /**
  * Created by fangyanpeng1 on 2017/8/4.
@@ -18,14 +17,12 @@ public class FailoverHaStrategy<T> extends AbstractHaStrategy<T>  {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(FailoverHaStrategy.class);
 
-
     @Override
     public Object call(Request request, LoadBalance<T> loadBalance) {
-        List<Refer<T>> haRefers = loadBalance.selectHaRefers(request);
-        int retry = haRefers.get(0).getConfig().getExtInt(ConfigEnum.retries.getName(),ConfigEnum.retries.getIntValue());
-        retry = retry < 0 ? 0 : retry;
+        int retry = config.getExtInt(ConfigEnum.retries.getName(),ConfigEnum.retries.getIntValue());
+        retry = retry < 0 ? 1 : retry;
         for(int i = 0;i <= retry ;++i){
-            Refer<T> refer = haRefers.get(i % haRefers.size());
+            Refer<T> refer = loadBalance.select(request);
             try {
                 return refer.request(request);
             } catch (Exception e) {

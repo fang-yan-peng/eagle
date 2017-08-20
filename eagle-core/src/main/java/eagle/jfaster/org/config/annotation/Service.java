@@ -56,4 +56,6 @@ public @interface Service {
 
     String baseService()default "";
 
+    String weight() default "";
+
 }
