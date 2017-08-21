@@ -475,7 +475,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
    * callback: 回调，如果设置了回调，该服务就会变成异步。
    * callback-thread: 回调执行线程池的大小。
    * callback-queue-size: 回调任务队列大小。
-   * callback-wait-time: 回调任务执行等待时间与request-timeout不同。
+   * callback-wait-time: 回调任务执行等待时间与request-timeout不同,如果异步任务队列超过设定阈值并且任务等待时间过长，则将此服务设置为不可用，直到任务队列在合理范围内。
    * base-refer: 公共的refer配置。
    
 
