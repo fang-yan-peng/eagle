@@ -487,6 +487,11 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
    * export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
    * weight: 权重，与权重负载均衡算法联合使用。
 # wrk压测结果
+   * eagle 压测效果图
+       ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/eagle.jpeg)
+ 
+   * dubbo 压测效果图
+       ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/dubbo.jpeg)
 
 
 # 贡献者
