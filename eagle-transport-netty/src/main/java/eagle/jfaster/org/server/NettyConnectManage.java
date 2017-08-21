@@ -7,6 +7,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.Getter;
+
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +23,7 @@ public class NettyConnectManage extends ChannelDuplexHandler {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyConnectManage.class);
 
-
+    @Getter
     private ConcurrentMap<String, Channel> channels = new ConcurrentHashMap<String, Channel>();
 
     private int maxChannel = 0;

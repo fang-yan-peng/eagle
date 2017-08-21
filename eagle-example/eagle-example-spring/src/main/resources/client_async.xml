@@ -23,6 +23,6 @@
 
     <eagle:base-refer id="baseRefer2" request-timeout="300" actives="20000" actives-wait="3000" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
 
-    <eagle:refer id="calculate2" callback="eagle.jfaster.org.callback.CalculateCallBack" interface="eagle.jfaster.org.service.Calculate" base-refer="baseRefer2" max-invoke-error="10" max-client-connection="200" />
+    <eagle:refer id="calculate2" callback="eagle.jfaster.org.callback.CalculateCallBack" interface="eagle.jfaster.org.service.Calculate" base-refer="baseRefer2" max-invoke-error="10" max-client-connection="200"/>
 
 </beans>

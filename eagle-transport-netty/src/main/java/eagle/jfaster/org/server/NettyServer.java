@@ -13,6 +13,7 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
 import eagle.jfaster.org.spi.SpiClassLoader;
+import eagle.jfaster.org.statistic.StatisticCallback;
 import eagle.jfaster.org.transport.InvokeRouter;
 import eagle.jfaster.org.transport.Server;
 import eagle.jfaster.org.transport.StandardThreadExecutor;
@@ -38,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by fangyanpeng1 on 2017/7/31.
  */
 @RequiredArgsConstructor
-public class NettyServer implements Server {
+public class NettyServer implements Server,StatisticCallback {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyServer.class);
 
@@ -124,5 +125,14 @@ public class NettyServer implements Server {
                                 .addLast(new MessageChannelHandler(invokeRouter,standardThreadExecutor));
                     }
                 });
+    }
+
+    @Override
+    public String statistic() {
+        return String.format(
+                "identity: %s connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s",
+                config.identity(), connectManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),
+                standardThreadExecutor.getQueue().size(), standardThreadExecutor.getMaximumPoolSize(),
+                standardThreadExecutor.getMaxSubmittedTaskCount());
     }
 }

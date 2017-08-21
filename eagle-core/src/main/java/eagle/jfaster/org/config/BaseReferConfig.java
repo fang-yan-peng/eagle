@@ -60,5 +60,19 @@ public class BaseReferConfig extends AbstractInterfaceConfig{
     @Getter
     protected String haStrategy;
 
+    //回调执行的线程数
+    @Setter
+    @Getter
+    protected Integer callbackThread;
+
+    //回调任务对列大小
+    @Setter
+    @Getter
+    protected Integer callbackQueueSize;
+
+    @Setter
+    @Getter
+    protected Integer callbackWaitTime;
+
 
 }

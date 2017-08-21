@@ -96,4 +96,10 @@ public @interface Refer {
     String baseRefer()default "";
 
     String callBack()default "";
+
+    String callbackThread() default "";
+
+    String callbackQueueSize() default "";
+
+    String callbackWaitTime() default "";
 }

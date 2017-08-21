@@ -208,6 +208,15 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                     if(!Strings.isNullOrEmpty(referAnnotation.proxy())){
                         refer.addPropertyValue("proxy",referAnnotation.proxy());
                     }
+                    if(!Strings.isNullOrEmpty(referAnnotation.callbackThread())){
+                        refer.addPropertyValue("callbackThread",referAnnotation.callbackThread());
+                    }
+                    if(!Strings.isNullOrEmpty(referAnnotation.callbackQueueSize())){
+                        refer.addPropertyValue("callbackQueueSize",referAnnotation.callbackQueueSize());
+                    }
+                    if(!Strings.isNullOrEmpty(referAnnotation.callbackWaitTime())){
+                        refer.addPropertyValue("callbackWaitTime",referAnnotation.callbackWaitTime());
+                    }
                     if(!Strings.isNullOrEmpty(referAnnotation.callBack())){
                         try {
                             Class.forName(referAnnotation.callBack());

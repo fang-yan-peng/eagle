@@ -20,6 +20,9 @@ import eagle.jfaster.org.rpc.MethodInvokeCallBack;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.ResponseFuture;
 import eagle.jfaster.org.spi.SpiClassLoader;
+import eagle.jfaster.org.statistic.StatisticCallback;
+import eagle.jfaster.org.thread.AsyncCallbackExecutor;
+import eagle.jfaster.org.thread.FutureTaskExt;
 import eagle.jfaster.org.transport.Client;
 import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -47,10 +50,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * Created by fangyanpeng1 on 2017/8/1.
  */
 @RequiredArgsConstructor
-public class NettyClient implements Client {
+public class NettyClient implements Client,StatisticCallback {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyClient.class);
-
 
     private final MergeConfig config;
 
@@ -64,6 +66,8 @@ public class NettyClient implements Client {
 
     private AtomicBoolean stat = new AtomicBoolean(false);
 
+    private volatile boolean suspend = false;
+
     private AtomicBoolean init = new AtomicBoolean(false);
 
     // 连续失败次数
@@ -71,13 +75,18 @@ public class NettyClient implements Client {
 
     private Map<Integer,NettyResponseFuture> callBackMap = new ConcurrentHashMap(256);
 
-    private ScheduledFuture<?> callBackCancleFuture = null;
+    private ScheduledFuture<?> callbackCancleFuture = null;
 
     // 回收过期任务
-    private static ScheduledExecutorService callBackCancleExecutor = Executors.newScheduledThreadPool(4);
+    private static ScheduledExecutorService callbackCancleExecutor = Executors.newScheduledThreadPool(4);
+
+    //检测异步任务执行超时
+    private static ScheduledExecutorService callbackMonitorExecutor;
 
     // 回调执行线程池
-    private ExecutorService callBackExecutor;
+    private ThreadPoolExecutor callbackExecutor;
+
+    private BlockingQueue<Runnable> callbackQueue;
 
     //最大连续失败次数
     private int maxInvokeError = 0;
@@ -92,9 +101,16 @@ public class NettyClient implements Client {
             if(init.compareAndSet(false,true)){
                 remoteAddress = new InetSocketAddress(config.getHost(),config.getPort());
                 maxInvokeError = config.getExtInt(ConfigEnum.maxInvokeError.getName(),ConfigEnum.maxInvokeError.getIntValue());
-                if(callBack != null && config.getExtBoolean(ConfigEnum.async.getName(),ConfigEnum.async.isBooleanValue())){
-                    int callBackWorkerThread = config.getExtInt(ConfigEnum.callBackThread.getName(),ConfigEnum.callBackThread.getIntValue());
-                    callBackExecutor = Executors.newFixedThreadPool(callBackWorkerThread,new DefaultThreadFactory("Method callback exec-"+config.getInterfaceName()+"-"));
+                if(callBack != null){
+                    int callbackWorkerThread = config.getExtInt(ConfigEnum.callbackThread.getName(),ConfigEnum.callbackThread.getIntValue());
+                    int callbackQueueSize = config.getExtInt(ConfigEnum.callbackQueueSize.getName(),ConfigEnum.callbackQueueSize.getIntValue());
+                    callbackQueue = new LinkedBlockingQueue<>(callbackQueueSize);
+                    callbackExecutor = new AsyncCallbackExecutor(callbackWorkerThread,callbackWorkerThread,10*60*1000,TimeUnit.MILLISECONDS, callbackQueue, new DefaultThreadFactory("Method callback exec-"+config.getInterfaceName()+"-"));
+                    callbackExecutor.allowCoreThreadTimeOut(true);
+                    if(callbackMonitorExecutor == null){
+                        callbackMonitorExecutor = Executors.newScheduledThreadPool(1);
+                    }
+                    callbackMonitorExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
                 }
                 boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(),ConfigEnum.useNative.isBooleanValue());
                 if(useNative){
@@ -122,7 +138,7 @@ public class NettyClient implements Client {
                             }
                         });
                 //定时扫描超时的请求
-                callBackCancleFuture = callBackCancleExecutor.scheduleWithFixedDelay(new TimeoutTask(),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
+                callbackCancleFuture = callbackCancleExecutor.scheduleWithFixedDelay(new TimeoutTask(),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
                 connPool = new NettySharedConnPool(config,this);
                 stat.set(true);
 
@@ -150,18 +166,9 @@ public class NettyClient implements Client {
 
     public void executeInvokeCallback(final ResponseFuture responseFuture) {
         boolean runInThisThread = false;
-        if (callBackExecutor != null) {
+        if (callbackExecutor != null) {
             try {
-                callBackExecutor.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            responseFuture.executeCallback();
-                        } catch (Throwable e) {
-                            logger.info("execute callback in executor exception, and callback throw", e);
-                        }
-                    }
-                });
+                callbackExecutor.submit(new AsyncCallbackTask(responseFuture));
             } catch (Exception e) {
                 runInThisThread = true;
                 logger.info("execute callback in executor exception, maybe executor busy", e);
@@ -185,7 +192,7 @@ public class NettyClient implements Client {
 
     @Override
     public boolean isAlive() {
-        return stat.get();
+        return stat.get() && !suspend;
     }
 
 
@@ -195,9 +202,9 @@ public class NettyClient implements Client {
             if(init.compareAndSet(true,false)){
                 workerGroup.shutdownGracefully();
                 //不能关闭callBackCancleExecutor，因为是多个client公用的。
-                callBackCancleFuture.cancel(true);
-                if(callBackExecutor != null){
-                    callBackExecutor.shutdownNow();
+                callbackCancleFuture.cancel(true);
+                if(callbackExecutor != null){
+                    callbackExecutor.shutdownNow();
                 }
                 callBackMap.clear();
                 connPool.shutdown();
@@ -233,7 +240,7 @@ public class NettyClient implements Client {
     public void incrErrorCount() {
         long count = errorCount.incrementAndGet();
         // 如果节点是可用状态，同时当前连续失败的次数超过限制maxClientConnection次，那么把该节点标示为不可用
-        if (count >= maxInvokeError && isAlive()) {
+        if (count >= maxInvokeError && stat.get()) {
             if(stat.compareAndSet(true,false)){
                 logger.error("NettyClient unavailable Error: config=" + config.getInterfaceName() + " " + config.identity());
             }
@@ -248,6 +255,11 @@ public class NettyClient implements Client {
         if(!stat.get() && init.get() && errorCount.intValue() < maxInvokeError && stat.compareAndSet(false,true)){
             logger.info("NettyClient recover available: interfaceName=" + config.getInterfaceName() + " " + config.identity());
         }
+    }
+
+    @Override
+    public String statistic() {
+        return String.format("identity:%s callbackMapSize:%d asyncCallbackQueueSize:%d",config.identity(),callBackMap.size(), callbackQueue.size());
     }
 
     class TimeoutTask implements Runnable{
@@ -267,6 +279,58 @@ public class NettyClient implements Client {
                     it.remove();
                     logger.warn("remove timeout request, interfaceName: " + config.getInterfaceName());
                 }
+            }
+        }
+    }
+
+    @RequiredArgsConstructor
+    class AsyncCallbackTask implements Runnable{
+
+        @Getter
+        private final ResponseFuture responseFuture;
+
+        @Override
+        public void run() {
+            try {
+                responseFuture.executeCallback();
+            } catch (Throwable e) {
+                logger.info("execute callback in executor exception, and callback throw", e);
+            }
+        }
+    }
+
+    class AsyncCallbackMonitor implements Runnable{
+
+        @Override
+        public void run() {
+            int callbackQueueSize = config.getExtInt(ConfigEnum.callbackQueueSize.getName(),ConfigEnum.callbackQueueSize.getIntValue());
+            int warThreshold = callbackQueueSize*2/3 == 0 ? 1 : callbackQueueSize/3;
+            int callbackWait = config.getExtInt(ConfigEnum.callbackWaitTime.getName(),ConfigEnum.callbackWaitTime.getIntValue());
+            try {
+                if (!callbackQueue.isEmpty()) {
+                    final FutureTaskExt runnable = (FutureTaskExt) callbackQueue.peek();
+                    if (null == runnable) {
+                        suspend = false;
+                        return;
+                    }
+                    if(callbackQueue.size() >= warThreshold) {
+                        logger.info(String.format("%d task need to execute,maybe some callbacks execute too slow please check", callbackQueue.size()));
+                    }
+                    AsyncCallbackTask callbackTask = (AsyncCallbackTask) runnable.getRunnable();
+                    NettyResponseFuture responseFuture = (NettyResponseFuture) callbackTask.getResponseFuture();
+                    final long behind = System.currentTimeMillis() - responseFuture.getBeginTimestamp();
+                    // 如果队列过长，并且队头的任务等待时间过长，则将此client挂起。
+                    if (behind >= callbackWait && callbackQueue.size() >= warThreshold) {
+                        logger.info(String.format("peek callback is not yet execute,has waited %ds and %d task need to execute,so stop accepting request",behind/1000, callbackQueue.size()));
+                        suspend = true;
+                    }else {
+                        suspend = false;
+                    }
+                }else {
+                    suspend = false;
+                }
+            } catch (Throwable e) {
+                logger.error("AsyncCallbackMonitor:",e);
             }
         }
     }

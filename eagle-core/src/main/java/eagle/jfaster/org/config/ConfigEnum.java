@@ -80,7 +80,9 @@ public enum ConfigEnum {
 
     retries("retries", 0),
     async("async", false),
-    callBackThread("callBackThread", DEFAULT_WORKER_THREAD),
+    callbackThread("callbackThread", DEFAULT_WORKER_THREAD),
+    callbackQueueSize("callbackQueueSize", DEFAULT_QUEUE_SIZE),
+    callbackWaitTime("callbackWaitTime", 4000),
 
     register("register", true),
     subscribe("subscribe", true),

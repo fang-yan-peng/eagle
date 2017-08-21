@@ -473,7 +473,11 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
    * ha-strategy: ha策略，目前支持failover、failfast。
    * interface: 服务的接口
    * callback: 回调，如果设置了回调，该服务就会变成异步。
+   * callback-thread: 回调执行线程池的大小。
+   * callback-queue-size: 回调任务队列大小。
+   * callback-wait-time: 回调任务执行等待时间与request-timeout不同。
    * base-refer: 公共的refer配置。
+   
 
 ## 服务端配置（eagle:service）
    * group: 调用组，客户端和服务端配置要一致。

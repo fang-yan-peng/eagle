@@ -188,7 +188,10 @@
           <xsd:attribute name="max-lifetime" type="xsd:string" use="optional"/>
           <xsd:attribute name="compress" type="xsd:string" use="optional"/>
           <xsd:attribute name="min-compress-size" type="xsd:string" use="optional"/>
-          <xsd:attribute name="loadbalance" type="xsd:string" use="optional">
+          <xsd:attribute name="loadbalance" type="xsd:string" use="optional"/>
+          <xsd:attribute name="callback-queue-size" type="xsd:string" use="optional"/>
+          <xsd:attribute name="callback-wait-time" type="xsd:string" use="optional"/>
+          <xsd:attribute name="callback-thread" type="xsd:string" use="optional">
             <xsd:annotation>
               <xsd:documentation><![CDATA[ 负载均衡 ]]></xsd:documentation>
             </xsd:annotation>
