@@ -206,6 +206,9 @@ public class NettyClient implements Client,StatisticCallback {
                 if(callbackExecutor != null){
                     callbackExecutor.shutdownNow();
                 }
+                if(callbackMonitorExecutor != null){
+                    callbackMonitorExecutor.shutdownNow();
+                }
                 callBackMap.clear();
                 connPool.shutdown();
                 logger.info("Netty client normal shutdown");
