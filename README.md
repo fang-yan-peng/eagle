@@ -431,61 +431,63 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
 # eagle常用配置
 
 ## 注册中心的配置（eagle:registry）
-    1、name: 注册中心的名称，如果没有配置id，会用name当id。
-    2、protocol: 注册中心协议，目前只支持zookeeper。
-    3、address: 注册中心地址，如果是多个地址以逗号分隔，如果是多组用|或;分隔。
-    4、namespace: zk上的命名空间，所有的信息都在改命名空间下。
-    5、max-retries: 连接注册中心的重试次数。
-    6、base-sleep-time-milliseconds: 重试时间间隔
-    7、max-sleep-time-milliseconds: 最大重试时间
-    8、session-timeout-milliseconds: 与注册中心的会话超时时间
-    9、digest: 连接注册中心的密码
+   * name: 注册中心的名称，如果没有配置id，会用name当id。
+   * protocol: 注册中心协议，目前只支持zookeeper。
+   * address: 注册中心地址，如果是多个地址以逗号分隔，如果是多组用|或;分隔。
+   * namespace: zk上的命名空间，所有的信息都在改命名空间下。
+   * max-retries: 连接注册中心的重试次数。
+   * base-sleep-time-milliseconds: 重试时间间隔
+   * max-sleep-time-milliseconds: 最大重试时间
+   * session-timeout-milliseconds: 与注册中心的会话超时时间
+   * digest: 连接注册中心的密码
 
 ## 协议配置(eagle:protocol）
-    1、name: 协议名称,目前只支持eagle，后续加入thrift，如果没有配置id，name会充当id。
-    2、serialization: 序列化，支持hessian、kryo、protobuf序列化协议。
-    3、heartbeat-factory: 心跳工厂,默认值是eagle,通过spi方式可以自定义心跳工厂。
-    4、select-thread-size: netty处理io的线程数，尽量不要阻塞netty的io线程。
-    5、core-worker-thread: 处理业务的核心线程数。
-    6、max-worker-thread:  处理业务的最大线程数。
-    7、max-content-length: rpc调用最大传输的字节数。
-    8、max-server-connection: 一个端口支持的最大连接数。
-    9、codec: 用于编码和解码的工具类，默认调用EagleCodec，可以通过spi的方式自定义codec。
-    10、use-native: 在linux环境下，是否开启epoll。默认是true。
+   * name: 协议名称,目前只支持eagle，后续加入thrift，如果没有配置id，name会充当id。
+   * serialization: 序列化，支持hessian、kryo、protobuf序列化协议。
+   * heartbeat-factory: 心跳工厂,默认值是eagle,通过spi方式可以自定义心跳工厂。
+   * select-thread-size: netty处理io的线程数，尽量不要阻塞netty的io线程。
+   * core-worker-thread: 处理业务的核心线程数。
+   * max-worker-thread:  处理业务的最大线程数。
+   * max-content-length: rpc调用最大传输的字节数。
+   * max-server-connection: 一个端口支持的最大连接数。
+   * codec: 用于编码和解码的工具类，默认调用EagleCodec，可以通过spi的方式自定义codec。
+   * use-native: 在linux环境下，是否开启epoll。默认是true。
 
 ## 客户端配置（eagle:refer）
-    1、group: 调用组，客户端和服务端配置要一致。
-    2、version: 版本号，区分相同服务的不同版本，客户端与服务端的版本号一致才能调用成功。
-    3、retries: 调用失败重试次数
-    4、actives: 支持的最大并发数。
-    5、actives-wait: 并发达到最大后等待多长时间。
-    6、check: 启动时是否检测有服务，默认false。
-    7、registry: 注册中心，多个注册中心以逗号分隔。
-    8、host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
-    9、request-timeout: 请求超时时间
-    10、min-client-connection: 最小连接数
-    11、max-client-connection: 最大连接数
-    12、idle-time: 连接空闲多长时间会被回收
-    13、connect-timeout: 获取连接的超时时间
-    14、max-invoke-error: 连续调用失败的的次数，超过这个次数，这个服务设置为不可用。
-    15、compress: 是否开启gzip压缩
-    16、loadbalance: 负载均衡策略，目前支持random（随机）、roundrobin（轮询）、activeWeigth（以调用量小的优先）、weight（根据配置的权重选择）。
-    17、ha-strategy: ha策略，目前支持failover、failfast。
-    18、interface: 服务的接口
-    19、callback: 回调，如果设置了回调，该服务就会变成异步。
-    20、base-refer: 公共的refer配置。
+   * group: 调用组，客户端和服务端配置要一致。
+   * version: 版本号，区分相同服务的不同版本，客户端与服务端的版本号一致才能调用成功。
+   * retries: 调用失败重试次数
+   * actives: 支持的最大并发数。
+   * actives-wait: 并发达到最大后等待多长时间。
+   * check: 启动时是否检测有服务，默认false。
+   * registry: 注册中心，多个注册中心以逗号分隔。
+   * host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
+   * request-timeout: 请求超时时间
+   * min-client-connection: 最小连接数
+   * max-client-connection: 最大连接数
+   * idle-time: 连接空闲多长时间会被回收
+   * connect-timeout: 获取连接的超时时间
+   * max-invoke-error: 连续调用失败的的次数，超过这个次数，这个服务设置为不可用。
+   * compress: 是否开启gzip压缩
+   * loadbalance: 负载均衡策略，目前支持random（随机）、roundrobin（轮询）、activeWeigth（以调用量小的优先）、weight（根据配置的权重选择）。
+   * ha-strategy: ha策略，目前支持failover、failfast。
+   * interface: 服务的接口
+   * callback: 回调，如果设置了回调，该服务就会变成异步。
+   * base-refer: 公共的refer配置。
 
 ## 服务端配置（eagle:service）
-    1、group: 调用组，客户端和服务端配置要一致。
-    2、version: 版本号，区分相同服务的不同版本，客户端与服务端的版本号一致才能调用成功。
-    3、registry: 注册中心，多个注册中心以逗号分隔。
-    4、host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
-    5、interface: 服务的接口
-    6、base-service: 公共的service配置。
-    7、ref: 接口的实现类引用
-    8、class: 如果没有配置ref，会根据class加载接口实现类。
-    9、export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
-    10、weight: 权重，与权重负载均衡算法联合使用。
+   * group: 调用组，客户端和服务端配置要一致。
+   * version: 版本号，区分相同服务的不同版本，客户端与服务端的版本号一致才能调用成功。
+   * registry: 注册中心，多个注册中心以逗号分隔。
+   * host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
+   * interface: 服务的接口
+   * base-service: 公共的service配置。
+   * ref: 接口的实现类引用
+   * class: 如果没有配置ref，会根据class加载接口实现类。
+   * export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
+   * weight: 权重，与权重负载均衡算法联合使用。
+# wrk压测结果
+
 
 # 贡献者
 
