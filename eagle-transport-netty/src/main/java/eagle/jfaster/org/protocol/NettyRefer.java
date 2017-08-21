@@ -67,8 +67,12 @@ public class NettyRefer <T> implements Refer <T> {
     public Object request(Request request) {
         try {
             if(lock.tryAcquire()){
-                activeCnt.incrementAndGet();
-                return client.request(request);
+                try {
+                    activeCnt.incrementAndGet();
+                    return client.request(request);
+                } finally {
+                    lock.release();
+                }
             }else {
                 String warn = String.format("%s too much request,more than actives:%d",config.identity(),lock.getMaxPermits());
                 logger.warn(warn);
