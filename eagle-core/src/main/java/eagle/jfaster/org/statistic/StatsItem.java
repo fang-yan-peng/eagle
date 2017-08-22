@@ -1,6 +1,7 @@
 package eagle.jfaster.org.statistic;
 
 import eagle.jfaster.org.logging.InternalLogger;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.LinkedList;
@@ -15,8 +16,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 public class StatsItem {
 
+    @Getter
     private final AtomicLong value = new AtomicLong(0);
 
+    @Getter
     private final AtomicLong times = new AtomicLong(0);
 
     private final LinkedList<CallSnapshot> csListMinute = new LinkedList<>();
@@ -25,13 +28,15 @@ public class StatsItem {
 
     private final LinkedList<CallSnapshot> csListDay = new LinkedList<>();
 
+    @Getter
     private final String statsName;
 
+    @Getter
     private final String statsKey;
 
     private final InternalLogger log;
 
-    private static StatsSnapshot computeStatsData(final LinkedList<CallSnapshot> csList) {
+    private StatsSnapshot computeStatsData(final LinkedList<CallSnapshot> csList) {
         StatsSnapshot statsSnapshot = new StatsSnapshot();
         synchronized (csList) {
             double tps = 0;
@@ -97,7 +102,7 @@ public class StatsItem {
 
     public void printAtMinutes() {
         StatsSnapshot ss = computeStatsData(this.csListMinute);
-        log.info(String.format("[%s] [%s] Stats In One Minute, SUM: %dms TPS: %.2f AVGPT: %.2fms",
+        log.info(String.format("[%s] [%s] Stats In One Minute, SUM: %d ms TPS: %.2f AVGPT: %.2f ms",
                 this.statsName,
                 this.statsKey,
                 ss.getSum(),
@@ -107,7 +112,7 @@ public class StatsItem {
 
     public void printAtHour() {
         StatsSnapshot ss = computeStatsData(this.csListHour);
-        log.info(String.format("[%s] [%s] Stats In One Hour, SUM: %dms TPS: %.2f AVGPT: %.2fms",
+        log.info(String.format("[%s] [%s] Stats In One Hour, SUM: %d ms TPS: %.2f AVGPT: %.2f ms",
                 this.statsName,
                 this.statsKey,
                 ss.getSum(),
@@ -117,27 +122,11 @@ public class StatsItem {
 
     public void printAtDay() {
         StatsSnapshot ss = computeStatsData(this.csListDay);
-        log.info(String.format("[%s] [%s] Stats In One Day, SUM: %dms TPS: %.2f AVGPT: %.2fms",
+        log.info(String.format("[%s] [%s] Stats In One Day, SUM: %dms TPS: %.2f AVGPT: %.2f ms",
                 this.statsName,
                 this.statsKey,
                 ss.getSum(),
                 ss.getTps(),
                 ss.getAvgpt()));
-    }
-
-    public AtomicLong getValue() {
-        return value;
-    }
-
-    public String getStatsKey() {
-        return statsKey;
-    }
-
-    public String getStatsName() {
-        return statsName;
-    }
-
-    public AtomicLong getTimes() {
-        return times;
     }
 }

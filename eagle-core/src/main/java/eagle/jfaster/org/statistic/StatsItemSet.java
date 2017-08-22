@@ -20,6 +20,8 @@ public class StatsItemSet {
 
     private final ConcurrentMap<String/* key */, StatsItem> statsItemTable = new ConcurrentHashMap<>(4);
 
+    private final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<>(4);
+
     private final String statsName;
 
     private final ScheduledExecutorService scheduledExecutorService;
@@ -153,7 +155,7 @@ public class StatsItemSet {
     public StatsItem getAndCreateStatsItem(final String statsKey) {
         StatsItem statsItem = this.statsItemTable.get(statsKey);
         if (null == statsItem) {
-            synchronized (this) {
+            synchronized (getLock(statsKey)) {
                 statsItem = this.statsItemTable.get(statsKey);
                 if(statsItem == null){
                     statsItem = new StatsItem(this.statsName, statsKey, this.log);
@@ -165,6 +167,17 @@ public class StatsItemSet {
         return statsItem;
     }
 
+    private Object getLock(String key) {
+        Object lock = locks.get(key);
+        if (lock == null) {
+            lock = new Object();
+            Object old = locks.putIfAbsent(key, lock);
+            if (old != null) { // 已经存在lock
+                lock = old;
+            }
+        }
+        return lock;
+    }
     public StatsSnapshot getStatsDataInMinute(final String statsKey) {
         StatsItem statsItem = this.statsItemTable.get(statsKey);
         if (null != statsItem) {
