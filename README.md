@@ -1,11 +1,11 @@
 # Eagle
 
 # 概要
-Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessian等序列化协议，默认序列化使用kryo。
+Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]、[Hessian][hessian]等序列化协议，默认序列化使用kryo。
 
 # 特点
 - 需要很少的操作就可以实现自己的分布式rpc调用。
-- 借助zookeeper实现服务注册和发现。
+- 借助[Zookeeper][zookeeper]实现服务注册和发现。
 - 基于AQS实现高性能连接池。
 - 提供failover和failfast两种高可用策略。
 - 支持同步和异步回调两种机制。
@@ -477,7 +477,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
    * callback-queue-size: 回调任务队列大小。
    * callback-wait-time: 回调任务执行等待时间与request-timeout不同,如果异步任务队列超过设定阈值并且任务等待时间过长，则将此服务设置为不可用，直到任务队列在合理范围内。
    * base-refer: 公共的refer配置。
-   * stats-log: 统计log的名称，如果配置了该名称则，会把方法的调用时间、tps等信息写入此log，方便查看接口的性能。
+   * stats-log: 统计log的名称，如果配置了该名称，则会把接口方法的调用时间、tps等信息写入此log，方便查看接口的性能。
    
 
 ## 服务端配置（eagle:service）
@@ -506,5 +506,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
 [maven]:https://maven.apache.org
 [gradle]:http://gradle.org
 [zookeeper]:http://zookeeper.apache.org
+[kryo]:https://github.com/EsotericSoftware/kryo
+[hessian]:http://hessian.caucho.com/
 
 
