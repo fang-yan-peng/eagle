@@ -4,11 +4,11 @@
 Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]、[Hessian][hessian]等序列化协议，默认序列化使用kryo。
 
 # 特点
-- 需要很少的操作就可以实现自己的分布式rpc调用。
 - 借助[Zookeeper][zookeeper]实现服务注册和发现。
 - 基于AQS实现高性能连接池。
 - 提供failover和failfast两种高可用策略。
 - 支持同步和异步回调两种机制。
+- 提供接口方法请求时间、tps等监控信息。
 
 # 例子
 
