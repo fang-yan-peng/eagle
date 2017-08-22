@@ -132,7 +132,7 @@ public class NettyServer implements Server,StatisticCallback {
     @Override
     public String statistic() {
         return String.format(
-                "identity: %s://%s connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s",
+                "[%s://%s] connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s",
                 config.getProtocol(),config.hostPort(), connectManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),
                 standardThreadExecutor.getQueue().size(), standardThreadExecutor.getMaximumPoolSize(),
                 standardThreadExecutor.getMaxSubmittedTaskCount());
