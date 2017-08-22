@@ -184,10 +184,10 @@ public class MergeConfig {
         return config;
     }
 
-    private final String IDENTITY_FORMATE = "%s://%s:%d";
+    private final String IDENTITY_FORMATE = "%s://%s:%d/%s";
 
     public String identity(){
-        return String.format(IDENTITY_FORMATE,protocol,host,port);
+        return String.format(IDENTITY_FORMATE,protocol,host,port,interfaceName);
     }
 
     private final String HOST_FORMATE = "%s:%d";

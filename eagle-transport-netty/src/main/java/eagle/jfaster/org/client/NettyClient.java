@@ -146,7 +146,7 @@ public class NettyClient implements Client,StatisticCallback {
                 //定时扫描超时的请求
                 callbackCancelFuture = callbackCancelExecutor.scheduleWithFixedDelay(new TimeoutMonitorTask(this),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
                 connPool = new NettySharedConnPool(config,this);
-                EagleStatsManager.egisterStatsCallback(this);
+                EagleStatsManager.registerStatsCallback(this);
                 stat.set(true);
 
             }

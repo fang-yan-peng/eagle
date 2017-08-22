@@ -67,7 +67,7 @@ public class NettyServer implements Server,StatisticCallback {
             try {
                 initServer();
                 bootstrap.bind(new InetSocketAddress(config.getPort())).sync();
-                EagleStatsManager.egisterStatsCallback(this);
+                EagleStatsManager.registerStatsCallback(this);
             } catch (Exception e) {
                 logger.error("Error start server ",e);
                 throw new EagleFrameException(e);
@@ -132,8 +132,8 @@ public class NettyServer implements Server,StatisticCallback {
     @Override
     public String statistic() {
         return String.format(
-                "identity: %s connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s",
-                config.identity(), connectManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),
+                "identity: %s://%s connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s",
+                config.getProtocol(),config.hostPort(), connectManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),
                 standardThreadExecutor.getQueue().size(), standardThreadExecutor.getMaximumPoolSize(),
                 standardThreadExecutor.getMaxSubmittedTaskCount());
     }

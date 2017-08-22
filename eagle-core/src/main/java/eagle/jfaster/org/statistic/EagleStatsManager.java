@@ -76,7 +76,7 @@ public class EagleStatsManager {
         statsTable.get(key).addValue(methodDesc, excTime, 1);
     }
 
-    public synchronized static void egisterStatsCallback(StatisticCallback callback){
+    public synchronized static void registerStatsCallback(StatisticCallback callback){
         if(!statsList.contains(callback)){
             statsList.add(callback);
         }else {

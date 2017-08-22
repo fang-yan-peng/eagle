@@ -153,7 +153,14 @@ public class StatsItemSet {
     public StatsItem getAndCreateStatsItem(final String statsKey) {
         StatsItem statsItem = this.statsItemTable.get(statsKey);
         if (null == statsItem) {
-            statsItem = new StatsItem(this.statsName, statsKey, this.log);
+            synchronized (this) {
+                statsItem = this.statsItemTable.get(statsKey);
+                if(statsItem == null){
+                    statsItem = new StatsItem(this.statsName, statsKey, this.log);
+                    statsItemTable.put(statsKey, statsItem);
+                }
+
+            }
         }
         return statsItem;
     }
