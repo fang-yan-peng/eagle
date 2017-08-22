@@ -84,7 +84,7 @@ public class AbstractInterfaceConfig extends AbstractConfig {
     @Getter
     @Setter
     // 是否记录访问日志，true记录，false不记录
-    protected String accessLog;
+    protected String statsLog;
 
     @Getter
     @Setter

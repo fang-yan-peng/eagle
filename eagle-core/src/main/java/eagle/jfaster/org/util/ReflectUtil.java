@@ -18,7 +18,9 @@ public class ReflectUtil {
 
     public static final String PARAM_CLASS_SPLIT = ",";
 
-    public static final String J_VOID = "V";
+    public static final String METHOD_DESC_VOID = "%s()";
+
+    public static final String METHOD_DESC_PARAM = "%s(%s)";
 
     private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];
 
@@ -78,9 +80,9 @@ public class ReflectUtil {
      */
     public static String getMethodDesc(String methodName, String paramDesc) {
         if (paramDesc == null) {
-            return methodName + "()";
+            return String.format(METHOD_DESC_VOID,methodName);
         } else {
-            return methodName + "(" + paramDesc + ")";
+            return String.format(METHOD_DESC_PARAM,methodName, paramDesc);
         }
     }
 

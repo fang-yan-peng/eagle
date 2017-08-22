@@ -61,6 +61,7 @@ public class UtilityUtil {
     public static final class DefaultThreadFactory implements ThreadFactory {
 
         private final String threadName;
+
         private final boolean daemon;
 
         public DefaultThreadFactory(String threadName, boolean daemon) {

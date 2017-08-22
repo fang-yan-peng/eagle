@@ -50,6 +50,8 @@ public class EagleConstants {
     public static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
     public static final String PACKAGE = "base-package";
     public static final int WARMUP = 10 * 60 * 1000;
+    public static final int STATISTIC_PEROID = 60; // 60 seconds
+
 
 
 }

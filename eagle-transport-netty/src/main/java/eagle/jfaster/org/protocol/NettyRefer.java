@@ -18,18 +18,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class NettyRefer <T> implements Refer <T> {
 
-    private final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyRefer.class);
+    protected final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyRefer.class);
 
+    protected final Client client;
 
-    private final Client client;
-
-    private final MergeConfig config;
+    protected final MergeConfig config;
 
     private final Class<T> type;
 
-    private final SuspendResumeLock lock;
+    protected final SuspendResumeLock lock;
 
-    private AtomicInteger activeCnt = new AtomicInteger(0);
+    protected AtomicInteger activeCnt = new AtomicInteger(0);
 
     @Override
     public MergeConfig getConfig() {

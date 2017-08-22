@@ -10,7 +10,10 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
  * Created by fangyanpeng1 on 2017/8/2.
  */
 public interface ClockSource {
+
     ClockSource INSTANCE = Factory.create();
+
+    ClockSource MILLINSTANCE = new MillisecondClockSource();
 
     long currentTime();
 

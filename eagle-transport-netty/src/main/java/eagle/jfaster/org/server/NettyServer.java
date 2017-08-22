@@ -13,6 +13,7 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
 import eagle.jfaster.org.spi.SpiClassLoader;
+import eagle.jfaster.org.statistic.EagleStatsManager;
 import eagle.jfaster.org.statistic.StatisticCallback;
 import eagle.jfaster.org.transport.InvokeRouter;
 import eagle.jfaster.org.transport.Server;
@@ -66,6 +67,7 @@ public class NettyServer implements Server,StatisticCallback {
             try {
                 initServer();
                 bootstrap.bind(new InetSocketAddress(config.getPort())).sync();
+                EagleStatsManager.egisterStatsCallback(this);
             } catch (Exception e) {
                 logger.error("Error start server ",e);
                 throw new EagleFrameException(e);

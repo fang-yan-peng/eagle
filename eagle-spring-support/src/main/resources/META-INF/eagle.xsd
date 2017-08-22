@@ -140,9 +140,9 @@
                       <xsd:documentation><![CDATA[ 在该注册中心上服务是否引用. ]]></xsd:documentation>
                   </xsd:annotation>
               </xsd:attribute>
-              <xsd:attribute name="access-log" type="xsd:string" use="optional">
+              <xsd:attribute name="stats-log" type="xsd:string" use="optional">
                   <xsd:annotation>
-                      <xsd:documentation><![CDATA[ accessLog ]]></xsd:documentation>
+                      <xsd:documentation><![CDATA[ 统计log ]]></xsd:documentation>
                   </xsd:annotation>
               </xsd:attribute>
               <xsd:attribute name="host" type="xsd:string" use="optional">

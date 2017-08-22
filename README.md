@@ -436,10 +436,10 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
    * address: 注册中心地址，如果是多个地址以逗号分隔，如果是多组用|或;分隔。
    * namespace: zk上的命名空间，所有的信息都在改命名空间下。
    * max-retries: 连接注册中心的重试次数。
-   * base-sleep-time-milliseconds: 重试时间间隔
-   * max-sleep-time-milliseconds: 最大重试时间
-   * session-timeout-milliseconds: 与注册中心的会话超时时间
-   * digest: 连接注册中心的密码
+   * base-sleep-time-milliseconds: 重试时间间隔。
+   * max-sleep-time-milliseconds: 最大重试时间。
+   * session-timeout-milliseconds: 与注册中心的会话超时时间。
+   * digest: 连接注册中心的密码。
 
 ## 协议配置(eagle:protocol）
    * name: 协议名称,目前只支持eagle，后续加入thrift，如果没有配置id，name会充当id。
@@ -456,27 +456,28 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
 ## 客户端配置（eagle:refer）
    * group: 调用组，客户端和服务端配置要一致。
    * version: 版本号，区分相同服务的不同版本，客户端与服务端的版本号一致才能调用成功。
-   * retries: 调用失败重试次数
+   * retries: 调用失败重试次数。
    * actives: 支持的最大并发数。
    * actives-wait: 并发达到最大后等待多长时间。
    * check: 启动时是否检测有服务，默认false。
    * registry: 注册中心，多个注册中心以逗号分隔。
    * host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
-   * request-timeout: 请求超时时间
-   * min-client-connection: 最小连接数
-   * max-client-connection: 最大连接数
-   * idle-time: 连接空闲多长时间会被回收
-   * connect-timeout: 获取连接的超时时间
+   * request-timeout: 请求超时时间。
+   * min-client-connection: 最小连接数。
+   * max-client-connection: 最大连接数。
+   * idle-time: 连接空闲多长时间会被回收。
+   * connect-timeout: 获取连接的超时时间。
    * max-invoke-error: 连续调用失败的的次数，超过这个次数，这个服务设置为不可用。
-   * compress: 是否开启gzip压缩
+   * compress: 是否开启gzip压缩。
    * loadbalance: 负载均衡策略，目前支持random（随机）、roundrobin（轮询）、activeWeigth（以调用量小的优先）、weight（根据配置的权重选择）。
    * ha-strategy: ha策略，目前支持failover、failfast。
-   * interface: 服务的接口
+   * interface: 服务的接口。
    * callback: 回调，如果设置了回调，该服务就会变成异步。
    * callback-thread: 回调执行线程池的大小。
    * callback-queue-size: 回调任务队列大小。
    * callback-wait-time: 回调任务执行等待时间与request-timeout不同,如果异步任务队列超过设定阈值并且任务等待时间过长，则将此服务设置为不可用，直到任务队列在合理范围内。
    * base-refer: 公共的refer配置。
+   * stats-log: 统计log的名称，如果配置了该名称则，会把方法的调用时间、tps等信息写入此log，方便查看接口的性能。
    
 
 ## 服务端配置（eagle:service）
@@ -484,9 +485,9 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持kryo、hessi
    * version: 版本号，区分相同服务的不同版本，客户端与服务端的版本号一致才能调用成功。
    * registry: 注册中心，多个注册中心以逗号分隔。
    * host: ip地址，一般不需要指定，系统会自动获取，如果特殊需求可自己设定。
-   * interface: 服务的接口
+   * interface: 服务的接口。
    * base-service: 公共的service配置。
-   * ref: 接口的实现类引用
+   * ref: 接口的实现类引用。
    * class: 如果没有配置ref，会根据class加载接口实现类。
    * export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
    * weight: 权重，与权重负载均衡算法联合使用。

@@ -20,9 +20,12 @@ import eagle.jfaster.org.rpc.MethodInvokeCallBack;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.ResponseFuture;
 import eagle.jfaster.org.spi.SpiClassLoader;
+import eagle.jfaster.org.statistic.EagleStatsManager;
 import eagle.jfaster.org.statistic.StatisticCallback;
+import eagle.jfaster.org.task.AsyncCallbackMonitor;
+import eagle.jfaster.org.task.AsyncCallbackTask;
+import eagle.jfaster.org.task.TimeoutMonitorTask;
 import eagle.jfaster.org.thread.AsyncCallbackExecutor;
-import eagle.jfaster.org.thread.FutureTaskExt;
 import eagle.jfaster.org.transport.Client;
 import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -36,9 +39,9 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.net.InetSocketAddress;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,6 +69,7 @@ public class NettyClient implements Client,StatisticCallback {
 
     private AtomicBoolean stat = new AtomicBoolean(false);
 
+    @Setter
     private volatile boolean suspend = false;
 
     private AtomicBoolean init = new AtomicBoolean(false);
@@ -73,12 +77,13 @@ public class NettyClient implements Client,StatisticCallback {
     // 连续失败次数
     private AtomicLong errorCount = new AtomicLong(0);
 
-    private Map<Integer,NettyResponseFuture> callBackMap = new ConcurrentHashMap(256);
+    @Getter
+    private Map<Integer,NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
 
-    private ScheduledFuture<?> callbackCancleFuture = null;
+    private ScheduledFuture<?> callbackCancelFuture = null;
 
     // 回收过期任务
-    private static ScheduledExecutorService callbackCancleExecutor = Executors.newScheduledThreadPool(4);
+    private static ScheduledExecutorService callbackCancelExecutor = Executors.newScheduledThreadPool(4);
 
     //检测异步任务执行超时
     private static ScheduledExecutorService callbackMonitorExecutor;
@@ -86,6 +91,7 @@ public class NettyClient implements Client,StatisticCallback {
     // 回调执行线程池
     private ThreadPoolExecutor callbackExecutor;
 
+    @Getter
     private BlockingQueue<Runnable> callbackQueue;
 
     //最大连续失败次数
@@ -110,7 +116,7 @@ public class NettyClient implements Client,StatisticCallback {
                     if(callbackMonitorExecutor == null){
                         callbackMonitorExecutor = Executors.newScheduledThreadPool(1);
                     }
-                    callbackMonitorExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
+                    callbackMonitorExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(this),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
                 }
                 boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(),ConfigEnum.useNative.isBooleanValue());
                 if(useNative){
@@ -138,8 +144,9 @@ public class NettyClient implements Client,StatisticCallback {
                             }
                         });
                 //定时扫描超时的请求
-                callbackCancleFuture = callbackCancleExecutor.scheduleWithFixedDelay(new TimeoutTask(),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
+                callbackCancelFuture = callbackCancelExecutor.scheduleWithFixedDelay(new TimeoutMonitorTask(this),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
                 connPool = new NettySharedConnPool(config,this);
+                EagleStatsManager.egisterStatsCallback(this);
                 stat.set(true);
 
             }
@@ -157,11 +164,11 @@ public class NettyClient implements Client,StatisticCallback {
     }
 
     public NettyResponseFuture removeCallBack(Integer opaque){
-        return callBackMap.remove(opaque);
+        return callbackMap.remove(opaque);
     }
 
     public void addCallBack(Integer opaque,NettyResponseFuture future){
-        callBackMap.put(opaque,future);
+        callbackMap.put(opaque,future);
     }
 
     public void executeInvokeCallback(final ResponseFuture responseFuture) {
@@ -202,14 +209,14 @@ public class NettyClient implements Client,StatisticCallback {
             if(init.compareAndSet(true,false)){
                 workerGroup.shutdownGracefully();
                 //不能关闭callBackCancleExecutor，因为是多个client公用的。
-                callbackCancleFuture.cancel(true);
+                callbackCancelFuture.cancel(true);
                 if(callbackExecutor != null){
                     callbackExecutor.shutdownNow();
                 }
                 if(callbackMonitorExecutor != null){
                     callbackMonitorExecutor.shutdownNow();
                 }
-                callBackMap.clear();
+                callbackMap.clear();
                 connPool.shutdown();
                 logger.info("Netty client normal shutdown");
             }
@@ -262,79 +269,7 @@ public class NettyClient implements Client,StatisticCallback {
 
     @Override
     public String statistic() {
-        return String.format("identity:%s callbackMapSize:%d asyncCallbackQueueSize:%d",config.identity(),callBackMap.size(), callbackQueue.size());
+        return String.format("identity:%s callbackMapSize:%d asyncCallbackQueueSize:%d",config.identity(), callbackMap.size(), callbackQueue == null ? 0 : callbackQueue.size());
     }
 
-    class TimeoutTask implements Runnable{
-        @Override
-        public void run() {
-            Iterator<Map.Entry<Integer, NettyResponseFuture>> it = NettyClient.this.callBackMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<Integer, NettyResponseFuture> next = it.next();
-                NettyResponseFuture rep = next.getValue();
-                if ((rep.getBeginTimestamp() + rep.getTimeoutMillis() + 300) <= System.currentTimeMillis()) {
-                    if(rep.getCallBack() == null){
-                        rep.onFail(new EagleFrameException("%s request timeout，requestid:%d,timeout:%d ms",config.getInterfaceName(),rep.getOpaque(),rep.getTimeoutMillis()));
-                    }else {
-                        rep.setException(new EagleFrameException("%s request timeout，requestid:%d,timeout:%d ms",config.getInterfaceName(),rep.getOpaque(),rep.getTimeoutMillis()));
-                        executeInvokeCallback(rep);
-                    }
-                    it.remove();
-                    logger.warn("remove timeout request, interfaceName: " + config.getInterfaceName());
-                }
-            }
-        }
-    }
-
-    @RequiredArgsConstructor
-    class AsyncCallbackTask implements Runnable{
-
-        @Getter
-        private final ResponseFuture responseFuture;
-
-        @Override
-        public void run() {
-            try {
-                responseFuture.executeCallback();
-            } catch (Throwable e) {
-                logger.info("execute callback in executor exception, and callback throw", e);
-            }
-        }
-    }
-
-    class AsyncCallbackMonitor implements Runnable{
-
-        @Override
-        public void run() {
-            int callbackQueueSize = config.getExtInt(ConfigEnum.callbackQueueSize.getName(),ConfigEnum.callbackQueueSize.getIntValue());
-            int warThreshold = callbackQueueSize*2/3 == 0 ? 1 : callbackQueueSize/3;
-            int callbackWait = config.getExtInt(ConfigEnum.callbackWaitTime.getName(),ConfigEnum.callbackWaitTime.getIntValue());
-            try {
-                if (!callbackQueue.isEmpty()) {
-                    final FutureTaskExt runnable = (FutureTaskExt) callbackQueue.peek();
-                    if (null == runnable) {
-                        suspend = false;
-                        return;
-                    }
-                    if(callbackQueue.size() >= warThreshold) {
-                        logger.info(String.format("%d task need to execute,maybe some callbacks execute too slow please check", callbackQueue.size()));
-                    }
-                    AsyncCallbackTask callbackTask = (AsyncCallbackTask) runnable.getRunnable();
-                    NettyResponseFuture responseFuture = (NettyResponseFuture) callbackTask.getResponseFuture();
-                    final long behind = System.currentTimeMillis() - responseFuture.getBeginTimestamp();
-                    // 如果队列过长，并且队头的任务等待时间过长，则将此client挂起。
-                    if (behind >= callbackWait && callbackQueue.size() >= warThreshold) {
-                        logger.info(String.format("peek callback is not yet execute,has waited %ds and %d task need to execute,so stop accepting request",behind/1000, callbackQueue.size()));
-                        suspend = true;
-                    }else {
-                        suspend = false;
-                    }
-                }else {
-                    suspend = false;
-                }
-            } catch (Throwable e) {
-                logger.error("AsyncCallbackMonitor:",e);
-            }
-        }
-    }
 }

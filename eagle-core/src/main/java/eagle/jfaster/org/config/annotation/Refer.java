@@ -50,7 +50,7 @@ public @interface Refer {
     String subscribe()default "";
 
     // 是否记录访问日志，true记录，false不记录
-    String accessLog()default "";
+    String statsLog()default "";
 
     // 是否进行check，如果为true，则在监测失败后抛异常
     String check()default "";

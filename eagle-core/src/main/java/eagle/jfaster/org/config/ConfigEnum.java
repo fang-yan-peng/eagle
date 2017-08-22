@@ -39,7 +39,7 @@ public enum ConfigEnum {
     /************************** SPI end ******************************/
 
     group("group", "default_rpc"),
-    accessLog("accessLog", false),
+    statsLog("statsLog", ""),
     useNative("useNative",true),
 
     // 0为不做并发限制

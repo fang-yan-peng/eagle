@@ -1,10 +1,12 @@
 package eagle.jfaster.org.protocol;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import eagle.jfaster.org.client.NettyClient;
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.pool.SuspendResumeLock;
 import eagle.jfaster.org.rpc.*;
 import eagle.jfaster.org.rpc.support.EagleRpcRemoteInvoke;
@@ -59,16 +61,16 @@ public class NettyRpcProtocol<T> implements Protocol<T> {
     @Override
     public Refer createRefer(MergeConfig config,Class<T> type) {
         Client client = new NettyClient(config,config.getInvokeCallBack());
-        SuspendResumeLock lock;
+        SuspendResumeLock lock = SuspendResumeLock.FAUX_LOCK;
         //并发控制
         int actives = config.getExtInt(ConfigEnum.actives.getName(),ConfigEnum.actives.getIntValue());
-        if(actives == 0){
-            lock = SuspendResumeLock.FAUX_LOCK;
-        }else {
+        if(actives != 0){
             long activesWait = config.getExtLong(ConfigEnum.activesWait.getName(),ConfigEnum.activesWait.getLongValue());
             lock = new SuspendResumeLock(actives,activesWait);
         }
-        Refer<T> refer = new NettyRefer<>(client,config,type,lock);
+        //是否统计调用信息，如果配置了统计日志则统计各个方法的调用信息
+        String  logName= config.getExt(ConfigEnum.statsLog.getName(),ConfigEnum.statsLog.getValue());
+        Refer<T> refer = Strings.isNullOrEmpty(logName) ? new NettyRefer<>(client,config,type,lock) : new StatsNettyRefer<>(client,config,type,lock,InternalLoggerFactory.getInstance(logName));
         refer.init();
         return refer;
     }

@@ -45,7 +45,7 @@ public @interface Service {
     String register()default "";
 
     // 是否记录访问日志，true记录，false不记录
-    String accessLog()default "";
+    String statsLog()default "";
 
     // 重试次数
     String retries()default "";

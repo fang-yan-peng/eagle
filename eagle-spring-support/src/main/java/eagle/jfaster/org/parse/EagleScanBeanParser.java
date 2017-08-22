@@ -61,8 +61,8 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                         if(!Strings.isNullOrEmpty(serviceAnnotation.protocol())){
                             multiRef("protocols",serviceAnnotation.protocol(),service);
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.accessLog())){
-                            service.addPropertyValue("accessLog",serviceAnnotation.accessLog());
+                        if(!Strings.isNullOrEmpty(serviceAnnotation.statsLog())){
+                            service.addPropertyValue("statsLog",serviceAnnotation.statsLog());
                         }
                         if(!Strings.isNullOrEmpty(serviceAnnotation.actives())){
                             service.addPropertyValue("actives",serviceAnnotation.actives());
@@ -124,8 +124,8 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                     if(!Strings.isNullOrEmpty(referAnnotation.protocol())){
                         multiRef("protocols",referAnnotation.protocol(),refer);
                     }
-                    if(!Strings.isNullOrEmpty(referAnnotation.accessLog())){
-                        refer.addPropertyValue("accessLog",referAnnotation.accessLog());
+                    if(!Strings.isNullOrEmpty(referAnnotation.statsLog())){
+                        refer.addPropertyValue("statsLog",referAnnotation.statsLog());
                     }
                     if(!Strings.isNullOrEmpty(referAnnotation.actives())){
                         refer.addPropertyValue("actives",referAnnotation.actives());
