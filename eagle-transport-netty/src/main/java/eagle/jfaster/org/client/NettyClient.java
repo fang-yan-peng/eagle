@@ -269,6 +269,15 @@ public class NettyClient implements Client,StatisticCallback {
 
     @Override
     public String statistic() {
+        if(callbackQueue == null){
+            if(callbackMap.size() < 100){
+                return null;
+            }
+        }else {
+            if(callbackMap.size() < 100 && callbackQueue.size() < 100){
+                return null;
+            }
+        }
         return String.format("[%s] callbackMapSize: %d asyncCallbackQueueSize: %d",config.identity(), callbackMap.size(), callbackQueue == null ? 0 : callbackQueue.size());
     }
 

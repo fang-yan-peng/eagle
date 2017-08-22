@@ -2,6 +2,7 @@ package eagle.jfaster.org.statistic;
 
 
 
+import com.google.common.base.Strings;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.util.UtilityUtil;
@@ -108,7 +109,7 @@ public class EagleStatsManager {
             try {
                 String msg = callback.statistic();
 
-                if (msg != null && !msg.isEmpty()) {
+                if (Strings.isNullOrEmpty(msg)) {
                     logger.info(String.format("[eagle-statisticCallback] %s", msg));
                 }
             } catch (Exception e) {
