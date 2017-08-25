@@ -1,7 +1,6 @@
 package eagle.jfaster.org.client;
 
 import eagle.jfaster.org.service.Hello;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -9,7 +8,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class AnnotationClient {
     public static void main(String[] args) {
-        ApplicationContext appCtx = new ClassPathXmlApplicationContext("client_annotation.xml");
+        ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("client_annotation.xml");
+        appCtx.start();
         Hello hello = appCtx.getBean("helloAnno",Hello.class);
         System.out.println(hello.hello());
     }

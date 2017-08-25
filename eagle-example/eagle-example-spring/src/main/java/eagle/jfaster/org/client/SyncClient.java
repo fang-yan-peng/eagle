@@ -3,7 +3,6 @@ package eagle.jfaster.org.client;
 import eagle.jfaster.org.service.Calculate;
 import eagle.jfaster.org.service.HelloWorld;
 import eagle.jfaster.org.service.Notify;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.concurrent.TimeUnit;
@@ -14,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 public class SyncClient {
 
     public static void main(String[] args) throws InterruptedException {
-        ApplicationContext appCtx = new ClassPathXmlApplicationContext("client_sync.xml");
-
+        ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("client_sync.xml");
+        appCtx.start();
         Calculate calculate = appCtx.getBean("calculate1",Calculate.class);
         int cnt = 0;
         while (cnt < 30) {

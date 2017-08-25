@@ -1,6 +1,5 @@
 package eagle.jfaster.org.server;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.concurrent.CountDownLatch;
@@ -10,7 +9,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public class Server {
     public static void main(String[] args) throws InterruptedException {
-        ApplicationContext appCtx = new ClassPathXmlApplicationContext("server.xml");
+        ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("server.xml");
+        appCtx.start();
         CountDownLatch latch = new CountDownLatch(1);
         latch.await();
     }
