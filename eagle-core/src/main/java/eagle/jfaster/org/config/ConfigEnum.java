@@ -88,7 +88,8 @@ public enum ConfigEnum {
     subscribe("subscribe", true),
     throwException("throwException", "true"),
 
-    weight("weight", 100);
+    weight("weight", 100),
+    disable("disable", false);
 
 
     private ConfigEnum(String name , String value){

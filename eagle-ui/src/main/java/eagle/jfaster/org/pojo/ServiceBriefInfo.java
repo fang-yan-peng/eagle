@@ -41,6 +41,5 @@ public class ServiceBriefInfo{
         OK,
         CRASHED,
         DISABLED,
-        SHARDING_FLAG
     }
 }

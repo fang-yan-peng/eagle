@@ -105,9 +105,10 @@ public class ReferClusterManage<T> implements ServiceChangeListener {
         List<Refer<T>> existRefers = registryRefers.get(registryConfig);
         List<Refer<T>> newRefers = new ArrayList<>();
         for(MergeConfig serviceConfig : serviceConfigs){
-            if(!serviceConfig.isSupport(refConfig)){
+            if(!serviceConfig.isSupport(refConfig) || serviceConfig.disable()){
                 continue;
             }
+
             Refer<T> refer = getExistingRefer(serviceConfig,existRefers);
             //获取权重信息
             int weight = serviceConfig.getExtInt(ConfigEnum.weight.getName(),0);

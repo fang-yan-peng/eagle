@@ -39,9 +39,6 @@ function statusFormatter(value, row) {
         case "DISABLED":
             return "<span class='label label-warning' data-lang='status-disabled'></span>";
             break;
-        case "SHARDING_FLAG":
-            return "<span class='label label-info' data-lang='status-sharding-flag'></span>";
-            break;
         case "CRASHED":
             return "<span class='label label-default' data-lang='status-crashed'></span>";
             break;

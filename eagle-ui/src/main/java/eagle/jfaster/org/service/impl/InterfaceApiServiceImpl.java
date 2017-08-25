@@ -115,6 +115,39 @@ public class InterfaceApiServiceImpl implements InterfaceApiService {
         }
     }
 
+    @Override
+    public boolean disableServer(String serviceName, String protocol, String host) {
+        try {
+            String serverConfigJson = regCenter.getDirectly(String.format(SERVICE,serviceName,protocol,host));
+            MergeConfig config = MergeConfig.decode(serverConfigJson);
+            if(config.disable()){
+                return true;
+            }
+            config.addExt(ConfigEnum.disable.getName(),"true");
+            regCenter.update(String.format(SERVICE,serviceName,protocol,host),config.encode());
+            return true;
+        } catch (Exception e) {
+            Logs.error("disableServer",e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean enableServer(String serviceName, String protocol, String host) {
+        try {
+            String serverConfigJson = regCenter.getDirectly(String.format(SERVICE,serviceName,protocol,host));
+            MergeConfig config = MergeConfig.decode(serverConfigJson);
+            if(!config.disable()){
+                return true;
+            }
+            config.addExt(ConfigEnum.disable.getName(),"false");
+            regCenter.update(String.format(SERVICE,serviceName,protocol,host),config.encode());
+            return true;
+        } catch (Exception e) {
+            Logs.error("disableServer",e);
+            return false;
+        }    }
+
 
     private List<ServiceBriefInfo> getBriefInfos(String pathFormat,String chilPahtFormat){
         List<String> interfaceNames = regCenter.getChildrenKeys("/");
@@ -142,7 +175,11 @@ public class InterfaceApiServiceImpl implements InterfaceApiService {
                         briefInfo.setProcess(config.getPort());
                         briefInfo.setProtocol(config.getProtocol());
                         briefInfo.setServiceName(config.getInterfaceName());
-                        briefInfo.setStatus(ServiceBriefInfo.ServiceStatus.OK);
+                        if(config.disable()){
+                            briefInfo.setStatus(ServiceBriefInfo.ServiceStatus.DISABLED);
+                        }else {
+                            briefInfo.setStatus(ServiceBriefInfo.ServiceStatus.OK);
+                        }
                         briefInfo.setVersion(config.getVersion());
                         briefInfos.add(briefInfo);
                     }

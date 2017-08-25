@@ -68,4 +68,16 @@ public class ServiceRestfulApi {
         return iService.getApiService().updateServerConfig(serviceInfo);
     }
 
+    @RequestMapping(value = "/server/disable")
+    public boolean disableServertConfig(@RequestParam("serviceName") String serviceName, @RequestParam("protocol") String protocol,@RequestParam("host") String host){
+        return iService.getApiService().disableServer(serviceName,protocol,host);
+    }
+
+    @RequestMapping(value = "/server/enable")
+    public boolean enableServertConfig(@RequestParam("serviceName") String serviceName, @RequestParam("protocol") String protocol,@RequestParam("host") String host){
+        return iService.getApiService().enableServer(serviceName,protocol,host);
+    }
+
+
+
 }

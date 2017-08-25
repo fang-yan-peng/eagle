@@ -127,6 +127,10 @@ public class MergeConfig {
         this.numbers.clear();
     }
 
+    public boolean disable(){
+        return getExtBoolean(ConfigEnum.disable.getName(),ConfigEnum.disable.isBooleanValue());
+    }
+
     public boolean isSupport(MergeConfig other){
         //比较版本
         String version = getVersion();
@@ -205,7 +209,7 @@ public class MergeConfig {
 
         MergeConfig config = (MergeConfig) o;
 
-        if (port != config.port)
+        if (!port.equals(config.port))
             return false;
         if (!host.equals(config.host))
             return false;

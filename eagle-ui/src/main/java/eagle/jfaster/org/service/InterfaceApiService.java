@@ -29,4 +29,8 @@ public interface InterfaceApiService {
 
     boolean updateServerConfig(ServerServiceInfo serviceInfo);
 
+    boolean disableServer(String serviceName, String protocol, String host);
+
+    boolean enableServer(String serviceName, String protocol, String host);
+
 }
