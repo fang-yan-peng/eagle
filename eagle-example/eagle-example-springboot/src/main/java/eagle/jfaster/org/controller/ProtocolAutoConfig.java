@@ -1,4 +1,5 @@
-package eagle.jfaster.org.config;
+package eagle.jfaster.org.controller;
+import eagle.jfaster.org.config.ProtocolConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

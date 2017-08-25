@@ -53,7 +53,7 @@ public class ProtoBufSerialization implements Serialization {
             oos.writeObject(obj);
             oos.flush();
         } else {
-            throw new IllegalArgumentException("can't serialize " + clazz);
+            throw new IllegalArgumentException("can't serialization " + clazz);
         }
 
         output.flush();

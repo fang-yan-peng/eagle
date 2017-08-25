@@ -1,0 +1,295 @@
+<div class="box-body">
+    <div role="tabpanel" class="tab-pane active" onsubmit="return false;">
+        <form id="service-config-form" class="form-horizontal">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="protocol" class="col-sm-6 control-label" data-lang="protocol"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="protocol" name="protocol" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="serialization" class="col-sm-6 control-label" data-lang="serialization"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="serialization" name="serialization" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="group" class="col-sm-6 control-label" data-lang="group"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="group" name="group" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="service-name" class="col-sm-2 control-label" data-lang="service-name"></label>
+                    <div class="col-sm-9">
+                        <input type="text" id="service-name" name="serviceName" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="callback" class="col-sm-2 control-label" data-lang="callback"></label>
+                    <div class="col-sm-9">
+                        <input type="text" id="callback" name="callback" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="host" class="col-sm-6 control-label" data-lang="host"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="host" name="host" class="form-control" data-toggle="tooltip" data-placement="bottom" title="订阅改服务的ip。" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="process" class="col-sm-6 control-label" data-lang="process"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="process" name="process" class="form-control" data-toggle="tooltip" data-placement="bottom" title="订阅服务的进程号。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="codec" class="col-sm-6 control-label" data-lang="codec"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="codec" name="codec" class="form-control" data-toggle="tooltip" data-placement="bottom" title="通信协议实现。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="actives" class="col-sm-6 control-label" data-lang="actives"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="actives" name="actives" class="form-control" data-toggle="tooltip" data-placement="bottom" title="接口调用并发控制。配置为0表示不进行并发控制。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="actives-wait" class="col-sm-6 control-label" data-lang="actives-wait"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="actives-wait" name="activesWait" class="form-control" data-toggle="tooltip" data-placement="bottom" title="当达到最大并发数时，等待多长时间放弃该次调用。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="max-content-length" class="col-sm-6 control-label" data-lang="max-content-length"></label>
+                            <div class="col-sm-6">
+                                <input type="number" max=1000000000 id="max-content-length" name="maxContentLength" class="form-control" data-toggle="tooltip" data-placement="bottom" title="传输的最大字节数。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="check" class="col-sm-6 control-label" data-lang="check"></label>
+                            <div class="col-sm-6">
+                                <input type="checkbox" id="check" name="check" data-toggle="tooltip" data-placement="bottom" title="启动检测服务。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="use-native" class="col-sm-6 control-label" data-lang="use-native"></label>
+                            <div class="col-sm-6">
+                                <input type="checkbox" id="use-native" name="useNative" data-toggle="tooltip" data-placement="bottom" title="linux下是否启用epoll。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="compress" class="col-sm-6 control-label" data-lang="compress"></label>
+                            <div class="col-sm-6">
+                                <input type="checkbox" id="compress" name="compress" data-toggle="tooltip" data-placement="bottom" title="是否开启gzip压缩。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="use-default" class="col-sm-6 control-label" data-lang="use-default"></label>
+                            <div class="col-sm-6">
+                                <input type="checkbox" id="use-default" name="useDefault" data-toggle="tooltip" data-placement="bottom" title="是否将此协议设为默认。" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="cluster" class="col-sm-6 control-label" data-lang="cluster"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="cluster" name="cluster" class="form-control" data-toggle="tooltip" data-placement="bottom" title="客户端集群管理实现。" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="heartbeat-factory" class="col-sm-6 control-label" data-lang="heartbeat-factory"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="heartbeat-factory" name="heartbeatFactory" class="form-control" data-toggle="tooltip" data-placement="bottom" title="订阅服务的进程号。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="heartbeat" class="col-sm-6 control-label" data-lang="heartbeat"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="heartbeat" name="heartbeat" class="form-control" data-toggle="tooltip" data-placement="bottom" title="心跳时间间隔。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="version" class="col-sm-6 control-label" data-lang="version"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="version" name="version" class="form-control" data-toggle="tooltip" data-placement="bottom" title="服务版本号。" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="stats-log" class="col-sm-6 control-label" data-lang="stats-log"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="stats-log" name="statsLog" class="form-control" data-toggle="tooltip" data-placement="bottom" title="统计日志名称，如果配置了统计日志，则会把服务的调用时间、tps等信息写入此日志。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="retries" class="col-sm-6 control-label" data-lang="retries"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="retries" name="retries" class="form-control" data-toggle="tooltip" data-placement="bottom" title="失败重试次数，如果为0则不重试。"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="callback-thread" class="col-sm-6 control-label" data-lang="callback-thread"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="callback-thread" name="callbackThread" class="form-control" data-toggle="tooltip" data-placement="bottom" title="异步接口回调执行线程数。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="callback-queue-size" class="col-sm-6 control-label" data-lang="callback-queue-size"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="callback-queue-size" name="callbackQueueSize" class="form-control" data-toggle="tooltip" data-placement="bottom" title="异步接口回调执行队列长度。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="callback-wait-time" class="col-sm-6 control-label" data-lang="callback-wait-time"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="callback-wait-time" name="callbackWaitTime" class="form-control" data-toggle="tooltip" data-placement="bottom" title="当异步接口回调任务运行紧张时，并且对头的任务等待时间（ms）超过改值则进行接口保护。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="request-timeout" class="col-sm-6 control-label" data-lang="request-timeout"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="request-timeout" name="requestTimeout" class="form-control" data-toggle="tooltip" data-placement="bottom" title="接口请求超时时间，单位ms。"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="connect-timeout" class="col-sm-6 control-label" data-lang="connect-timeout"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="connect-timeout" name="connectTimeout" class="form-control" data-toggle="tooltip" data-placement="bottom" title="获取连接超时时间，单位ms。"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="idle-time" class="col-sm-6 control-label" data-lang="idle-time"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="idle-time" name="idleTime" class="form-control" data-toggle="tooltip" data-placement="bottom" title="连接空闲时间，超过此时间连接会被回收，单位ms。"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="min-client-connection" class="col-sm-6 control-label" data-lang="min-client-connection"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="min-client-connection" name="minClientConnection" class="form-control" data-toggle="tooltip" data-placement="bottom" title="与服务端维持的最小连接数。"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="max-client-connection" class="col-sm-6 control-label" data-lang="max-client-connection"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="max-client-connection" name="maxClientConnection" class="form-control" data-toggle="tooltip" data-placement="bottom" title="与服务端维持的最大连接数。"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="max-invoke-error" class="col-sm-6 control-label" data-lang="max-invoke-error"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="max-invoke-error" name="maxInvokeError" class="form-control" data-toggle="tooltip" data-placement="bottom" title="如果服务连续调用失败超过改次数，就会将服务设为不可用。"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="loadbalance" class="col-sm-6 control-label" data-lang="loadbalance"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="loadbalance" name="loadbalance" class="form-control" data-toggle="tooltip" data-placement="bottom" title="负载均衡策略，目前支持random（随机）、roundrobin（轮询）、activeWeigth（以调用量小的优先）、weight（根据配置的权重选择）。" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="ha-strategy" class="col-sm-6 control-label" data-lang="ha-strategy"></label>
+                            <div class="col-sm-6">
+                                <input type="text" id="ha-strategy" name="haStrategy" class="form-control" data-toggle="tooltip" data-placement="bottom" title="ha策略，目前支持failover、failfast。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="max-lifetime" class="col-sm-6 control-label" data-lang="max-lifetime"></label>
+                            <div class="col-sm-6">
+                                <input type="number" id="max-lifetime" name="maxLifetime" class="form-control" data-toggle="tooltip" data-placement="bottom" title="每个连接的生命周期，如果一个连接超过了生命周期，会关闭重新开启。" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="reset" class="btn-xs btn-inverse" id="reset" data-lang="operation-reset"></button>
+                <button id="update-service-info-btn" type="submit" class="btn-xs btn-primary" data-lang="operation-submit"></button>
+            </form>
+    </div>
+</div>
+<script src="/lib/bootstrap-table/bootstrap-table.js"></script>
+<script src="/lib/BootstrapValidator/js/bootstrapValidator.js"></script>
+<script src="/lib/BootstrapValidator/js/bootstrapValidator_zh_CN.js"></script>
+<script src="/js/util/common.js"></script>
+<script src="/js/status/client/service_config.js"></script>

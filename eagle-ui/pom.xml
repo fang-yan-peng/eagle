@@ -5,6 +5,7 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>1.5.6.RELEASE</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>eagle.jfaster.org</groupId>
   <artifactId>eagle-ui</artifactId>
@@ -19,6 +20,8 @@
     <logback.version>1.1.2</logback.version>
     <common.loggin.version>1.2</common.loggin.version>
     <lombok.version>1.16.4</lombok.version>
+    <java.version>1.7</java.version>
+    <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
   </properties>
 
   <dependencies>
@@ -36,6 +39,11 @@
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>eagle.jfaster.org</groupId>
       <artifactId>eagle-core</artifactId>
       <version>1.0-SNAPSHOT</version>
@@ -46,5 +54,19 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <testSource>${java.version}</testSource>
+          <testTarget>${java.version}</testTarget>
+        </configuration>
+        <version>${maven-compiler-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>

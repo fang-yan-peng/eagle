@@ -127,7 +127,7 @@ public class NettyClient implements Client,StatisticCallback {
                 bootstrap = new Bootstrap();
                 final int maxContentLen = config.getExtInt(ConfigEnum.maxContentLength.getName(),ConfigEnum.maxContentLength.getIntValue());
                 final Codec codec = SpiClassLoader.getClassLoader(Codec.class).getExtension(config.getExt(ConfigEnum.codec.getName(),ConfigEnum.codec.getValue()));
-                final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialize.getName(),ConfigEnum.serialize.getValue()));
+                final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialization.getName(),ConfigEnum.serialization.getValue()));
                 bootstrap.group(workerGroup).channel(useNative ? EpollSocketChannel.class : NioSocketChannel.class)
                         .option(ChannelOption.TCP_NODELAY,true)
                         .option(ChannelOption.SO_KEEPALIVE,false)

@@ -441,7 +441,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * session-timeout-milliseconds: 与注册中心的会话超时时间。
    * digest: 连接注册中心的密码。
 
-## 协议配置(eagle:protocol）
+## 协议配置 (eagle:protocol）
    * name: 协议名称,目前只支持eagle，后续加入thrift，如果没有配置id，name会充当id。
    * serialization: 序列化，支持hessian、kryo、protobuf序列化协议。
    * heartbeat-factory: 心跳工厂,默认值是eagle,通过spi方式可以自定义心跳工厂。
@@ -491,6 +491,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * class: 如果没有配置ref，会根据class加载接口实现类。
    * export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
    * weight: 权重，与权重负载均衡算法联合使用。
+   
 # wrk压测结果
    * eagle 压测效果图（wrk -t5 -c20 -d30s --latency http://localhost:8080/wrk/eagle）
        ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/eagle.jpeg)
@@ -498,7 +499,11 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * dubbo 压测效果图（wrk -t5 -c20 -d30s --latency http://localhost:8080/wrk/dubbo）
        ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/dubbo.jpeg)
 
-
+# 后台管理界面
+   * eagle 提供可视化的后台管理，方便查看和修改配置。
+       ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/eagle-ui.jpeg)
+ 
+   
 # 贡献者
 
 * fangyanpeng([@fangyanpeng](https://github.com/fang-yan-peng))

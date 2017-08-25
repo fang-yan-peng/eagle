@@ -14,6 +14,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <slf4j.version>1.7.7</slf4j.version>
     <logback.version>1.1.2</logback.version>
+    <java.version>1.7</java.version>
+    <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
   </properties>
 
   <dependencies>
@@ -84,4 +86,19 @@
       <version>${springframework.version}</version>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <testSource>${java.version}</testSource>
+          <testTarget>${java.version}</testTarget>
+        </configuration>
+        <version>${maven-compiler-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>

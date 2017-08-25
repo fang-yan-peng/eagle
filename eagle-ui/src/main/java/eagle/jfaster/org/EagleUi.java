@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Created by fangyanpeng on 2017/8/17.
+ * @author fangyanpeng
  */
 @SpringBootApplication
 public class EagleUi {

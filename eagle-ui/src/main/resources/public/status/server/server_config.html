@@ -1,0 +1,159 @@
+<div class="box-body">
+    <div role="tabpanel" class="tab-pane active" onsubmit="return false;">
+        <form id="service-config-form" class="form-horizontal">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="protocol" class="col-sm-6 control-label" data-lang="protocol"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="protocol" name="protocol" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="serialization" class="col-sm-6 control-label" data-lang="serialization"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="serialization" name="serialization" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="group" class="col-sm-6 control-label" data-lang="group"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="group" name="group" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="service-name" class="col-sm-2 control-label" data-lang="service-name"></label>
+                <div class="col-sm-9">
+                    <input type="text" id="service-name" name="serviceName" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="host" class="col-sm-6 control-label" data-lang="host"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="host" name="host" class="form-control" data-toggle="tooltip" data-placement="bottom" title="订阅改服务的ip。" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="port" class="col-sm-6 control-label" data-lang="port"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="port" name="port" class="form-control" data-toggle="tooltip" data-placement="bottom" title="服务暴露的端口号。" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="codec" class="col-sm-6 control-label" data-lang="codec"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="codec" name="codec" class="form-control" data-toggle="tooltip" data-placement="bottom" title="通信协议实现。" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="weight" class="col-sm-6 control-label" data-lang="weight"></label>
+                        <div class="col-sm-6">
+                            <input type="number" id="weight" name="weight" class="form-control" data-toggle="tooltip" data-placement="bottom" title="服务调用权重。"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="select-thread-size" class="col-sm-6 control-label" data-lang="select-thread-size"></label>
+                        <div class="col-sm-6">
+                            <input type="number" id="select-thread-size" name="selectThreadSize" class="form-control" data-toggle="tooltip" data-placement="bottom" title="netty处理io线程数。" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="max-content-length" class="col-sm-6 control-label" data-lang="max-content-length"></label>
+                        <div class="col-sm-6">
+                            <input type="number" max=1000000000 id="max-content-length" name="maxContentLength" class="form-control" data-toggle="tooltip" data-placement="bottom" title="传输的最大字节数。" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="use-native" class="col-sm-6 control-label" data-lang="use-native"></label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" id="use-native" name="useNative" data-toggle="tooltip" data-placement="bottom" title="linux下是否启用epoll。" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="version" class="col-sm-6 control-label" data-lang="version"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="version" name="version" class="form-control" data-toggle="tooltip" data-placement="bottom" title="服务版本号。" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="heartbeat-factory" class="col-sm-6 control-label" data-lang="heartbeat-factory"></label>
+                        <div class="col-sm-6">
+                            <input type="text" id="heartbeat-factory" name="heartbeatFactory" class="form-control" data-toggle="tooltip" data-placement="bottom" title="订阅服务的进程号。" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="max-server-connection" class="col-sm-6 control-label" data-lang="max-server-connection"></label>
+                        <div class="col-sm-6">
+                            <input type="number" id="max-server-connection" name="maxServerConnection" class="form-control" data-toggle="tooltip" data-placement="bottom" title="服务端接受的最大连接数，如果超过此连接数，就会关闭新的连接。"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="core-worker-thread" class="col-sm-6 control-label" data-lang="core-worker-thread"></label>
+                        <div class="col-sm-6">
+                            <input type="number" id="core-worker-thread" name="coreWorkerThread" class="form-control" data-toggle="tooltip" data-placement="bottom" title="执行业务核心线程数。" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="max-worker-thread" class="col-sm-6 control-label" data-lang="max-worker-thread"></label>
+                        <div class="col-sm-6">
+                            <input type="number" id="max-worker-thread" name="maxWorkerThread" class="form-control" data-toggle="tooltip" data-placement="bottom" title="执行业务最大线程数。" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="worker-queue-size" class="col-sm-6 control-label" data-lang="worker-queue-size"></label>
+                        <div class="col-sm-6">
+                            <input type="number" id="worker-queue-size" name="workerQueueSize" class="form-control" data-toggle="tooltip" data-placement="bottom" title="执行业务队列长度。" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="reset" class="btn-xs btn-inverse" id="reset" data-lang="operation-reset"></button>
+            <button id="update-service-info-btn" type="submit" class="btn-xs btn-primary" data-lang="operation-submit"></button>
+        </form>
+    </div>
+</div>
+<script src="/lib/bootstrap-table/bootstrap-table.js"></script>
+<script src="/lib/BootstrapValidator/js/bootstrapValidator.js"></script>
+<script src="/lib/BootstrapValidator/js/bootstrapValidator_zh_CN.js"></script>
+<script src="/js/util/common.js"></script>
+<script src="/js/status/server/server_config.js"></script>

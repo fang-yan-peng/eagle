@@ -1,6 +1,7 @@
-package eagle.jfaster.org.config;
+package eagle.jfaster.org.controller;
 
 import eagle.jfaster.org.bean.ReferBean;
+import eagle.jfaster.org.config.BaseReferConfig;
 import eagle.jfaster.org.service.Calculate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

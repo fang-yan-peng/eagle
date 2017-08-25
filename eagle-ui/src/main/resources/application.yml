@@ -3,7 +3,7 @@
 server:
   # the server port
   address: 127.0.0.1
-  port: 8111
+  port: 8110
 
 
 logging:
@@ -17,7 +17,7 @@ logging:
 eagle:
 
   # eagle-ui user, default is admin
-  user: admin
+  user: root
 
   # eagle-ui password, default is admin
   pass: 123456

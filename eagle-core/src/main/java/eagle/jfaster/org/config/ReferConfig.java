@@ -112,6 +112,9 @@ public class ReferConfig<T> extends BaseReferConfig {
                 referConfig.setInvokeCallBack(getInvokeCallBack());
                 ConfigUtil.collectConfigParams(referConfig, protocol, baseRefer, this);
                 ConfigUtil.collectMethodConfigParams(referConfig, this.getMethods());
+                if(getInvokeCallBack() != null){
+                    referConfig.addExt(ConfigEnum.callback.getName(),getInvokeCallBack().getClass().getCanonicalName());
+                }
                 ReferClusterManage<T> clusterManage = rpcHandler.buildClusterManage(interfaceClass,referConfig,regConfigs);
                 clusterManages.add(clusterManage);
                 clusters.add(clusterManage.getCluster());

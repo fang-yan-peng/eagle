@@ -109,7 +109,7 @@ public class EagleStatsManager {
             try {
                 String msg = callback.statistic();
 
-                if (Strings.isNullOrEmpty(msg)) {
+                if (!Strings.isNullOrEmpty(msg)) {
                     logger.info(String.format("[eagle-statisticCallback] %s", msg));
                 }
             } catch (Exception e) {

@@ -30,7 +30,7 @@ public class MergeConfig {
 
     @Getter
     @Setter
-    private int port;
+    private Integer port;
 
     @Getter
     @Setter
@@ -136,8 +136,8 @@ public class MergeConfig {
             return false;
         }
         //比较序列化
-        String serialize = getExt(ConfigEnum.serialize.getName(), ConfigEnum.serialize.getValue());
-        String refSerialize = other.getExt(ConfigEnum.serialize.getName(), ConfigEnum.serialize.getValue());
+        String serialize = getExt(ConfigEnum.serialization.getName(), ConfigEnum.serialization.getValue());
+        String refSerialize = other.getExt(ConfigEnum.serialization.getName(), ConfigEnum.serialization.getValue());
         if (!serialize.equals(refSerialize)) {
             logger.info(String.format("Not support serializeType:%s,current support serializeType:%s",serialize,refSerialize));
             return false;

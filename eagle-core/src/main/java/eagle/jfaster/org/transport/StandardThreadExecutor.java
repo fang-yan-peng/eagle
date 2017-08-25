@@ -109,7 +109,7 @@ public class StandardThreadExecutor extends ThreadPoolExecutor {
  *
  * 		1) 不过LinkedTransferQueue的缺点是没有队列长度控制，需要在外层协助控制
  *
- * @author maijunsheng
+ * Create by fangyanpeng 2017/07/28
  *
  */
 class ExecutorQueue extends LinkedTransferQueue<Runnable> {

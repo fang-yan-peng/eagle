@@ -108,7 +108,7 @@ public class NettyServer implements Server,StatisticCallback {
             groupSelector =  new NioEventLoopGroup(selectWorker,new DefaultThreadFactory("NettyServer-select-" + config.hostPort(), true));
         }
         final Codec codec = SpiClassLoader.getClassLoader(Codec.class).getExtension(config.getExt(ConfigEnum.codec.getName(),ConfigEnum.codec.getValue()));
-        final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialize.getName(),ConfigEnum.serialize.getValue()));
+        final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialization.getName(),ConfigEnum.serialization.getValue()));
         bootstrap = new ServerBootstrap();
         bootstrap.group(groupAccept,groupSelector).channel(useNative ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE,false)

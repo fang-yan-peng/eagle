@@ -32,7 +32,7 @@ public enum ConfigEnum {
 
     /************************** SPI start ******************************/
 
-    serialize("serialization", "kryo"),
+    serialization("serialization", "kryo"),
     codec("codec", "eagle"),
     heartbeatFactory("heartbeatFactory", "eagle"),
 

@@ -74,7 +74,7 @@ public class ZookeeperRegistryCenterManage extends AbstractRegistryManage {
 
     @Override
     public void addRefListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener) {
-        RefListener refListener = new RefListener(regConfig,refConfig.getHost(),listener);
+        RefListener refListener = new RefListener(regConfig,refConfig.hostPort(),listener);
         addListenerCommon((CoordinatorRegistryCenter) this.getRegistry(regConfig),refConfig,REF_CHILDREN,refListener,true);
     }
 

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by fangyanpeng on 2017/8/17.
+ * @author fangyanpeng
  */
 public final class Logs {
 
