@@ -434,7 +434,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * name: 注册中心的名称，如果没有配置id，会用name当id。
    * protocol: 注册中心协议，目前只支持zookeeper。
    * address: 注册中心地址，如果是多个地址以逗号分隔，如果是多组用|或;分隔。
-   * namespace: zk上的命名空间，所有的信息都在改命名空间下。
+   * namespace: zk上的命名空间，所有的信息都在该命名空间下。
    * max-retries: 连接注册中心的重试次数。
    * base-sleep-time-milliseconds: 重试时间间隔。
    * max-sleep-time-milliseconds: 最大重试时间。

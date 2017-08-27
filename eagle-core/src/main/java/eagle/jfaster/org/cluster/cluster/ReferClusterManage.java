@@ -111,7 +111,7 @@ public class ReferClusterManage<T> implements ServiceChangeListener {
             Refer<T> refer = getExistingRefer(serviceConfig,existRefers);
             //获取权重信息
             int weight = serviceConfig.getExtInt(ConfigEnum.weight.getName(),0);
-            if(weight != 0){
+            if(weight > 0){
                 refConfig.addExt(ConfigEnum.weight.getName(),String.valueOf(weight));
             }
             if(refer == null){

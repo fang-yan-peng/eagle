@@ -257,11 +257,7 @@ public class EagleCodec implements Codec {
         return request;
     }
 
-    private Object[] decodeRequestParameter(ByteBuffer buffer, String parameterDesc, Serialization serialization) throws IOException,
-            ClassNotFoundException {
-        if (Strings.isNullOrEmpty(parameterDesc)) {
-            return null;
-        }
+    private Object[] decodeRequestParameter(ByteBuffer buffer, String parameterDesc, Serialization serialization) throws IOException, ClassNotFoundException {
         Class<?>[] classTypes = ReflectUtil.forNames(parameterDesc);
         Object[] paramObjs = new Object[classTypes.length];
         int dataLen;
