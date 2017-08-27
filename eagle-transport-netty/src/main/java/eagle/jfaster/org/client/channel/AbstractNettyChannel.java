@@ -56,39 +56,34 @@ public abstract class AbstractNettyChannel {
         if(timeout < 0){
             throw new EagleFrameException("The request timeout of %s is not allowed to set 0",timeout);
         }
-        try {
-            final int opaque = request.getOpaque();
-            final NettyResponseFuture responseFuture = new NettyResponseFuture(opaque,timeout,callBack);
-            client.addCallBack(opaque,responseFuture);
-            final SocketAddress addr = channel.remoteAddress();
-            channel.writeAndFlush(request).addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture f) throws Exception {
-                    if (f.isSuccess()) {
-                        responseFuture.setSendRequestOK(true);
-                        client.resetErrorCount();
-                        return;
-                    } else {
-                        client.incrErrorCount();
-                        responseFuture.setSendRequestOK(false);
-                    }
-
-                    client.removeCallBack(opaque);
-                    Exception e = new EagleFrameException(f.cause().getMessage());
-                    if (!sync){
-                        responseFuture.setException(e);
-                        client.executeInvokeCallback(responseFuture);
-                    }else {
-                        responseFuture.onFail(e);
-                    }
-                    logger.warn("send a request command to channel <" + addr + "> failed.");
+        final int opaque = request.getOpaque();
+        final NettyResponseFuture responseFuture = new NettyResponseFuture(opaque,timeout,callBack);
+        client.addCallBack(opaque,responseFuture);
+        final SocketAddress addr = channel.remoteAddress();
+        channel.writeAndFlush(request).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture f) throws Exception {
+                if (f.isSuccess()) {
+                    responseFuture.setSendRequestOK(true);
+                    client.resetErrorCount();
+                    return;
+                } else {
+                    client.incrErrorCount();
+                    responseFuture.setSendRequestOK(false);
                 }
-            });
-            return handle(timeout,responseFuture);
-        } catch (Throwable e) {
-            logger.error("send a request to channel failed",e);
-            throw e;
-        }
+
+                client.removeCallBack(opaque);
+                Exception e = new EagleFrameException(f.cause().getMessage());
+                if (!sync){
+                    responseFuture.setException(e);
+                    client.executeInvokeCallback(responseFuture);
+                }else {
+                    responseFuture.onFail(e);
+                }
+                logger.warn("send a request command to channel <" + addr + "> failed.");
+            }
+        });
+        return handle(timeout,responseFuture);
 
     }
 
