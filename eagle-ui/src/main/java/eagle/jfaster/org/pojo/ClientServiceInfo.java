@@ -78,7 +78,7 @@ public class ClientServiceInfo implements ServiceCommonSetter {
 
     @Setter
     @Getter
-    Long heartbeat ;
+    Integer heartbeat ;
 
     @Setter
     @Getter

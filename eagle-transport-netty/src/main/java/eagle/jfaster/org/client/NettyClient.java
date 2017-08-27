@@ -24,6 +24,7 @@ import eagle.jfaster.org.statistic.EagleStatsManager;
 import eagle.jfaster.org.statistic.StatisticCallback;
 import eagle.jfaster.org.task.AsyncCallbackMonitor;
 import eagle.jfaster.org.task.AsyncCallbackTask;
+import eagle.jfaster.org.task.HeartBeatTask;
 import eagle.jfaster.org.task.TimeoutMonitorTask;
 import eagle.jfaster.org.thread.AsyncCallbackExecutor;
 import eagle.jfaster.org.transport.Client;
@@ -67,6 +68,7 @@ public class NettyClient implements Client,StatisticCallback {
     @Getter
     private Bootstrap bootstrap;
 
+    @Getter
     private AtomicBoolean stat = new AtomicBoolean(false);
 
     @Setter
@@ -85,8 +87,7 @@ public class NettyClient implements Client,StatisticCallback {
     // 回收过期任务
     private static ScheduledExecutorService callbackCancelExecutor = Executors.newScheduledThreadPool(4);
 
-    //检测异步任务执行超时
-    private static ScheduledExecutorService callbackMonitorExecutor;
+    private static ScheduledExecutorService commonExecutor = Executors.newScheduledThreadPool(1);
 
     // 回调执行线程池
     private ThreadPoolExecutor callbackExecutor;
@@ -113,10 +114,7 @@ public class NettyClient implements Client,StatisticCallback {
                     callbackQueue = new LinkedBlockingQueue<>(callbackQueueSize);
                     callbackExecutor = new AsyncCallbackExecutor(callbackWorkerThread,callbackWorkerThread,10*60*1000,TimeUnit.MILLISECONDS, callbackQueue, new DefaultThreadFactory("Method callback exec-"+config.getInterfaceName()+"-"));
                     callbackExecutor.allowCoreThreadTimeOut(true);
-                    if(callbackMonitorExecutor == null){
-                        callbackMonitorExecutor = Executors.newScheduledThreadPool(1);
-                    }
-                    callbackMonitorExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(this),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
+                    commonExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(this),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
                 }
                 boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(),ConfigEnum.useNative.isBooleanValue());
                 if(useNative){
@@ -128,6 +126,7 @@ public class NettyClient implements Client,StatisticCallback {
                 final int maxContentLen = config.getExtInt(ConfigEnum.maxContentLength.getName(),ConfigEnum.maxContentLength.getIntValue());
                 final Codec codec = SpiClassLoader.getClassLoader(Codec.class).getExtension(config.getExt(ConfigEnum.codec.getName(),ConfigEnum.codec.getValue()));
                 final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialization.getName(),ConfigEnum.serialization.getValue()));
+                final int heartBeatInterval = config.getExtInt(ConfigEnum.heartbeat.getName(),ConfigEnum.heartbeat.getIntValue());
                 bootstrap.group(workerGroup).channel(useNative ? EpollSocketChannel.class : NioSocketChannel.class)
                         .option(ChannelOption.TCP_NODELAY,true)
                         .option(ChannelOption.SO_KEEPALIVE,false)
@@ -138,7 +137,7 @@ public class NettyClient implements Client,StatisticCallback {
                             protected void initChannel(SocketChannel sc) throws Exception {
                                 sc.pipeline().addLast(new NettyEncoder(codec,serialization))
                                         .addLast(new NettyDecorder(maxContentLen,codec,serialization))
-                                        .addLast(new IdleStateHandler(0,0,config.getExtInt(ConfigEnum.heartbeat.getName(),ConfigEnum.heartbeat.getIntValue())))
+                                        .addLast(new IdleStateHandler(0,0,heartBeatInterval))
                                         .addLast(new NettyConnectionManager(config,connPool,NettyClient.this))
                                         .addLast(NettyClient.this.callBack == null ? new SyncMessageHandler(NettyClient.this) : new AsyncMessageHandler(NettyClient.this));
                             }
@@ -146,6 +145,7 @@ public class NettyClient implements Client,StatisticCallback {
                 //定时扫描超时的请求
                 callbackCancelFuture = callbackCancelExecutor.scheduleWithFixedDelay(new TimeoutMonitorTask(this),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
                 connPool = new NettySharedConnPool(config,this);
+                commonExecutor.scheduleWithFixedDelay(new HeartBeatTask(config,connPool,this),heartBeatInterval,heartBeatInterval,TimeUnit.SECONDS);
                 EagleStatsManager.registerStatsCallback(this);
                 stat.set(true);
 
@@ -213,8 +213,8 @@ public class NettyClient implements Client,StatisticCallback {
                 if(callbackExecutor != null){
                     callbackExecutor.shutdownNow();
                 }
-                if(callbackMonitorExecutor != null){
-                    callbackMonitorExecutor.shutdownNow();
+                if(commonExecutor != null){
+                    commonExecutor.shutdownNow();
                 }
                 callbackMap.clear();
                 connPool.shutdown();

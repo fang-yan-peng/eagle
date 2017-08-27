@@ -23,7 +23,7 @@ public enum ConfigEnum {
     maxLifetime("maxLifetime", MAX_LIFETIME),
     maxServerConnection("maxServerConnection", 100000),
     idleTime("idleTime", 15*60*1000l),
-    heartbeat("heartbeat", 15*60*1000l),
+    heartbeat("heartbeat", 5*60),
     compress("compress", false),
     minCompressSize("minCompressSize", 1000), // 进行gz压缩的最小数据大小。超过此阈值才进行gz压缩
     callback("callback", ""),
