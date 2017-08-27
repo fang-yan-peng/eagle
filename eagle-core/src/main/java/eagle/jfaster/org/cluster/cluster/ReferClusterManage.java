@@ -92,7 +92,6 @@ public class ReferClusterManage<T> implements ServiceChangeListener {
         if(check && CollectionUtil.isEmpty(cluster.getRefers())){
             throw new EagleFrameException("%s no available services",refConfig.identity());
         }
-        cluster.init();
     }
 
     @Override

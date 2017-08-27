@@ -39,7 +39,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
     @Override
     public Response routeAndInvoke(Request message) {
-        String serviceKey = ExploreUtil.getServiceKey(message);
+        String serviceKey = message.getInterfaceName();
         RemoteInvoke invoker = services.get(serviceKey);
         if(invoker == null){
             logger.info(String.format("Error invoke service %s not exist ",serviceKey));
@@ -55,7 +55,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
                 response.setException(new EagleFrameException("Not allow invoke service %s because of too many invoke at the same time",serviceKey));
                 return response;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             EagleResponse response = new EagleResponse();
             response.setException(new EagleFrameException("Error invoke service %s",e.getMessage()));
             return response;
@@ -68,7 +68,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
     @Override
     public void addRemoteInvoke(RemoteInvoke invoke){
-        String serviceKey = ExploreUtil.getServiceKey(invoke.getConfig());
+        String serviceKey = invoke.getConfig().getInterfaceName();
         if(services.containsKey(serviceKey)){
             throw new EagleFrameException("Error service %s has explored",serviceKey);
         }

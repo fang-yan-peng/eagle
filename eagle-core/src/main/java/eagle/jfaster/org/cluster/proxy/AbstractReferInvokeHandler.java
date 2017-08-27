@@ -79,14 +79,14 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         request.setParameterDesc(ReflectUtil.getMethodParamDesc(method));
         try {
             return handle(method,request);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ReferCluster<T> tmp = this.defaultCluster;
             selectDefaultCluster();
             if(tmp != defaultCluster){
                 logger.info(String.format("ReferInvokeHandler.invoke,interface:%s,from %s to %s",interfaceName,tmp.getConfig().identity(),defaultCluster.getConfig().identity()));
                 try {
                     return handle(method,request);
-                } catch (Exception e1) {
+                } catch (Throwable e1) {
                     logger.error(String.format("ReferInvokeHandler.invoke,interface:%s,protocol:%s",interfaceName,defaultCluster.getConfig().identity()),e1);
                     throw e1;
                 }

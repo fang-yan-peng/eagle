@@ -45,7 +45,7 @@ public class EagleCodec implements Codec {
         if(Response.class.isInstance(message)){ //编码response
             try {
                 return encodeResponse((Response) message,serialization);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 return encodeExceptionResponse((Response) message,serialization,e);
             }
         }else {
@@ -53,7 +53,7 @@ public class EagleCodec implements Codec {
         }
     }
 
-    private ByteBuffer encodeExceptionResponse(Response messageRes,Serialization serialization,Exception e) throws IOException {
+    private ByteBuffer encodeExceptionResponse(Response messageRes,Serialization serialization,Throwable e) throws IOException {
         EagleResponse response = new EagleResponse();
         response.setOpaque(messageRes.getOpaque());
         response.setNeedCompress(false);
@@ -220,8 +220,8 @@ public class EagleCodec implements Codec {
             }else {
                 return decodeResponse(buffer,serialization,opaque,magicCode);
             }
-        } catch (ClassNotFoundException e) {
-            throw new EagleFrameException(e);
+        } catch (Exception e) {
+            throw new EagleFrameException(e.getMessage());
         }
     }
 

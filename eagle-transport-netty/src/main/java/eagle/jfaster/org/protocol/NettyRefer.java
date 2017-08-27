@@ -77,7 +77,7 @@ public class NettyRefer <T> implements Refer <T> {
                 logger.warn(warn);
                 throw new EagleFrameException(warn);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new EagleFrameException("NettyRefer request failed,refer:%s,host:%s,cause:%s",config.getInterfaceName(),config.identity(),e.getMessage());
         }finally {
             activeCnt.decrementAndGet();

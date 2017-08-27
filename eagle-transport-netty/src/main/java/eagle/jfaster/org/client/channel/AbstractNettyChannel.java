@@ -74,7 +74,7 @@ public abstract class AbstractNettyChannel {
                     }
 
                     client.removeCallBack(opaque);
-                    Exception e = new EagleFrameException(f.cause());
+                    Exception e = new EagleFrameException(f.cause().getMessage());
                     if (!sync){
                         responseFuture.setException(e);
                         client.executeInvokeCallback(responseFuture);
@@ -85,7 +85,7 @@ public abstract class AbstractNettyChannel {
                 }
             });
             return handle(timeout,responseFuture);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("send a request to channel failed",e);
             throw e;
         }

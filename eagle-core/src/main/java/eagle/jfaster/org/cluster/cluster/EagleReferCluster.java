@@ -95,17 +95,16 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
 
     @Override
     public Object call(Request request) {
-        if(stat.get()){
-            try {
-                return haStrategy.call(request,loadBalance);
-            } catch (Exception e) {
-                logger.error(String.format("Cluster.call fail,interface:%s,host:%s,cause:%s",config.getInterfaceName(),config.identity(),e.getMessage()));
+        try {
+            return haStrategy.call(request,loadBalance);
+        } catch (Throwable e) {
+            logger.error(String.format("Cluster.call fail,interface:%s,host:%s,cause:%s",config.getInterfaceName(),config.identity(),e.getMessage()));
+            if(e instanceof EagleFrameException){
                 throw e;
-            } catch (Throwable cause){
-                logger.error(String.format("Cluster.call fail,interface:%s,host:%s,cause:%s",config.getInterfaceName(),cause.getMessage()));
+            }else {
+                throw new EagleFrameException(e.getMessage());
             }
         }
-        throw new EagleFrameException("%s cluser is not available",config.identity());
     }
 
     @Override

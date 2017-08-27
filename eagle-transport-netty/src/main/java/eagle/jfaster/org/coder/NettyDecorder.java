@@ -2,11 +2,13 @@ package eagle.jfaster.org.coder;
 
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
-import eagle.jfaster.org.util.RemotingUtil;
+import eagle.jfaster.org.rpc.support.EagleResponse;
 import eagle.jfaster.org.codec.Codec;
 import eagle.jfaster.org.codec.Serialization;
 import eagle.jfaster.org.exception.EagleFrameException;
 import static eagle.jfaster.org.util.RequestUtil.*;
+
+import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -50,19 +52,23 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
                 return codec.decode(byteBuffer,serialization,opaque,magicCode);
             }catch (Throwable e){
                 logger.error("Error codec decode ",e);
-                if(isRequest(magicCode)){
-                    if(e instanceof EagleFrameException){
-                        return buildExceptionResponse(opaque,(Exception)e);
-                    }else{
-                        return buildExceptionResponse(opaque,new EagleFrameException(e.getMessage()));
-                    }
+                EagleResponse response;
+                if(e instanceof EagleFrameException){
+                    response = buildExceptionResponse(opaque,(Exception)e);
+                }else{
+                    response = buildExceptionResponse(opaque,new EagleFrameException(e.getMessage()));
                 }
-                return null;
+                if(isRequest(magicCode)){
+                    ctx.writeAndFlush(response);
+                    return null;
+                }else{
+                    return response;
+                }
             }
         } catch (Throwable e){
             logger.error("Error decode message ",e);
-            RemotingUtil.closeChannel(ctx.channel(),"NettyDecorder decode");
-            return null;
+            RemotingUtil.closeChannel(ctx.channel(),"NettyEncoder decode");
+            throw new EagleFrameException(e.getMessage());
         } finally {
             if (null != frame) {
                 frame.release();

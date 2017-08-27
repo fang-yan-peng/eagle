@@ -25,7 +25,7 @@ public class FailoverHaStrategy<T> extends AbstractHaStrategy<T>  {
             Refer<T> refer = loadBalance.select(request);
             try {
                 return refer.request(request);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if(i > retry){
                     throw e;
                 }

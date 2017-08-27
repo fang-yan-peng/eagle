@@ -1,5 +1,6 @@
 package eagle.jfaster.org.coder;
 
+import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.util.RemotingUtil;
@@ -9,7 +10,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.RequiredArgsConstructor;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -35,6 +35,7 @@ public class NettyEncoder extends MessageToByteEncoder {
         } catch (Throwable e) {
             logger.error("Error encode message "+RemotingUtil.parseChannelRemoteAddr(ctx.channel()),e);
             RemotingUtil.closeChannel(ctx.channel(),"NettyEncoder encode");
+            throw new EagleFrameException(e.getMessage());
         }
     }
 }
