@@ -1,12 +1,16 @@
 package eagle.jfaster.org.controller;
 
 import eagle.jfaster.org.util.AuthenticatUtil;
+import org.assertj.core.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +48,18 @@ public class ConsoleIndex extends AbstractErrorController {
         }
 
         return "wrong";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/user",method = RequestMethod.HEAD)
+    public void getLoginUser(HttpServletResponse response){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userName = userDetails.getUsername();
+        if(Strings.isNullOrEmpty(userName)){
+            AuthenticatUtil.needAuthenticate(response);
+            return;
+        }
+        AuthenticatUtil.authenticateSuccess(response,userName);
     }
 
     @Override
