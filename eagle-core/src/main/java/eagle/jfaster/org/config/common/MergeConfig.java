@@ -124,6 +124,7 @@ public class MergeConfig {
 
     public void update(MergeConfig config){
         this.addExts(config.getExtFeilds());
+        this.version = config.getVersion();
         this.numbers.clear();
     }
 

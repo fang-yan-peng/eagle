@@ -29,7 +29,7 @@ public class FailoverHaStrategy<T> extends AbstractHaStrategy<T>  {
                 if(i > retry){
                     throw e;
                 }
-                logger.warn("Failover.call fail for interface:%s,cause:%s",request.getInterfaceName(),e.getMessage());
+                logger.warn(String.format("Failover.call fail for interface:%s,cause:%s",request.getInterfaceName(),e.getMessage()));
             }
         }
         throw new EagleFrameException("Failover.call can'nt run here!");
