@@ -68,9 +68,9 @@ public class NettyServer implements Server,StatisticCallback {
                 initServer();
                 bootstrap.bind(new InetSocketAddress(config.getPort())).sync();
                 EagleStatsManager.registerStatsCallback(this);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("Error start server ",e);
-                throw new EagleFrameException(e);
+                throw new EagleFrameException(e.getMessage());
             }
         }
     }

@@ -150,9 +150,9 @@ public class NettyClient implements Client,StatisticCallback {
                 stat.set(true);
 
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("Error start netty client ",e);
-            throw new EagleFrameException(e);
+            throw new EagleFrameException(e.getMessage());
         }
     }
 
@@ -220,7 +220,7 @@ public class NettyClient implements Client,StatisticCallback {
                 connPool.shutdown();
                 logger.info("Netty client normal shutdown");
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("Netty client shutdown ",e);
         }
     }
