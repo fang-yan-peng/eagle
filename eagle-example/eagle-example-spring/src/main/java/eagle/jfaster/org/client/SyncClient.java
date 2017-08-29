@@ -17,16 +17,19 @@ public class SyncClient {
         appCtx.start();
         Calculate calculate = appCtx.getBean("calculate1",Calculate.class);
         int cnt = 0;
+        //测试统计
         while (cnt < 30) {
             ++cnt;
             System.out.println(calculate.add(1, 3));
             System.out.println(calculate.sub(8, 3));
             TimeUnit.SECONDS.sleep(2);
         }
+        //测试mock
+        System.out.println(calculate.div(2,0));
         HelloWorld helloWorld = appCtx.getBean("hello1",HelloWorld.class);
         System.out.println(helloWorld.hello());
         System.out.println(helloWorld.hellos().size());
-
+        //测试无参返回
         Notify notify = appCtx.getBean("notify1",Notify.class);
         System.out.println(notify.ping("ping"));
         notify.invoke("It is me");

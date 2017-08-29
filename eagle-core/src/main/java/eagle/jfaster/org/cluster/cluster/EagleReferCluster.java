@@ -1,12 +1,16 @@
 package eagle.jfaster.org.cluster.cluster;
 
+import com.google.common.base.Strings;
 import eagle.jfaster.org.cluster.HaStrategy;
 import eagle.jfaster.org.cluster.LoadBalance;
 import eagle.jfaster.org.cluster.ReferCluster;
+import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.exception.MockException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
+import eagle.jfaster.org.rpc.Mock;
 import eagle.jfaster.org.rpc.Refer;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.spi.SpiInfo;
@@ -33,8 +37,22 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
 
     private AtomicBoolean stat = new AtomicBoolean(false);
 
+    private Mock mock;
+
     @Override
     public void init() {
+        String mockClzName = config.getExt(ConfigEnum.mock.getName(),ConfigEnum.mock.getValue());
+        if(!Strings.isNullOrEmpty(mockClzName)){
+            try {
+                Class<?> mockClz = Class.forName(mockClzName);
+                if(!Mock.class.isAssignableFrom(mockClz)){
+                    throw new MockException("%s is not the implement of eagle.jfaster.org.rpc.Mock",mockClz.getName());
+                }
+                this.mock = (Mock) mockClz.newInstance();
+            } catch (Exception e) {
+                throw new MockException(e.getMessage());
+            }
+        }
         stat.set(true);
     }
 
@@ -99,11 +117,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
             return haStrategy.call(request,loadBalance);
         } catch (Throwable e) {
             logger.error(String.format("Cluster.call fail,interface:%s,host:%s,cause:%s",config.getInterfaceName(),config.identity(),e.getMessage()));
-            if(e instanceof EagleFrameException){
-                throw e;
-            }else {
-                throw new EagleFrameException(e.getMessage());
-            }
+            return dealCallFail(request,e);
         }
     }
 
@@ -119,6 +133,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
         }
     }
 
+
     @Override
     public boolean isAvailable() {
         return stat.get();
@@ -127,5 +142,20 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
     @Override
     public MergeConfig getConfig() {
         return config;
+    }
+
+    private Object dealCallFail(Request request,Throwable e)  {
+        if(mock != null ){
+            try {
+                return mock.getMockValue(request.getInterfaceName(),request.getMethodName(),request.getParameters(),e);
+            } catch (Throwable e1) {
+                throw new MockException("Call exception: %s--Mock exception: %s ",e.getMessage(),e1.getMessage());
+            }
+        }
+        if(e instanceof EagleFrameException){
+            throw (EagleFrameException)e;
+        }else {
+            throw new EagleFrameException(e.getMessage());
+        }
     }
 }

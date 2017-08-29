@@ -9,11 +9,18 @@ import org.springframework.stereotype.Service;
 @Service("calculate")
 public class CalculateImpl implements Calculate {
 
+    @Override
     public int add(int a, int b) {
         return a+b;
     }
 
+    @Override
     public int sub(int a, int b) {
         return a-b;
+    }
+
+    @Override
+    public int div(int a, int b) {
+        return a/b;
     }
 }

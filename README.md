@@ -478,6 +478,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * callback-wait-time: 回调任务执行等待时间与request-timeout不同,如果异步任务队列超过设定阈值并且任务等待时间过长，则将此服务设置为不可用，直到任务队列在合理范围内。
    * base-refer: 公共的refer配置。
    * stats-log: 统计log的名称，如果配置了该名称，则会把接口方法的调用时间、tps等信息写入此log，方便查看接口的性能。
+   * mock: 接口失败降级类的全限定名。如果配置了mock，接口调用失败，就会降级调用mock的实现。mock需要实现 eagle.jfaster.org.rpc.Mock接口。
    
 
 ## 服务端配置（eagle:service）

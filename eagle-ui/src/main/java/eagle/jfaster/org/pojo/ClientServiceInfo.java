@@ -144,4 +144,9 @@ public class ClientServiceInfo implements ServiceCommonSetter {
     @Getter
     String callback;
 
+    @Setter
+    @Getter
+    String mock;
+
+
 }

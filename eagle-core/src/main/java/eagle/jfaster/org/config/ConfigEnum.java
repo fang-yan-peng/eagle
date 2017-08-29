@@ -77,6 +77,7 @@ public enum ConfigEnum {
 
     application("application", APPLICATION_DEFAULT),
     module("module", MODULE_DEFAULT),
+    mock("mock", ""),
 
     retries("retries", 0),
     async("async", false),

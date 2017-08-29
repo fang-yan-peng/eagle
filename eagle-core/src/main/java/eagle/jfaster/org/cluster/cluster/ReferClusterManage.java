@@ -68,6 +68,7 @@ public class ReferClusterManage<T> implements ServiceChangeListener {
         cluster.setConfig(refConfig);
         cluster.setLoadBalance(loadBalance);
         cluster.setHaStrategy(haStrategy);
+        cluster.init();
     }
 
     public void initProtocol(){

@@ -150,4 +150,5 @@ function renderJob(data) {
     $("#ha-strategy").attr("value", data.haStrategy);
     $("#max-lifetime").attr("value", data.maxLifetime);
     $("#callback").attr("value", data.callback);
+    $("#mock").attr("value", data.mock);
 }
