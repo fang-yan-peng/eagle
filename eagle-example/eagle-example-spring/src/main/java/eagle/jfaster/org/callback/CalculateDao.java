@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("calculateDao")
 public class CalculateDao {
-    void insert(){
+    public void insert(){
         System.out.println("-----------insert--------");
     }
 }

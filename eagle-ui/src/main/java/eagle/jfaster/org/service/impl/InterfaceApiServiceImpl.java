@@ -149,14 +149,18 @@ public class InterfaceApiServiceImpl implements InterfaceApiService {
         }    }
 
 
-    private List<ServiceBriefInfo> getBriefInfos(String pathFormat,String chilPahtFormat){
+    private List<ServiceBriefInfo> getBriefInfos(String pathFormat,String childPathFormat){
         List<String> interfaceNames = regCenter.getChildrenKeys("/");
         List<ServiceBriefInfo> briefInfos = new ArrayList<>();
         for(String interfaceName : interfaceNames){
             List<String> protocols = regCenter.getChildrenKeys("/"+interfaceName);
             for(String protocol : protocols){
-                List<String> hosts = regCenter.getChildrenKeys(String.format(chilPahtFormat,interfaceName,protocol));
-                if(CollectionUtil.isEmpty(hosts) && regCenter.isExisted(String.format(chilPahtFormat,interfaceName,protocol))){
+                String path = String.format(childPathFormat,interfaceName,protocol);
+                if(!regCenter.isExisted(path)){
+                    continue;
+                }
+                List<String> hosts = regCenter.getChildrenKeys(path);
+                if(CollectionUtil.isEmpty(hosts) && regCenter.isExisted(String.format(childPathFormat,interfaceName,protocol))){
                     ServiceBriefInfo briefInfo = new ServiceBriefInfo();
                     briefInfo.setProtocol(protocol);
                     briefInfo.setServiceName(interfaceName);

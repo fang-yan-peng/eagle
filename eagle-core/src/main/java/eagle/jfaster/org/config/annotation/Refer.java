@@ -95,7 +95,7 @@ public @interface Refer {
 
     String baseRefer()default "";
 
-    String callBack()default "";
+    String callback()default "";
 
     String callbackThread() default "";
 

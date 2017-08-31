@@ -8,6 +8,7 @@ import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
+import eagle.jfaster.org.rpc.Mock;
 import eagle.jfaster.org.rpc.RpcHandler;
 import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.util.CollectionUtil;
@@ -43,7 +44,15 @@ public class ReferConfig<T> extends BaseReferConfig {
 
     @Setter
     @Getter
-    protected MethodInvokeCallBack invokeCallBack;
+    protected MethodInvokeCallBack invokeCallback;
+
+    @Setter
+    @Getter
+    protected String callback;
+
+    @Setter
+    @Getter
+    protected Mock failMock;
 
     @Setter
     @Getter
@@ -83,7 +92,7 @@ public class ReferConfig<T> extends BaseReferConfig {
                 throw new EagleFrameException("%s RefererConfig is malformed, for protocol not set correctly!", interfaceClass.getName());
             }
             ConfigUtil.checkInterfaceAndMethods(interfaceClass, methods);
-            clusterManages = new ArrayList<ReferClusterManage<T>>(protocols.size());
+            clusterManages = new ArrayList<>(protocols.size());
             //检查注册中心
             List<MergeConfig> regConfigs = ConfigUtil.loadRegistryConfigs(getRegistries());
             if( CollectionUtil.isEmpty(regConfigs)){
@@ -109,12 +118,10 @@ public class ReferConfig<T> extends BaseReferConfig {
                 referConfig.setProtocol(protocolName);
                 referConfig.setVersion(Strings.isNullOrEmpty(version)? ConfigEnum.version.getValue() : version);
                 referConfig.addExt(ConfigEnum.refreshTimestamp.getName(),String.valueOf(System.currentTimeMillis()));
-                referConfig.setInvokeCallBack(getInvokeCallBack());
+                referConfig.setInvokeCallBack(getInvokeCallback());
+                referConfig.setMock(getFailMock());
                 ConfigUtil.collectConfigParams(referConfig, protocol, baseRefer, this);
                 ConfigUtil.collectMethodConfigParams(referConfig, this.getMethods());
-                if(getInvokeCallBack() != null){
-                    referConfig.addExt(ConfigEnum.callback.getName(),getInvokeCallBack().getClass().getCanonicalName());
-                }
                 ReferClusterManage<T> clusterManage = rpcHandler.buildClusterManage(interfaceClass,referConfig,regConfigs);
                 clusterManages.add(clusterManage);
                 clusters.add(clusterManage.getCluster());

@@ -16,6 +16,7 @@ import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.w3c.dom.Element;
 import static eagle.jfaster.org.util.ParserUtil.multiRef;
+import static eagle.jfaster.org.util.ParserUtil.register;
 
 /**
  * Created by fangyanpeng on 2017/8/18.
@@ -153,6 +154,7 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                     }
                     if(!Strings.isNullOrEmpty(referAnnotation.mock())){
                         refer.addPropertyValue("mock",referAnnotation.mock());
+                        register(referAnnotation.mock(),"failMock",refer,parserContext);
                     }
                     if(!Strings.isNullOrEmpty(referAnnotation.retries())){
                         refer.addPropertyValue("retries",referAnnotation.retries());
@@ -217,16 +219,9 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                     if(!Strings.isNullOrEmpty(referAnnotation.callbackWaitTime())){
                         refer.addPropertyValue("callbackWaitTime",referAnnotation.callbackWaitTime());
                     }
-                    if(!Strings.isNullOrEmpty(referAnnotation.callBack())){
-                        try {
-                            Class.forName(referAnnotation.callBack());
-                        } catch (ClassNotFoundException e) {
-                            throw e;
-                        }
-                        BeanDefinitionBuilder callBuilder = BeanDefinitionBuilder.rootBeanDefinition(referAnnotation.callBack());
-                        String callBackId = parserContext.getReaderContext().generateBeanName(callBuilder.getBeanDefinition());
-                        parserContext.getRegistry().registerBeanDefinition(callBackId,callBuilder.getBeanDefinition());
-                        refer.addPropertyReference("invokeCallBack", callBackId);
+                    if(!Strings.isNullOrEmpty(referAnnotation.callback())){
+                        refer.addPropertyValue("callback",referAnnotation.callback());
+                        register(referAnnotation.callback(),"invokeCallback",refer,parserContext);
                     }
                     refer.addPropertyValue("interface",clz);
                     String referId = Strings.isNullOrEmpty(referAnnotation.id()) ? parserContext.getReaderContext().generateBeanName(refer.getBeanDefinition()) : referAnnotation.id();

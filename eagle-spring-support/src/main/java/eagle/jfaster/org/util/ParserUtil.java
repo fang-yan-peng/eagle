@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.factory.xml.ParserContext;
 
 /**
  * Created by fangyanpeng on 2017/8/18.
@@ -22,5 +23,14 @@ public class ParserUtil {
             }
         }
         beanBuiler.addPropertyValue(name, list);
+    }
+
+    public static void register(String beanClassName,String propertyName,BeanDefinitionBuilder beanBuilder,ParserContext parserContext){
+        if(!Strings.isNullOrEmpty(beanClassName)){
+            BeanDefinitionBuilder injectBuilder = BeanDefinitionBuilder.rootBeanDefinition(beanClassName);
+            String injectId = parserContext.getReaderContext().generateBeanName(injectBuilder.getBeanDefinition());
+            parserContext.getRegistry().registerBeanDefinition(injectId,injectBuilder.getBeanDefinition());
+            beanBuilder.addPropertyReference(propertyName, injectId);
+        }
     }
 }

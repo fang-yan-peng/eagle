@@ -1,10 +1,8 @@
 package eagle.jfaster.org.cluster.cluster;
 
-import com.google.common.base.Strings;
 import eagle.jfaster.org.cluster.HaStrategy;
 import eagle.jfaster.org.cluster.LoadBalance;
 import eagle.jfaster.org.cluster.ReferCluster;
-import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.exception.MockException;
@@ -41,18 +39,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
 
     @Override
     public void init() {
-        String mockClzName = config.getExt(ConfigEnum.mock.getName(),ConfigEnum.mock.getValue());
-        if(!Strings.isNullOrEmpty(mockClzName)){
-            try {
-                Class<?> mockClz = Class.forName(mockClzName);
-                if(!Mock.class.isAssignableFrom(mockClz)){
-                    throw new MockException("%s is not the implement of eagle.jfaster.org.rpc.Mock",mockClz.getName());
-                }
-                this.mock = (Mock) mockClz.newInstance();
-            } catch (Exception e) {
-                throw new MockException(e.getMessage());
-            }
-        }
+        mock = config.getMock();
         stat.set(true);
     }
 

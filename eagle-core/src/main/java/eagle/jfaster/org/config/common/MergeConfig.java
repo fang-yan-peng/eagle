@@ -7,6 +7,7 @@ import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
+import eagle.jfaster.org.rpc.Mock;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,6 +48,10 @@ public class MergeConfig {
     @Getter
     @Setter
     private transient MethodInvokeCallBack invokeCallBack;
+
+    @Getter
+    @Setter
+    private transient Mock mock;
 
     @Getter
     @Setter
