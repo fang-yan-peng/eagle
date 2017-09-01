@@ -82,7 +82,7 @@ public class NettyRpcProtocol<T> implements Protocol<T> {
                 entry.getValue().shutdown();
             }
             host2Server.clear();
-            host2Server.clear();
+            host2Router.clear();
         }
     }
 

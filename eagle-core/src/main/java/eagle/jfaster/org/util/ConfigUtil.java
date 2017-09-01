@@ -103,6 +103,9 @@ public class ConfigUtil {
 
     public static void collectConfigParams(MergeConfig data,AbstractConfig config,String prefix) throws Exception {
         try {
+            if(config == null){
+                return;
+            }
             BeanInfo beanInfo = Introspector.getBeanInfo(config.getClass());
             PropertyDescriptor[] pros = beanInfo.getPropertyDescriptors();
             for (PropertyDescriptor pro : pros){
