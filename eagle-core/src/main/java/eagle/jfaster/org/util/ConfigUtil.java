@@ -17,6 +17,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 import static eagle.jfaster.org.constant.EagleConstants.COMMA_SPLIT_PATTERN;
 import static eagle.jfaster.org.constant.EagleConstants.HOST_SPLIT_PATTERN;
 import static eagle.jfaster.org.constant.EagleConstants.REGISTRY_SPLIT_PATTERN;
@@ -31,7 +33,7 @@ public class ConfigUtil {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(ConfigUtil.class);
 
 
-    private static LoadingCache<RegistryConfig,MergeConfig> regCache = CacheBuilder.newBuilder().build(
+    private static LoadingCache<RegistryConfig,MergeConfig> regCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build(
             new CacheLoader<RegistryConfig, MergeConfig>() {
                 @Override
                 public MergeConfig load(RegistryConfig regConfig) throws Exception {
