@@ -50,6 +50,7 @@ function bindSubmitServiceSettingsForm() {
             var haStrategy = $("#ha-strategy").val();
             var maxLifetime = $("#max-lifetime").val();
             var callback = $("#callback").val();
+            var mock = $("#mock").val();
             var postJson = {protocol: protocol,
                 serialization : serialization,
                 group : group,
@@ -82,7 +83,8 @@ function bindSubmitServiceSettingsForm() {
                 loadbalance:loadbalance,
                 haStrategy: haStrategy,
                 maxLifetime: maxLifetime,
-                callback: callback};
+                callback: callback,
+                mock: mock};
             submitAjax(postJson);
         }
     });

@@ -1,4 +1,7 @@
 package eagle.jfaster.org.util;
+import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.rpc.Request;
+import eagle.jfaster.org.rpc.Response;
 import eagle.jfaster.org.rpc.support.EagleResponse;
 
 import java.io.ByteArrayInputStream;
@@ -14,6 +17,8 @@ import static eagle.jfaster.org.constant.EagleConstants.*;
  * Created by fangyanpeng1 on 2017/7/27.
  */
 public class RequestUtil {
+
+    private static final String REQ_FORMAT="%s.%s";
 
     public static boolean isRequest(short magicCode){
         return (magicCode & EAGLE_TYPE_REQ) == EAGLE_TYPE_REQ;
@@ -46,6 +51,12 @@ public class RequestUtil {
         return response;
     }
 
+    public static Response buildRejectResponse(String info){
+        EagleResponse response = new EagleResponse();
+        response.setException(new EagleFrameException(info));
+        return response;
+    }
+
 
     public static byte[] compress(byte[] data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -66,5 +77,8 @@ public class RequestUtil {
         return ret;
     }
 
+    public static String getRequestDesc(Request request){
+        return String.format(REQ_FORMAT,request.getInterfaceName(),ReflectUtil.getMethodDesc(request.getMethodName(),request.getParameterDesc()));
+    }
 
 }

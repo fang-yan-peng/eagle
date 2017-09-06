@@ -34,6 +34,7 @@ function bindSubmitServiceSettingsForm() {
             var coreWorkerThread = $("#core-worker-thread").val();
             var maxWorkerThread = $("#max-worker-thread").val();
             var workerQueueSize= $("#worker-queue-size").val();
+            var protectStrategy= $("#protect-strategy").val();
             var postJson = {protocol: protocol,
                 serialization : serialization,
                 group : group,
@@ -50,7 +51,8 @@ function bindSubmitServiceSettingsForm() {
                 maxServerConnection: maxServerConnection,
                 coreWorkerThread: coreWorkerThread,
                 maxWorkerThread: maxWorkerThread,
-                workerQueueSize: workerQueueSize};
+                workerQueueSize: workerQueueSize,
+                protectStrategy: protectStrategy};
             submitAjax(postJson);
         }
     });

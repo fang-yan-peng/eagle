@@ -92,6 +92,10 @@ public class ProtocolConfig extends AbstractConfig {
     @Getter
     private Integer heartbeat;
 
+    @Setter
+    @Getter
+    private String protectStrategy;
+
     @ConfigDesc(excluded = true)
     public String getName() {
         return name;

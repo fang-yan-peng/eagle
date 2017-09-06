@@ -6,6 +6,9 @@ import com.google.common.base.Strings;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.util.UtilityUtil;
+import org.hyperic.sigar.CpuPerc;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -25,11 +28,17 @@ import static eagle.jfaster.org.constant.EagleConstants.STATISTIC_PEROID;
  */
 public class EagleStatsManager {
 
+    private volatile static double memoryUsedPct = 0.0;
+
+    private volatile static double cpuUsedPct = 0.0;
+
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(EagleStatsManager.class);
 
     private static final HashMap<String, StatsItemSet> statsTable = new HashMap<>();
 
     private static final List<StatisticCallback> statsList = new LinkedList<>();
+
+    private static final Sigar sigar = new Sigar();;
 
     private static final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(new UtilityUtil.DefaultThreadFactory("EagleServiceStatsThread",true));
 
@@ -40,6 +49,8 @@ public class EagleStatsManager {
             public void run() {
                 // memory
                 logMemoryStatistic();
+                //cup使用率需要安装相应的so文件
+                //logCpuStatistic();
                 // callbacks
                 logStatisticCallback();
             }
@@ -96,11 +107,33 @@ public class EagleStatsManager {
             double percentUsed = 100 - percentFree;
             DecimalFormat mbFormat = new DecimalFormat("#0.00");
             DecimalFormat percentFormat = new DecimalFormat("#0.0");
+            memoryUsedPct = Double.parseDouble(percentFormat.format(percentUsed));
+            //当内存使用率大于50%时开始打印内存监控日志
+            if(memoryUsedPct < 50.0){
+                return;
+            }
             StringBuilder sb = new StringBuilder();
             sb.append(mbFormat.format(usedMemory)).append("MB of ").append(mbFormat.format(maxMemory)).append(" MB (").append(percentFormat.format(percentUsed)).append("%) used");
             logger.info(sb.toString());
-        } catch (Exception e) {
-            logger.error("EagleStatsManager logMemoryStatistic Error: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            logger.error("EagleStatsManager logMemoryStatistic error: " + e.getMessage(), e);
+        }
+    }
+
+    public static void logCpuStatistic(){
+        try {
+            CpuPerc cpuPerc = sigar.getCpuPerc();
+            double user = cpuPerc.getUser();
+            double sys = cpuPerc.getSys();
+            double nice = cpuPerc.getNice();
+            double idle = cpuPerc.getIdle();
+            double combined = cpuPerc.getCombined();
+            cpuUsedPct = combined;
+            StringBuilder sb = new StringBuilder();
+            sb.append("cpu usage -- user: ").append(user).append(" sys: ").append(sys).append(" nice: ").append(nice).append(" idle: ").append(idle).append(" combined: ").append(combined);
+            logger.info(sb.toString());
+        } catch (Throwable e) {
+            logger.error("EagleStatsManager logCpuStatistic error: ",e);
         }
     }
 
@@ -116,6 +149,14 @@ public class EagleStatsManager {
                 logger.error("EagleStatsManager logStatisticCallback Error: " + e.getMessage(), e);
             }
         }
+    }
+
+    public static double getMemoryUsedPct(){
+        return memoryUsedPct;
+    }
+
+    public static double getCpuUsedPct(){
+        return cpuUsedPct;
     }
 
 

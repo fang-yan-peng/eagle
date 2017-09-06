@@ -450,6 +450,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * max-worker-thread:  处理业务的最大线程数。
    * max-content-length: rpc调用最大传输的字节数。
    * max-server-connection: 一个端口支持的最大连接数。
+   * protect-strategy: 服务端负载保护策略，当服务端接收了过多的请求并且业务处理不过来时，进行负载保护。目前支持none、concurrent、memory 3种过载保护策略。none是默认策略，什么都不做。concurrent是并发保护策略，当并发达到max-worker-thread*3／4时，并且处理业务缓慢则拒绝接收新的请求。memory 是内存使用策略，当jvm内存使用超过90%时，拒绝接收新的请求。
    * codec: 用于编码和解码的工具类，默认调用EagleCodec，可以通过spi的方式自定义codec。
    * use-native: 在linux环境下，是否开启epoll。默认是true。
 

@@ -1,0 +1,3 @@
+eagle.jfaster.org.rpc.support.NoneProtectStrategy
+eagle.jfaster.org.rpc.support.MemoryProtectStrategy
+eagle.jfaster.org.rpc.support.ConcurrentOverloadProtectStrategy

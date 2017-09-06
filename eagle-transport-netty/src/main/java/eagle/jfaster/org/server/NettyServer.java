@@ -131,6 +131,11 @@ public class NettyServer implements Server,StatisticCallback {
 
     @Override
     public String statistic() {
+        int maxWorkerThread = config.getExtInt(ConfigEnum.maxWorkerThread.getName(),ConfigEnum.maxWorkerThread.getIntValue());
+        //当活跃线程数达到最大线程数的50%时才打印server的统计信息
+        if(standardThreadExecutor.getActiveCount() < maxWorkerThread * 1/2){
+            return null;
+        }
         return String.format(
                 "[%s://%s] connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s",
                 config.getProtocol(),config.hostPort(), connectManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),

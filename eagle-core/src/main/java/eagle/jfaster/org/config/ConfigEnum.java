@@ -28,7 +28,7 @@ public enum ConfigEnum {
     minCompressSize("minCompressSize", 1000), // 进行gz压缩的最小数据大小。超过此阈值才进行gz压缩
     callback("callback", ""),
     lazyInit("lazyInit", false),
-    protect("protect", false),
+    protectStrategy("protectStrategy", "none"),
 
     /************************** SPI start ******************************/
 

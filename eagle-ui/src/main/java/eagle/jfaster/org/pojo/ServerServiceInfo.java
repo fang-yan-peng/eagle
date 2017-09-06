@@ -76,6 +76,10 @@ public class ServerServiceInfo implements ServiceCommonSetter{
     @Getter
     Integer workerQueueSize;
 
+    @Setter
+    @Getter
+    String protectStrategy;
+
     @Override
     public void setProcess(Integer process) {
 

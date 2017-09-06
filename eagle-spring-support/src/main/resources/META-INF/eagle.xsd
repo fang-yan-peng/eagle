@@ -227,6 +227,7 @@
             <xsd:attribute name="max-server-connection" type="xsd:string" use="optional"/>
             <xsd:attribute name="lazy-init" type="xsd:string" use="optional"/>
             <xsd:attribute name="cluster" type="xsd:string" use="optional"/>
+            <xsd:attribute name="protect-strategy" type="xsd:string" use="optional"/>
             <xsd:attribute name="worker-queue-size" type="xsd:string" use="optional">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[ workerQueueSize  ]]></xsd:documentation>

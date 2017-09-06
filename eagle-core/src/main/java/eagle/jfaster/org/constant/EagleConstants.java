@@ -52,6 +52,4 @@ public class EagleConstants {
     public static final int WARMUP = 10 * 60 * 1000;
     public static final int STATISTIC_PEROID = 60; // 60 seconds
 
-
-
 }

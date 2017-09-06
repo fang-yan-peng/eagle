@@ -1,13 +1,17 @@
 package eagle.jfaster.org.transport.support;
 
 import com.google.common.collect.Maps;
+import eagle.jfaster.org.config.ConfigEnum;
+import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
+import eagle.jfaster.org.rpc.ProtectStrategy;
 import eagle.jfaster.org.rpc.support.EagleResponse;
 import eagle.jfaster.org.rpc.RemoteInvoke;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
+import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.transport.InvokeRouter;
 import eagle.jfaster.org.util.ExploreUtil;
 import eagle.jfaster.org.util.ReflectUtil;
@@ -33,7 +37,15 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
     private AtomicInteger methodCnt = new AtomicInteger(0);
 
+    private ProtectStrategy protectStrategy;
+
     public ServiceInvokeRouter(RemoteInvoke invoke) {
+        MergeConfig config = invoke.getConfig();
+        String strategyName = config.getExt(ConfigEnum.protectStrategy.getName(),ConfigEnum.protectStrategy.getValue());
+        protectStrategy = SpiClassLoader.getClassLoader(ProtectStrategy.class).getExtension(strategyName);
+        if(protectStrategy == null){
+            throw new EagleFrameException("Error protect strategy name %s not exists",strategyName);
+        }
         addRemoteInvoke(invoke);
     }
 
@@ -48,13 +60,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
             return response;
         }
         try {
-            if(isAllow(message,invoker)){
-                return invoker.invoke(message);
-            }else {
-                EagleResponse response = new EagleResponse();
-                response.setException(new EagleFrameException("Not allow invoke service %s because of too many invoke at the same time",serviceKey));
-                return response;
-            }
+            return protectStrategy.protect(message,invoker,methodCnt.get());
         } catch (Throwable e) {
             EagleResponse response = new EagleResponse();
             response.setException(new EagleFrameException("Error invoke service %s",e.getMessage()));
@@ -62,9 +68,6 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
         }
     }
 
-    protected boolean isAllow(Request request,RemoteInvoke invoker){
-        return true;
-    }
 
     @Override
     public void addRemoteInvoke(RemoteInvoke invoke){

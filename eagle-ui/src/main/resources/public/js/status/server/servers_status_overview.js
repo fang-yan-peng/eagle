@@ -177,4 +177,5 @@ function renderJob(data) {
     $("#core-worker-thread").attr("value", data.coreWorkerThread);
     $("#max-worker-thread").attr("value", data.maxWorkerThread);
     $("#worker-queue-size").attr("value", data.workerQueueSize);
+    $("#protect-strategy").attr("value", data.protectStrategy);
 }
