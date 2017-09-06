@@ -1,14 +1,11 @@
 package eagle.jfaster.org.statistic;
 
-
-
 import com.google.common.base.Strings;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.util.UtilityUtil;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

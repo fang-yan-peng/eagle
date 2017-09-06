@@ -44,11 +44,11 @@ public class ReferBean<T> extends ReferConfig<T> implements ApplicationContextAw
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        checkRegistrys();
+        checkRegistries();
         checkProtocols();
     }
 
-    private void checkRegistrys(){
+    private void checkRegistries(){
         if(CollectionUtil.isEmpty(getRegistries())){
             if(getBaseRefer() != null && !CollectionUtil.isEmpty(getBaseRefer().getRegistries())){
                 setRegistries(getBaseRefer().getRegistries());

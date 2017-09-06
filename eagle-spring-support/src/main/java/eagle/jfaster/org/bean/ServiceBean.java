@@ -36,7 +36,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements ApplicationConte
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        checkRegistrys();
+        checkRegistries();
         checkExports();
     }
 
@@ -51,7 +51,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements ApplicationConte
         }
     }
 
-    private void checkRegistrys(){
+    private void checkRegistries(){
         if(CollectionUtil.isEmpty(getRegistries())){
             if(getBaseService() != null && !CollectionUtil.isEmpty(getBaseService().getRegistries())){
                 setRegistries(getBaseService().getRegistries());

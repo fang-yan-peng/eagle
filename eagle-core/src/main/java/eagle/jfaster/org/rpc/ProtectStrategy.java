@@ -11,5 +11,5 @@ import eagle.jfaster.org.spi.Spi;
  */
 @Spi(scope = Scope.PROTOTYPE)
 public interface ProtectStrategy {
-    Response protect(Request request,RemoteInvoke invoker,int methodCnts);
+    Response protect(Request request,RemoteInvoke invoker,int methodCnt);
 }
