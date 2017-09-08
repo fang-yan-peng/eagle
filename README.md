@@ -12,21 +12,21 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 - 提供和自定义服务端过载保护策略。
 
 # jmh基准测试结果
-   > 运行基准测试步骤：
-   * cd eagle-benchmark
-   * mvn clean install
-   * cd eagle-benchmark-server/target
-   * tar -zxvf eagle-benchmark-server-1.0-assembly.tar.gz
-   * cd eagle-benchmark-server-1.0
-   * bin/start.sh
-   * cd eagle-benchmark/eagle-benchmark-client
-   * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
+> 运行基准测试步骤：
+>  * cd eagle-benchmark
+>  * mvn clean install
+>  * cd eagle-benchmark-server/target
+>  * tar -zxvf eagle-benchmark-server-1.0-assembly.tar.gz
+>   * cd eagle-benchmark-server-1.0
+>   * bin/start.sh
+>   * cd eagle-benchmark/eagle-benchmark-client
+>   * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
    
    
    ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark.jpeg)
 
-# 例子（内置zookeeper，仅测试使用，生产环境请更换真实zookeeper地址）
-
+# 例子
+> 内置zookeeper，仅测试使用，生产环境请更换真实zookeeper地址
 > 运行要求:
 >  * JDK 1.7 or above
 >  * 编译工具 [Maven][maven] or [Gradle][gradle]
