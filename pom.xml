@@ -8,7 +8,6 @@
     <module>eagle-core</module>
     <module>eagle-registry-zookeeper</module>
     <module>eagle-transport-netty</module>
-    <module>eagle-extension</module>
     <module>eagle-spring-support</module>
     <module>eagle-benchmark</module>
     <module>eagle-example</module>
