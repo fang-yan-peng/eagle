@@ -21,7 +21,9 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * cd eagle-benchmark-server-1.0
    * bin/start.sh
    * cd eagle-benchmark/eagle-benchmark-client
-   * sh benchmark.sh
+   * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
+   
+   
    ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark.jpeg)
 
 # 例子
