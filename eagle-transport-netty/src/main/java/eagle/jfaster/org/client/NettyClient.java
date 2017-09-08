@@ -242,17 +242,13 @@ public class NettyClient implements Client,StatisticCallback {
         AbstractNettyChannel channel = null;
         try {
             channel = connPool.getConnection();
-            return channel.request(request);
+            return channel.request(request,connPool);
         } catch (Throwable e) {
             logger.error("NettyClient request error,interface:"+config.getInterfaceName()+",host:"+config.identity(),e);
             if(channel != null){
                 connPool.invalidateConnection(channel);
             }
             throw new EagleFrameException(e.getMessage());
-        }finally {
-            if(channel != null){
-                connPool.release(channel);
-            }
         }
     }
 
