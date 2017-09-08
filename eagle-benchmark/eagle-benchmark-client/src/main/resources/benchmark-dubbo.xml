@@ -10,7 +10,7 @@
 
     <dubbo:application name="dubbo-benchmark" />
 
-    <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" group="dubbo-benchmark"/>
+    <dubbo:registry protocol="zookeeper" address="127.0.0.1:4181" group="dubbo-benchmark"/>
 
     <dubbo:reference interface="eagle.jfaster.org.benchmark.api.EagleBenchmarkService" id="dubboBenchmark" check="false"/>
 

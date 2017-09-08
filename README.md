@@ -13,7 +13,6 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
 # jmh基准测试结果
    > 运行基准测试步骤：
-   * 修改benchmark-server.xml、benchmark-eagle.xml、benchmark-dubbo.xml的zookeeper地址
    * cd eagle-benchmark
    * mvn clean install
    * cd eagle-benchmark-server/target
@@ -26,7 +25,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    
    ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark.jpeg)
 
-# 例子
+# 例子（内置zookeeper，仅测试使用，生产环境请更换真实zookeeper地址）
 
 > 运行要求:
 >  * JDK 1.7 or above
@@ -119,7 +118,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <context:annotation-config/>
 
         <!--注册中心配置可以多个-->
-        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
         <!--协议配置-->
         <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="400" worker-queue-size="10"/>
         <eagle:base-service id="baseService" group="eagleGroup" export="proto:9200" registry="regCenter"/>
@@ -139,6 +138,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
     public class Server {
         public static void main(String[] args) throws InterruptedException {
+            EmbedZookeeperServer.start(4181);
             ApplicationContext appCtx = new ClassPathXmlApplicationContext("server.xml");
             CountDownLatch latch = new CountDownLatch(1);
             latch.await();
@@ -170,7 +170,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <context:component-scan base-package="eagle.jfaster.org" />
         <context:annotation-config/>
         <!--注册中心配置可以多个-->
-        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
         <!--协议配置-->
         <eagle:protocol name="eagle" serialization="kryo" use-default="true" cluster="eagle" max-content-length="16777216"/>
         <eagle:base-refer id="baseRefer" request-timeout="300" actives="20000" actives-wait="300" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
@@ -266,7 +266,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <context:component-scan base-package="eagle.jfaster.org" />
         <context:annotation-config/>
         <!--注册中心配置可以多个-->
-        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
         <!--协议配置-->
         <eagle:protocol name="eagle" serialization="kryo" use-default="true" cluster="eagle" max-content-length="80000000" />
         <eagle:base-refer id="baseReferAsync" request-timeout="300" actives="20000" actives-wait="3000" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
@@ -361,7 +361,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <context:annotation-config/>
     
         <!--注册中心配置可以多个-->
-        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
     
         <!--协议配置-->
         <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="400" worker-queue-size="10"/>
@@ -383,6 +383,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     import java.util.concurrent.CountDownLatch;
     public class ServerAnnotation {
         public static void main(String[] args) throws InterruptedException {
+            EmbedZookeeperServer.start(4181);
             ApplicationContext appCtx = new ClassPathXmlApplicationContext("server_annotation.xml");
             CountDownLatch latch = new CountDownLatch(1);
             latch.await();
@@ -414,7 +415,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <context:annotation-config/>
     
         <!--注册中心配置可以多个-->
-        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
     
         <!--协议配置-->
         <eagle:protocol name="eagle" serialization="kryo" use-default="true" cluster="eagle" max-content-length="16777216"/>

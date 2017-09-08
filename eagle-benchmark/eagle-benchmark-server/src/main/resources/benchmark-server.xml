@@ -19,7 +19,7 @@
     <bean id="eagleBenchmarkServiceImpl" class="eagle.jfaster.org.benchmark.impl.EagleBenchmarkServiceImpl"/>
 
     <!--eagle-->
-    <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle-benchmark" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+    <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle-benchmark" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
 
     <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="200" worker-queue-size="10"/>
 
@@ -30,7 +30,7 @@
     <!--dubbo-->
     <dubbo:application name="dubbo-benchmark"/>
 
-    <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" group="dubbo-benchmark"/>
+    <dubbo:registry protocol="zookeeper" address="127.0.0.1:4181" group="dubbo-benchmark"/>
 
     <dubbo:protocol name="dubbo" port="20888"/>
 
