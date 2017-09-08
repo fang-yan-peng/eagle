@@ -115,7 +115,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
                 return;
             }
             for(Refer<T> refer : refers){
-                refer.close();
+                refer.close(true);
             }
         }
     }

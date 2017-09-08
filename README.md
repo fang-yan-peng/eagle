@@ -495,13 +495,19 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
    * weight: 权重，与权重负载均衡算法联合使用。
    
-# wrk压测结果
-   * eagle 压测效果图（wrk -t5 -c20 -d30s --latency http://localhost:8080/wrk/eagle）
-       ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/eagle.jpeg)
+# jmh基准测试结果
+   > 运行基准测试步骤：
+   * 修改benchmark-server.xml、benchmark-eagle.xml、benchmark-dubbo.xml的zookeeper地址
+   * cd eagle-benchmark
+   * mvn clean install
+   * cd eagle-benchmark-server/target
+   * tar -zxvf eagle-benchmark-server-1.0-SNAPSHOT-assembly.tar.gz
+   * cd eagle-benchmark-server-1.0-SNAPSHOT
+   * bin/start.sh
+   * cd eagle-benchmark/eagle-benchmark-client
+   * sh benchmark.sh
+   ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark.jpeg)
  
-   * dubbo 压测效果图（wrk -t5 -c20 -d30s --latency http://localhost:8080/wrk/dubbo）
-       ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/dubbo.jpeg)
-
 # 后台管理界面
    * eagle 提供可视化的后台管理，方便查看和修改配置。
        ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/eagle-ui.jpeg)

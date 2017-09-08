@@ -39,7 +39,7 @@ public class ReferUtil {
 
                 for (Refer<?> refer : refers) {
                     try {
-                        refer.close();
+                        refer.close(false);
                     } catch (Exception e) {
                         logger.error("ReferSupports delayDestroy Error: url=" + refer.getConfig().identity(), e);
                     }

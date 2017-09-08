@@ -53,8 +53,8 @@ public class NettyRefer <T> implements Refer <T> {
     }
 
     @Override
-    public void close() {
-        client.shutdown();
+    public void close(boolean shutdown) {
+        client.shutdown(shutdown);
     }
 
     @Override

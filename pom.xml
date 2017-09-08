@@ -10,6 +10,7 @@
     <module>eagle-transport-netty</module>
     <module>eagle-extension</module>
     <module>eagle-spring-support</module>
+      <module>eagle-benchmark</module>
   </modules>
   <packaging>pom</packaging>
   <name>eagle</name>

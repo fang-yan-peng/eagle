@@ -82,6 +82,10 @@ public class NettyClient implements Client,StatisticCallback {
     @Getter
     private Map<Integer,NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
 
+    private ScheduledFuture<?> asyncCallbackMonitorFuture = null;
+
+    private ScheduledFuture<?> heartBeatTaskFuture = null;
+
     private ScheduledFuture<?> callbackCancelFuture = null;
 
     // 回收过期任务
@@ -114,7 +118,7 @@ public class NettyClient implements Client,StatisticCallback {
                     callbackQueue = new LinkedBlockingQueue<>(callbackQueueSize);
                     callbackExecutor = new AsyncCallbackExecutor(callbackWorkerThread,callbackWorkerThread,10*60*1000,TimeUnit.MILLISECONDS, callbackQueue, new DefaultThreadFactory("Method callback exec-"+config.getInterfaceName()+"-"));
                     callbackExecutor.allowCoreThreadTimeOut(true);
-                    commonExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(this),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
+                    asyncCallbackMonitorFuture = commonExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(this),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
                 }
                 boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(),ConfigEnum.useNative.isBooleanValue());
                 if(useNative){
@@ -145,7 +149,7 @@ public class NettyClient implements Client,StatisticCallback {
                 //定时扫描超时的请求
                 callbackCancelFuture = callbackCancelExecutor.scheduleWithFixedDelay(new TimeoutMonitorTask(this),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
                 connPool = new NettySharedConnPool(config,this);
-                commonExecutor.scheduleWithFixedDelay(new HeartBeatTask(config,connPool,this),heartBeatInterval,heartBeatInterval,TimeUnit.SECONDS);
+                heartBeatTaskFuture = commonExecutor.scheduleWithFixedDelay(new HeartBeatTask(config,connPool,this),heartBeatInterval,heartBeatInterval,TimeUnit.SECONDS);
                 EagleStatsManager.registerStatsCallback(this);
                 stat.set(true);
 
@@ -204,16 +208,24 @@ public class NettyClient implements Client,StatisticCallback {
 
 
     @Override
-    public void shutdown() {
+    public void shutdown(boolean shutdown) {
         try {
             if(init.compareAndSet(true,false)){
                 workerGroup.shutdownGracefully();
                 //不能关闭callBackCancleExecutor，因为是多个client公用的。
                 callbackCancelFuture.cancel(true);
+                if(shutdown){
+                    callbackCancelExecutor.shutdownNow();
+                }
+
                 if(callbackExecutor != null){
                     callbackExecutor.shutdownNow();
                 }
-                if(commonExecutor != null){
+                if(asyncCallbackMonitorFuture != null){
+                    asyncCallbackMonitorFuture.cancel(true);
+                }
+                heartBeatTaskFuture.cancel(true);
+                if(shutdown){
                     commonExecutor.shutdownNow();
                 }
                 callbackMap.clear();

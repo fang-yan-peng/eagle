@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:eagle="http://eagle.jfaster.org/schema/eagle"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context.xsd
+                        http://eagle.jfaster.org/schema/eagle
+                        http://eagle.jfaster.org/schema/eagle/eagle.xsd
+                        http://code.alibabatech.com/schema/dubbo
+                        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+                        ">
+
+    <context:annotation-config/>
+
+    <bean id="eagleBenchmarkServiceImpl" class="eagle.jfaster.org.benchmark.impl.EagleBenchmarkServiceImpl"/>
+
+    <!--eagle-->
+    <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle-benchmark" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+
+    <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="200" worker-queue-size="10"/>
+
+    <eagle:base-service id="baseService" group="eagleGroupWrk" export="proto:9400" registry="regCenter"/>
+
+    <eagle:service interface="eagle.jfaster.org.benchmark.api.EagleBenchmarkService" ref="eagleBenchmarkServiceImpl" base-service="baseService" />
+
+    <!--dubbo-->
+    <dubbo:application name="dubbo-benchmark"/>
+
+    <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" group="dubbo-benchmark"/>
+
+    <dubbo:protocol name="dubbo" port="20888"/>
+
+    <dubbo:provider timeout="30000" threadpool="fixed" threads="100" accepts="1000"/>
+
+    <dubbo:service retries="0" interface="eagle.jfaster.org.benchmark.api.EagleBenchmarkService" ref="eagleBenchmarkServiceImpl"/>
+
+</beans>

@@ -10,7 +10,7 @@ public interface Refer <T> {
     int getActiveCount();
     Class<T> getType();
     void updateConfig(MergeConfig refConfig);
-    void close();
+    void close(boolean shutdown);
     void init();
     Object request(Request request);
     boolean isAlive();

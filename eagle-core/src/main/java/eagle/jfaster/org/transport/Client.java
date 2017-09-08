@@ -11,6 +11,6 @@ public interface Client {
     MergeConfig getConfig();
     boolean isAlive();
     void start();
-    void shutdown();
+    void shutdown(boolean shutdown);
     Object request(Request request);
 }

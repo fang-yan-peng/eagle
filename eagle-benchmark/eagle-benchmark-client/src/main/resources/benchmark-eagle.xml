@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:eagle="http://eagle.jfaster.org/schema/eagle"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://eagle.jfaster.org/schema/eagle
+                           http://eagle.jfaster.org/schema/eagle/eagle.xsd
+                           ">
+
+    <!--注册中心配置可以多个-->
+    <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183" namespace="eagle-benchmark" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+
+    <!--协议配置-->
+    <eagle:protocol name="eagle" serialization="kryo" use-default="true" cluster="eagle" max-content-length="16777216"/>
+
+    <eagle:base-refer id="baseRefer" request-timeout="300" actives="20000" actives-wait="300" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroupWrk" connect-timeout="10000"/>
+
+    <eagle:refer id="eagleBenchmark" interface="eagle.jfaster.org.benchmark.api.EagleBenchmarkService" base-refer="baseRefer" max-invoke-error="10" max-client-connection="10" />
+
+
+</beans>
