@@ -17,8 +17,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * cd eagle-benchmark
    * mvn clean install
    * cd eagle-benchmark-server/target
-   * tar -zxvf eagle-benchmark-server-1.0-SNAPSHOT-assembly.tar.gz
-   * cd eagle-benchmark-server-1.0-SNAPSHOT
+   * tar -zxvf eagle-benchmark-server-1.0-assembly.tar.gz
+   * cd eagle-benchmark-server-1.0
    * bin/start.sh
    * cd eagle-benchmark/eagle-benchmark-client
    * sh benchmark.sh
@@ -38,22 +38,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     <dependency>
         <groupId>eagle.jfaster.org</groupId>
         <artifactId>eagle-core</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </dependency>
     <dependency>
         <groupId>eagle.jfaster.org</groupId>
         <artifactId>eagle-registry-zookeeper</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </dependency>
     <dependency>
         <groupId>eagle.jfaster.org</groupId>
         <artifactId>eagle-transport-netty</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </dependency>
     <dependency>
         <groupId>eagle.jfaster.org</groupId>
         <artifactId>eagle-spring-support</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </dependency>
    ```
 

@@ -3,14 +3,16 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eagle.jfaster.org</groupId>
   <artifactId>eagle</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <modules>
     <module>eagle-core</module>
     <module>eagle-registry-zookeeper</module>
     <module>eagle-transport-netty</module>
     <module>eagle-extension</module>
     <module>eagle-spring-support</module>
-      <module>eagle-benchmark</module>
+    <module>eagle-benchmark</module>
+    <module>eagle-example</module>
+    <module>eagle-ui</module>
   </modules>
   <packaging>pom</packaging>
   <name>eagle</name>

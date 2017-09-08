@@ -9,7 +9,7 @@ LIB_HOME=$EAGLE_HOME/lib
 CONF_FILE=$EAGLE_HOME/conf/eagle.conf
 . $CONF_FILE
 
-JAR_FILE=$LIB_HOME/eagle-ui-1.0-SNAPSHOT.jar
+JAR_FILE=$LIB_HOME/eagle-ui-1.0.jar
 
 PID_FILE=$EAGLE_HOME/eagle.pid
 
