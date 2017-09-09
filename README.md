@@ -17,10 +17,10 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 >  * mvn clean install
 >  * cd eagle-benchmark-server/target
 >  * tar -zxvf eagle-benchmark-server-1.0-assembly.tar.gz
->   * cd eagle-benchmark-server-1.0
->   * bin/start.sh
->   * cd eagle-benchmark/eagle-benchmark-client
->   * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
+>  * cd eagle-benchmark-server-1.0
+>  * bin/start.sh
+>  * cd eagle-benchmark/eagle-benchmark-client
+>  * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
    
    
    ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark.jpeg)
@@ -119,7 +119,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <!--注册中心配置可以多个-->
         <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
         <!--协议配置-->
-        <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="400" worker-queue-size="10"/>
+        <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="200" worker-queue-size="10"/>
         <eagle:base-service id="baseService" group="eagleGroup" export="proto:9200" registry="regCenter"/>
         <eagle:service interface="eagle.jfaster.org.service.Calculate" ref="calculate" base-service="baseService" export="proto:9300,proto:9400"/>
     ```
@@ -363,7 +363,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
     
         <!--协议配置-->
-        <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="400" worker-queue-size="10"/>
+        <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="200" worker-queue-size="10"/>
     
         <eagle:base-service id="baseService" group="eagleGroup" export="proto1:9200" registry="regCenter"/>
     
