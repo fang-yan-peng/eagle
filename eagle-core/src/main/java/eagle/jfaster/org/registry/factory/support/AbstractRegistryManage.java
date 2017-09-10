@@ -33,8 +33,11 @@ public abstract class AbstractRegistryManage implements RegistryCenterManage {
                 try {
                     rdwrLock.readLock().unlock();
                     rdwrLock.writeLock().lock();
-                    center = createRegistry(registryConfig);
-                    registries.put(registryKey,center);
+                    center = registries.get(registryKey);
+                    if(center == null){
+                        center = createRegistry(registryConfig);
+                        registries.put(registryKey,center);
+                    }
                 } finally {
                     rdwrLock.readLock().lock();
                     rdwrLock.writeLock().unlock();

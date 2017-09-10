@@ -3,6 +3,9 @@ package eagle.jfaster.org.spi;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import static eagle.jfaster.org.constant.EagleConstants.*;
+
+import eagle.jfaster.org.cache.CacheLoader;
+import eagle.jfaster.org.cache.support.DoubleCheckCache;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
@@ -31,7 +34,12 @@ public class SpiClassLoader <T> {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(SpiClassLoader.class);
 
 
-    private static Map<Class<?>,SpiClassLoader<?>> spiClassLoaders = Maps.newHashMap();
+    private static DoubleCheckCache<Class<?>,SpiClassLoader<?>> spiClassLoaders = new DoubleCheckCache<>(new CacheLoader<Class<?>, SpiClassLoader<?>>() {
+        @Override
+        public SpiClassLoader<?> load(Class<?> type) {
+            return new SpiClassLoader(type);
+        }
+    });
 
     private Map<String,T> singletonObjects = null;
 
@@ -40,9 +48,7 @@ public class SpiClassLoader <T> {
     private Class<T> type;
 
     private static final String PREFIX = "META-INF/services/";
-
-    private static ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-
+    
     private AtomicBoolean init = new AtomicBoolean(false);
 
     private ClassLoader classLoader;
@@ -64,24 +70,7 @@ public class SpiClassLoader <T> {
 
     public static <T> SpiClassLoader<T> getClassLoader(Class<T> type){
         checkInterfaceType(type);
-        readWriteLock.readLock().lock();
-        try {
-            SpiClassLoader<T> loader = (SpiClassLoader<T>) spiClassLoaders.get(type);
-            if(loader == null){
-                readWriteLock.readLock().unlock();
-                try {
-                    readWriteLock.writeLock().lock();
-                    loader = new SpiClassLoader(type);
-                    spiClassLoaders.put(type,loader);
-                } finally {
-                    readWriteLock.readLock().lock();
-                    readWriteLock.writeLock().unlock();
-                }
-            }
-            return loader;
-        } finally {
-            readWriteLock.readLock().unlock();
-        }
+        return (SpiClassLoader<T>) spiClassLoaders.get(type);
     }
 
     public T getExtension(String name) {
