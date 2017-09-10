@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * spi类加载器，接口需要@Spi注解，实现类需要@SpiInfo注解
@@ -48,7 +46,7 @@ public class SpiClassLoader <T> {
     private Class<T> type;
 
     private static final String PREFIX = "META-INF/services/";
-    
+
     private AtomicBoolean init = new AtomicBoolean(false);
 
     private ClassLoader classLoader;
