@@ -462,26 +462,9 @@
   </developers>
   <repositories>
     <repository>
-      <id>im20.snapshots.http</id>
-      <name>im20 Snapshots Repository</name>
-      <url>http://10.135.29.152:8081/nexus/content/repositories/snapshots</url>
-    </repository>
-    <repository>
       <id>redhat</id>
       <name>redhat</name>
       <url>https://maven.repository.redhat.com/ga/</url>
     </repository>
   </repositories>
-  <distributionManagement>
-    <repository>
-      <id>im20.releases.http</id>
-      <name>Nexus Release Repository</name>
-      <url>http://10.135.29.152:8081/nexus/content/repositories/releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>im20.snapshots.http</id>
-      <name>Nexus Snapshots Repository</name>
-      <url>http://10.135.29.152:8081/nexus/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
 </project>
