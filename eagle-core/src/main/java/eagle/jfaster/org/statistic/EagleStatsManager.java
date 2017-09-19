@@ -4,8 +4,6 @@ import com.google.common.base.Strings;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.util.UtilityUtil;
-import org.hyperic.sigar.CpuPerc;
-import org.hyperic.sigar.Sigar;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -34,8 +32,6 @@ public class EagleStatsManager {
     private static final HashMap<String, StatsItemSet> statsTable = new HashMap<>();
 
     private static final List<StatisticCallback> statsList = new LinkedList<>();
-
-    private static final Sigar sigar = new Sigar();;
 
     private static final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(new UtilityUtil.DefaultThreadFactory("EagleServiceStatsThread",true));
 
@@ -119,16 +115,7 @@ public class EagleStatsManager {
 
     public static void logCpuStatistic(){
         try {
-            CpuPerc cpuPerc = sigar.getCpuPerc();
-            double user = cpuPerc.getUser();
-            double sys = cpuPerc.getSys();
-            double nice = cpuPerc.getNice();
-            double idle = cpuPerc.getIdle();
-            double combined = cpuPerc.getCombined();
-            cpuUsedPct = combined;
-            StringBuilder sb = new StringBuilder();
-            sb.append("cpu usage -- user: ").append(user).append(" sys: ").append(sys).append(" nice: ").append(nice).append(" idle: ").append(idle).append(" combined: ").append(combined);
-            logger.info(sb.toString());
+
         } catch (Throwable e) {
             logger.error("EagleStatsManager logCpuStatistic error: ",e);
         }

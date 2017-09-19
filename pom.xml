@@ -44,7 +44,6 @@
     <hprose.version>2.0.32</hprose.version>
     <kryo.version>4.0.1</kryo.version>
     <kryo.serializer.version>0.42</kryo.serializer.version>
-    <sigar.version>1.6.5.132-6</sigar.version>
 
     <maven.version.range>[3.0.4,)</maven.version.range>
     <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
@@ -119,11 +118,6 @@
         <groupId>commons-pool</groupId>
         <artifactId>commons-pool</artifactId>
         <version>${common-pool.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hyperic</groupId>
-        <artifactId>sigar</artifactId>
-        <version>${sigar.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.thrift</groupId>
@@ -460,11 +454,4 @@
       <timezone>8</timezone>
     </developer>
   </developers>
-  <repositories>
-    <repository>
-      <id>redhat</id>
-      <name>redhat</name>
-      <url>https://maven.repository.redhat.com/ga/</url>
-    </repository>
-  </repositories>
 </project>
