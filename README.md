@@ -36,22 +36,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
    ```xml
     <dependency>
-        <groupId>eagle.jfaster.org</groupId>
+        <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-core</artifactId>
         <version>1.0</version>
     </dependency>
     <dependency>
-        <groupId>eagle.jfaster.org</groupId>
+        <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-registry-zookeeper</artifactId>
         <version>1.0</version>
     </dependency>
     <dependency>
-        <groupId>eagle.jfaster.org</groupId>
+        <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-transport-netty</artifactId>
         <version>1.0</version>
     </dependency>
     <dependency>
-        <groupId>eagle.jfaster.org</groupId>
+        <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-spring-support</artifactId>
         <version>1.0</version>
     </dependency>

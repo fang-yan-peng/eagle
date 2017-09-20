@@ -7,7 +7,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>eagle.jfaster.org</groupId>
+  <groupId>org.jfaster.eagle</groupId>
   <artifactId>eagle-ui</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
@@ -44,12 +44,12 @@
     </dependency>
 
     <dependency>
-      <groupId>eagle.jfaster.org</groupId>
+      <groupId>org.jfaster.eagle</groupId>
       <artifactId>eagle-core</artifactId>
       <version>1.0</version>
     </dependency>
     <dependency>
-      <groupId>eagle.jfaster.org</groupId>
+      <groupId>org.jfaster.eagle</groupId>
       <artifactId>eagle-registry-zookeeper</artifactId>
       <version>1.0</version>
     </dependency>

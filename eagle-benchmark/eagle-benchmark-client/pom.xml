@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>eagble-benchmark</artifactId>
-        <groupId>eagle.jfaster.org</groupId>
+        <groupId>org.jfaster.eagle</groupId>
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -37,7 +37,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eagle.jfaster.org</groupId>
+            <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-benchmark-api</artifactId>
             <version>1.0</version>
         </dependency>
@@ -99,22 +99,22 @@
 
         <!--eagle-->
         <dependency>
-            <groupId>eagle.jfaster.org</groupId>
+            <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-core</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>eagle.jfaster.org</groupId>
+            <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-registry-zookeeper</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>eagle.jfaster.org</groupId>
+            <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-transport-netty</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>eagle.jfaster.org</groupId>
+            <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-spring-support</artifactId>
             <version>1.0</version>
         </dependency>
