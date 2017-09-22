@@ -511,12 +511,12 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * weight: 权重，与权重负载均衡算法联合使用。
    
 # 后台管理界面
-   * eagle 提供可视化的后台管理，方便查看和修改配置。
-   * 启动后台的步骤
-   > tar -zxvf eagle-ui-1.0.tar.gz
-   > cd eagle-ui-1.0
-   > vim conf/eagle.conf 修改用户名秘密、jvm参数、日志路径、端口号等
-   > sh bin/eagle.sh start
+   > eagle 提供可视化的后台管理，方便查看和修改配置。
+   > 启动后台的步骤
+   * tar -zxvf eagle-ui-1.0.tar.gz
+   * cd eagle-ui-1.0
+   * vim conf/eagle.conf 修改用户名秘密、jvm参数、日志路径、端口号等
+   * sh bin/eagle.sh start
        ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/eagle-ui.jpeg)
  
    
