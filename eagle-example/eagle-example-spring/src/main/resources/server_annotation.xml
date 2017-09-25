@@ -21,7 +21,7 @@
     <!--协议配置-->
     <eagle:protocol id="proto" name="eagle" serialization="kryo" use-default="true" max-content-length="16777216" max-server-connection="20000" core-worker-thread="20" max-worker-thread="200" worker-queue-size="10"/>
 
-    <eagle:base-service id="baseService" group="eagleGroup" export="proto1:9200" registry="regCenter"/>
+    <eagle:base-service id="baseService" group="eagleGroup" export="proto:9200" registry="regCenter"/>
 
     <eagle:component-scan base-package="eagle.jfaster.org.anno"/>
 
