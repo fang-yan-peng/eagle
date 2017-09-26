@@ -1,6 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
   <groupId>org.jfaster.eagle</groupId>
   <artifactId>eagle</artifactId>
   <version>1.0</version>
@@ -15,7 +20,31 @@
   </modules>
   <packaging>pom</packaging>
   <name>eagle</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/fang-yan-peng/eagle</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/fang-yan-peng/eagle.git</connection>
+    <developerConnection>scm:git:git@github.com:fang-yan-peng/eagle.git</developerConnection>
+    <url>https://github.com/fang-yan-peng/eagle</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>fangyanpeng</id>
+      <name>FangYanpeng</name>
+      <email>13120336627@163.com</email>
+      <url>https://github.com/fang-yan-peng</url>
+      <timezone>8</timezone>
+    </developer>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -446,12 +475,4 @@
       </plugin>
     </plugins>
   </build>
-  <developers>
-    <developer>
-      <id>fangyanpeng</id>
-      <name>FangYanpeng</name>
-      <email>13120336627@163.com</email>
-      <timezone>8</timezone>
-    </developer>
-  </developers>
 </project>
