@@ -8,6 +8,7 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.RemoteInvoke;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
+import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.ReflectUtil;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -42,26 +43,15 @@ public class EagleRpcRemoteInvoke<T> implements RemoteInvoke<T> {
         Method method = methodInvoke.get(methodDesc);
         EagleResponse response = new EagleResponse();
         if(method == null){
-            response.setException(new EagleFrameException("Error - invoke method %s is not exist",methodDesc));
+            response.setException(new EagleFrameException("Error - invoke method '%s' is not exist",methodDesc));
             return response;
         }
         try {
             Object value = method.invoke(invokeImpl,request.getParameters());
             response.setValue(value);
-        } catch (Exception e) {
-            logger.error("EagleRpcRemoteInvoke invoke error",e);
-            if(e.getCause() != null){
-                response.setException(new EagleFrameException(e.getCause().getMessage()));
-            }else {
-                response.setException(new EagleFrameException(e.getMessage()));
-            }
         } catch (Throwable e) {
             logger.error("EagleRpcRemoteInvoke invoke error",e);
-            if(e.getCause() != null){
-                response.setException(new EagleFrameException(e.getCause().getMessage()));
-            }else {
-                response.setException(new EagleFrameException(e.getMessage()));
-            }
+            response.setException(new EagleFrameException(ExceptionUtil.transform(e)));
         }
         return response;
     }

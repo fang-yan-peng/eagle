@@ -26,7 +26,6 @@ public final class ExceptionUtil {
         }
         StringWriter result = new StringWriter();
         try (PrintWriter writer = new PrintWriter(result)) {
-            writer.println(cause.getMessage());
             cause.printStackTrace(writer);
         }
         return result.toString();

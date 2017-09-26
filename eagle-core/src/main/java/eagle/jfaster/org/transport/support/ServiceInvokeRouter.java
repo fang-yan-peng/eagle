@@ -13,7 +13,6 @@ import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
 import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.transport.InvokeRouter;
-import eagle.jfaster.org.util.ExploreUtil;
 import eagle.jfaster.org.util.ReflectUtil;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -62,8 +61,9 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
         try {
             return protectStrategy.protect(message,invoker,methodCnt.get());
         } catch (Throwable e) {
+            logger.error(String.format("Invoke '%s' error: ",message.getInterfaceName()),e);
             EagleResponse response = new EagleResponse();
-            response.setException(new EagleFrameException("Error invoke service %s",e.getMessage()));
+            response.setException(new EagleFrameException(e.getMessage()));
             return response;
         }
     }
