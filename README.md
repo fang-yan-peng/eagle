@@ -1,7 +1,7 @@
 # Eagle
 
 # 概要
-Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]、[Hessian][hessian]等序列化协议，默认序列化使用kryo。
+Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]、[Hessian][hessian]等序列化协议，默认序列化使用kryo。提供Spring和SpringBoot插件，方便与Spring和SpringBoot集成。
 
 # 特点
 - 借助[Zookeeper][zookeeper]实现服务注册和发现。
@@ -30,10 +30,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 >  * JDK 1.7 or above
 >  * 编译工具 [Maven][maven] or [Gradle][gradle]
 
-## 同步调用
-
-1. 添加依赖. 
-   
+## 添加依赖
    如果是spring,添加如下:
    ```xml
     <dependency>
@@ -58,30 +55,31 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     </dependency>
    ```
    如果是springBoot,添加如下:
-      ```xml
-       <dependency>
-           <groupId>org.jfaster.eagle</groupId>
-           <artifactId>eagle-core</artifactId>
-           <version>1.0</version>
-       </dependency>
-       <dependency>
-           <groupId>org.jfaster.eagle</groupId>
-           <artifactId>eagle-registry-zookeeper</artifactId>
-           <version>1.0</version>
-       </dependency>
-       <dependency>
-           <groupId>org.jfaster.eagle</groupId>
-           <artifactId>eagle-transport-netty</artifactId>
-           <version>1.0</version>
-       </dependency>
-       <dependency>
-         <groupId>org.jfaster.eagle</groupId>
-         <artifactId>spring-boot-starter-eagle</artifactId>
-         <version>1.0</version>
-       </dependency>
-      ```
+  ```xml
+   <dependency>
+       <groupId>org.jfaster.eagle</groupId>
+       <artifactId>eagle-core</artifactId>
+       <version>1.0</version>
+   </dependency>
+   <dependency>
+       <groupId>org.jfaster.eagle</groupId>
+       <artifactId>eagle-registry-zookeeper</artifactId>
+       <version>1.0</version>
+   </dependency>
+   <dependency>
+       <groupId>org.jfaster.eagle</groupId>
+       <artifactId>eagle-transport-netty</artifactId>
+       <version>1.0</version>
+   </dependency>
+   <dependency>
+     <groupId>org.jfaster.eagle</groupId>
+     <artifactId>spring-boot-starter-eagle</artifactId>
+     <version>1.0</version>
+   </dependency>
+  ```
+## 同步调用
 
-2. 创建一个接口类。
+1. 创建一个接口类。
 
     `src/main/java/eagle/jfaster/org/service/Calculate.java`
 
@@ -97,7 +95,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
     ```
 
-3. 实现接口，并暴露服务。
+2. 实现接口，并暴露服务。
     
     `src/main/java/eagle/jfaster/org/service/impl/CalculateImpl.java`
     
@@ -172,7 +170,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     执行main方法，就会在9300和9400端口发布服务。同时eagle还提供了eagle.jfaster.org.container.Main类，会跟据环境变量eagle.container的设置启动不同的容器。
     如果没有配置会默认启动SpringContainer，会加载classpath*:META-INF/spring/*.xml的所有spring配置文件。
 
-4. 创建和启动客户端
+3. 创建和启动客户端
 
     `src/main/resources/client_sync.xml`
 
@@ -468,6 +466,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    }
 
    ```
+   注解的方式同样支持同步调用和异步调用两种方式，只要在Refer注解里指定callback属性为MethodInvokeCallBack实现的全限定性名即可。Refer和Service注解里的属性与xml配置的属性一一对应。
    
 ## springBoot例子
 1. 配置yml或properties文件
@@ -597,7 +596,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         }
     }
     ```
-    注意此例子中，由于Refer和Service在同一个工程，所以运行main方法Refer和Service就都启动了，实际生产环境中一般都是服务的调用和服务的实现部署在不同的进程中。
+     SpringBoot方式同样支持同步调用和异步调用两种方式，只要在Refer注解里指定callback属性为MethodInvokeCallBack实现的全限定性名即可。Refer和Service注解里的属性与xml配置的属性一一对应。
+     注意此例子中，由于Refer和Service在同一个工程，所以运行main方法Refer和Service就都启动了，实际生产环境中一般都是服务的调用和服务的实现部署在不同的进程中。
 
 # eagle常用配置
 
