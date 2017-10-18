@@ -13,6 +13,35 @@
     <groupId>org.jfaster.eagle</groupId>
     <artifactId>spring-boot-starter-eagle</artifactId>
     <version>1.0</version>
+    <packaging>jar</packaging>
+    <name>spring-boot-starter-parent</name>
+    <url>https://github.com/fang-yan-peng/eagle</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/fang-yan-peng/eagle.git</connection>
+        <developerConnection>scm:git:git@github.com:fang-yan-peng/eagle.git</developerConnection>
+        <url>https://github.com/fang-yan-peng/eagle</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>fangyanpeng</id>
+            <name>FangYanpeng</name>
+            <email>13120336627@163.com</email>
+            <url>https://github.com/fang-yan-peng</url>
+            <timezone>8</timezone>
+        </developer>
+    </developers>
+
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,6 +85,17 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -83,6 +123,18 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
         </plugins>
     </build>
 </project>
