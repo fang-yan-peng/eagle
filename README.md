@@ -74,7 +74,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    <dependency>
      <groupId>org.jfaster.eagle</groupId>
      <artifactId>spring-boot-starter-eagle</artifactId>
-     <version>1.0</version>
+     <version>1.0.1</version>
    </dependency>
   ```
 ## 同步调用
