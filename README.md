@@ -32,8 +32,9 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
 ## 同步调用
 
-1. 添加依赖.
-
+1. 添加依赖. 
+   
+   如果是spring,添加如下:
    ```xml
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
@@ -56,6 +57,29 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
         <version>1.0</version>
     </dependency>
    ```
+   如果是springBoot,添加如下:
+      ```xml
+       <dependency>
+           <groupId>org.jfaster.eagle</groupId>
+           <artifactId>eagle-core</artifactId>
+           <version>1.0</version>
+       </dependency>
+       <dependency>
+           <groupId>org.jfaster.eagle</groupId>
+           <artifactId>eagle-registry-zookeeper</artifactId>
+           <version>1.0</version>
+       </dependency>
+       <dependency>
+           <groupId>org.jfaster.eagle</groupId>
+           <artifactId>eagle-transport-netty</artifactId>
+           <version>1.0</version>
+       </dependency>
+       <dependency>
+         <groupId>org.jfaster.eagle</groupId>
+         <artifactId>spring-boot-starter-eagle</artifactId>
+         <version>1.0</version>
+       </dependency>
+      ```
 
 2. 创建一个接口类。
 
@@ -390,6 +414,190 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     }
 
     ```
+
+4. 创建和启动客户端。
+
+    `src/main/resources/client_annotation.xml`
+
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:eagle="http://eagle.jfaster.org/schema/eagle"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd 
+                            http://www.springframework.org/schema/context 
+                            http://www.springframework.org/schema/context/spring-context.xsd 
+                            http://eagle.jfaster.org/schema/eagle
+                            http://eagle.jfaster.org/schema/eagle/eagle.xsd
+                            ">
+    
+        <context:component-scan base-package="eagle.jfaster.org" />
+    
+        <context:annotation-config/>
+    
+        <!--注册中心配置可以多个-->
+        <eagle:registry name="regCenter" protocol="zookeeper"  address="127.0.0.1:4181" namespace="eagle" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+    
+        <!--协议配置-->
+        <eagle:protocol name="eagle" serialization="kryo" use-default="true" cluster="eagle" max-content-length="16777216"/>
+    
+        <eagle:base-refer id="baseRefer" request-timeout="300" actives="20000" actives-wait="300" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
+    
+        <eagle:component-scan base-package="eagle.jfaster.org.service"/>
+    
+    </beans>
+    ```
+
+   `src/main/java/eagle/jfaster/org/client/AnnotationClient.java`
+
+   ```java
+   package eagle.jfaster.org.client;
+   
+   import eagle.jfaster.org.service.Hello;
+   import org.springframework.context.ApplicationContext;
+   import org.springframework.context.support.ClassPathXmlApplicationContext;
+   
+   public class AnnotationClient {
+       public static void main(String[] args) {
+           ApplicationContext appCtx = new ClassPathXmlApplicationContext("client_annotation.xml");
+           Hello hello = appCtx.getBean("helloAnno",Hello.class);
+           System.out.println(hello.hello());
+       }
+   }
+
+   ```
+   
+## springBoot例子
+1. 配置yml或properties文件
+    `src/main/resources/application.yml`
+    
+    ```yml
+    eagle:
+      #扫描eagle服务，多个包用逗号分隔
+      base-package: eagle.jfaster.org.service
+    
+      #注册中心配置，可以配置多个
+      registry:
+        - name: regCenter
+          protocol: zookeeper
+          address: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
+          namespace: eagle
+          base-sleep-time-milliseconds: 1000
+          max-sleep-time-milliseconds: 3000
+          max-retries: 3
+    
+      #协议配置，可以配置多个
+      protocol:
+        - id: proto
+          name: eagle
+          serialization: kryo
+          use-default: true
+          max-content-length: 16777216
+          max-server-connection: 20000
+          core-worker-thread: 20
+          max-worker-thread: 400
+          worker-queue-size: 10
+          cluster: eagle
+    
+      #baseRefer配置，可以配置多个
+      base-refer:
+        - id: baseRefer
+          request-timeout: 300
+          actives: 20000
+          actives-wait: 300
+          loadbalance: roundrobin
+          ha-strategy: failfast
+          compress: false
+          group: eagleGroup
+          connect-timeout: 10000
+          protocol: proto
+          registry: regCenter
+    
+      #baseService配置，可以配置多个
+      base-service:
+        - id: baseService
+          group: eagleGroup
+          export: proto:9200
+          registry: regCenter
+    ```
+
+2. 创建接口，并打上Refer注解。
+
+    `src/main/java/eagle/jfaster/org/service/Calculate.java`
+
+    ```java
+    
+    package eagle.jfaster.org.service;
+    
+    import eagle.jfaster.org.config.annotation.Refer;
+    
+    /**
+     * Created by fangyanpeng1 on 2017/8/9.
+     */
+    @Refer(id = "calculateRef",baseRefer = "baseRefer")
+    public interface Calculate {
+    
+        int add(int a, int b);
+    
+        int sub(int a, int b);
+    }
+    
+    ```
+3. 实现接口，并打上Service注解。
+    
+    `src/main/java/eagle/jfaster/org/service/impl/CalculateImpl.java`
+    
+    ```java
+    package eagle.jfaster.org.service.impl;
+    
+    import eagle.jfaster.org.config.annotation.Service;
+    import eagle.jfaster.org.service.Calculate;
+    
+    /**
+     * Created by fangyanpeng1 on 2017/8/9.
+     */
+    @Service(id = "calculateService",baseService = "baseService",export = "proto:29001")
+    public class CalculateImpl implements Calculate {
+    
+        public int add(int a, int b) {
+            return a+b;
+        }
+    
+        public int sub(int a, int b) {
+            return a-b;
+        }
+    }
+
+    ```
+4. 启动服务端和客户端
+    
+    `src/main/java/eagle/jfaster/org/SpringBootSartup.java`
+
+    ```java
+    package eagle.jfaster.org;
+    
+    import eagle.jfaster.org.service.Calculate;
+    import org.springframework.boot.SpringApplication;
+    import org.springframework.boot.autoconfigure.SpringBootApplication;
+    import org.springframework.context.ApplicationContext;
+    
+    /**
+     * Created by fangyanpeng1 on 2017/8/11.
+     */
+    @SpringBootApplication
+    public class SpringBootSartup {
+    
+        public static void main(String[] args) {
+            ApplicationContext ctx =  SpringApplication.run(SpringBootSartup.class, args);
+            Calculate calculate = (Calculate) ctx.getBean("calculateRef");
+            System.out.println(calculate.add(1,2));
+            System.out.println(calculate.sub(9,5));
+        }
+    }
+    ```
+    注意此例子中，由于Refer和Service在同一个工程，所以运行main方法Refer和Service就都启动了，实际生产环境中一般都是服务的调用和服务的实现部署在不同的进程中。
 
 4. 创建和启动客户端。
 

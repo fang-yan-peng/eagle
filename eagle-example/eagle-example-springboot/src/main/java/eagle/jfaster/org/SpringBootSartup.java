@@ -15,22 +15,23 @@
  * </p>
  */
 
-package eagle.jfaster.org.service.impl;
+package eagle.jfaster.org;
 
-import eagle.jfaster.org.config.annotation.Service;
 import eagle.jfaster.org.service.Calculate;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 /**
- * Created by fangyanpeng1 on 2017/8/9.
+ * Created by fangyanpeng1 on 2017/8/11.
  */
-@Service(id = "calculateService",baseService = "baseService",export = "proto:29001")
-public class CalculateImpl implements Calculate {
+@SpringBootApplication
+public class SpringBootSartup {
 
-    public int add(int a, int b) {
-        return a+b;
-    }
-
-    public int sub(int a, int b) {
-        return a-b;
+    public static void main(String[] args) {
+        ApplicationContext ctx =  SpringApplication.run(SpringBootSartup.class, args);
+        Calculate calculate = (Calculate) ctx.getBean("calculateRef");
+        System.out.println(calculate.add(1,2));
+        System.out.println(calculate.sub(9,5));
     }
 }

@@ -15,18 +15,21 @@
  * </p>
  */
 
-package eagle.jfaster.org;
+package org.springframe.boot.eagle;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import eagle.jfaster.org.config.BaseServiceConfig;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
+ * baseService与配置文件的映射类
+ *
+ * Created by fangyanpeng on 2017/10/17.
  */
-@SpringBootApplication
-public class ServiceStartup
-{
-    public static void main( String[] args ) {
-        SpringApplication.run(ServiceStartup.class, args);
-    }
+@Setter
+@Getter
+public class BootBaseServiceConfig extends BaseServiceConfig {
+
+    private String registry;
 }

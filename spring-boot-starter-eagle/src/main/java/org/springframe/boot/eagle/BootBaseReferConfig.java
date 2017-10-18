@@ -15,22 +15,22 @@
  * </p>
  */
 
-package eagle.jfaster.org;
+package org.springframe.boot.eagle;
 
-import eagle.jfaster.org.service.Calculate;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import eagle.jfaster.org.config.BaseReferConfig;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Created by fangyanpeng1 on 2017/8/11.
+ * baseRefer 与配置文件的映射类
+ *
+ * Created by fangyanpeng on 2017/10/17.
  */
-@SpringBootApplication
-public class ReferSartup {
+@Setter
+@Getter
+public class BootBaseReferConfig extends BaseReferConfig {
 
-    public static void main(String[] args) {
-        ApplicationContext ctx =  SpringApplication.run(ServiceStartup.class, args);
-        Calculate calculate = (Calculate) ctx.getBean("calculate1");
-        System.out.println(calculate.add(1,2));
-    }
+    private String protocol;
+
+    private String registry;
 }

@@ -15,17 +15,30 @@
  * </p>
  */
 
-package eagle.jfaster.org.service;
+package org.springframe.boot.eagle;
 
-import eagle.jfaster.org.config.annotation.Refer;
+import eagle.jfaster.org.config.ProtocolConfig;
+import eagle.jfaster.org.config.RegistryConfig;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
 
 /**
- * Created by fangyanpeng1 on 2017/8/9.
+ * Created by fangyanpeng on 2017/10/17.
  */
-@Refer(id = "calculateRef",baseRefer = "baseRefer")
-public interface Calculate {
+@Setter
+@Getter
+public class EagleConfig {
 
-    int add(int a, int b);
+    private List<RegistryConfig> registry;
 
-    int sub(int a, int b);
+    private List<ProtocolConfig> protocol;
+
+    private List<BootBaseReferConfig> baseRefer;
+
+    private List<BootBaseServiceConfig> baseService;
+
+    private String basePackage;
 }

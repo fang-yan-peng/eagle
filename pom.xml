@@ -17,6 +17,7 @@
     <module>eagle-benchmark</module>
     <module>eagle-example</module>
     <module>eagle-ui</module>
+    <module>spring-boot-starter-eagle</module>
   </modules>
   <packaging>pom</packaging>
   <name>eagle</name>
