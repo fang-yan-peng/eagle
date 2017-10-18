@@ -469,9 +469,10 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    注解的方式同样支持同步调用和异步调用两种方式，只要在Refer注解里指定callback属性为MethodInvokeCallBack实现的全限定性名即可。Refer和Service注解里的属性与xml配置的属性一一对应。
    
 ## springBoot例子
-1. 配置yml或properties文件
+
+1.配置yml或properties文件，以yml为例。
     `src/main/resources/application.yml`
-    
+      
     ```yml
     eagle:
       #扫描eagle服务，多个包用逗号分隔
