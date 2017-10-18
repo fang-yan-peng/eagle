@@ -470,10 +470,11 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    
 ## springBoot例子
 
-1.配置yml或properties文件，以yml为例。
+1. 配置yml或properties文件，以yml为例。
+
     `src/main/resources/application.yml`
-      
-    ```yml
+
+    ```xml
     eagle:
       #扫描eagle服务，多个包用逗号分隔
       base-package: eagle.jfaster.org.service
