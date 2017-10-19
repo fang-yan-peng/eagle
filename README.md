@@ -159,6 +159,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
     public class Server {
         public static void main(String[] args) throws InterruptedException {
+            //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
             EmbedZookeeperServer.start(4181);
             ApplicationContext appCtx = new ClassPathXmlApplicationContext("server.xml");
             CountDownLatch latch = new CountDownLatch(1);
@@ -404,6 +405,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     import java.util.concurrent.CountDownLatch;
     public class ServerAnnotation {
         public static void main(String[] args) throws InterruptedException {
+            //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址         
             EmbedZookeeperServer.start(4181);
             ApplicationContext appCtx = new ClassPathXmlApplicationContext("server_annotation.xml");
             CountDownLatch latch = new CountDownLatch(1);
@@ -483,7 +485,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
       registry:
         - name: regCenter
           protocol: zookeeper
-          address: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
+          address: 127.0.0.1:4181
           namespace: eagle
           base-sleep-time-milliseconds: 1000
           max-sleep-time-milliseconds: 3000
@@ -533,7 +535,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
       #注册中心配置，可以配置多个
       eagle.registry[0].name=regCenter
       eagle.registry[0].protocol=zookeeper
-      eagle.registry[0].address=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
+      eagle.registry[0].address=127.0.0.1:4181
       eagle.registry[0].namespace=eagle
       eagle.registry[0].base-sleep-time-milliseconds=1000
       eagle.registry[0].max-sleep-time-milliseconds=3000
@@ -640,6 +642,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     public class SpringBootSartup {
     
         public static void main(String[] args) {
+            //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
+            EmbedZookeeperServer.start(4181);
             ApplicationContext ctx =  SpringApplication.run(SpringBootSartup.class, args);
             Calculate calculate = (Calculate) ctx.getBean("calculateRef");
             System.out.println(calculate.add(1,2));

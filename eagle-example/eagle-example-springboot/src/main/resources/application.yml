@@ -6,7 +6,7 @@ eagle:
   registry:
     - name: regCenter
       protocol: zookeeper
-      address: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
+      address: 127.0.0.1:4181
       namespace: eagle
       base-sleep-time-milliseconds: 1000
       max-sleep-time-milliseconds: 3000

@@ -30,6 +30,7 @@ public class Server {
     public static final int EMBED_ZOOKEEPER_PORT = 4181;
 
     public static void main(String[] args) throws InterruptedException {
+        //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
         EmbedZookeeperServer.start(EMBED_ZOOKEEPER_PORT);
         ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("server.xml");
         appCtx.start();

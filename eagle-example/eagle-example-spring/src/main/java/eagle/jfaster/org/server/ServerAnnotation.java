@@ -29,6 +29,7 @@ import static eagle.jfaster.org.server.Server.EMBED_ZOOKEEPER_PORT;
  */
 public class ServerAnnotation {
     public static void main(String[] args) throws InterruptedException {
+        //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
         EmbedZookeeperServer.start(EMBED_ZOOKEEPER_PORT);
         ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("server_annotation.xml");
         appCtx.start();

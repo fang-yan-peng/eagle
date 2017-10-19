@@ -29,6 +29,8 @@ import org.springframework.context.ApplicationContext;
 public class SpringBootSartup {
 
     public static void main(String[] args) {
+        //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
+        EmbedZookeeperServer.start(4181);
         ApplicationContext ctx =  SpringApplication.run(SpringBootSartup.class, args);
         Calculate calculate = (Calculate) ctx.getBean("calculateRef");
         System.out.println(calculate.add(1,2));
