@@ -470,7 +470,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    
 ## SpringBoot例子
 
-1. 配置yml或properties文件，以yml为例。
+1. 配置yml或properties文件，配置一个即可。
 
     `src/main/resources/application.yml`
 
@@ -523,6 +523,55 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
           export: proto:9200
           registry: regCenter
     ```
+
+    `src/main/resources/application.properties`
+
+    ```xml
+      #扫描eagle服务，多个包用逗号分隔
+      eagle.base-package=eagle.jfaster.org.service
+      
+      #注册中心配置，可以配置多个
+      eagle.registry[0].name=regCenter
+      eagle.registry[0].protocol=zookeeper
+      eagle.registry[0].address=127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
+      eagle.registry[0].namespace=eagle
+      eagle.registry[0].base-sleep-time-milliseconds=1000
+      eagle.registry[0].max-sleep-time-milliseconds=3000
+      eagle.registry[0].max-retries=3
+      
+      #协议配置，可以配置多个
+      eagle.protocol[0].id=proto
+      eagle.protocol[0].name=eagle
+      eagle.protocol[0].serialization=kryo
+      eagle.protocol[0].use-default=true
+      eagle.protocol[0].max-content-length=16777216
+      eagle.protocol[0].max-server-connection=20000
+      eagle.protocol[0].core-worker-thread=20
+      eagle.protocol[0].max-worker-thread=400
+      eagle.protocol[0].worker-queue-size=10
+      eagle.protocol[0].cluster=eagle
+      
+      #baseRefer配置，可以配置多个
+      eagle.base-refer[0].id=baseRefer
+      eagle.base-refer[0].request-timeout=300
+      eagle.base-refer[0].actives=20000
+      eagle.base-refer[0].actives-wait=300
+      eagle.base-refer[0].loadbalance=roundrobin
+      eagle.base-refer[0].ha-strategy=failfast
+      eagle.base-refer[0].compress=false
+      eagle.base-refer[0].group=eagleGroup
+      eagle.base-refer[0].connect-timeout=10000
+      eagle.base-refer[0].protocol=proto
+      eagle.base-refer[0].registry=regCenter
+      
+      #baseService配置，可以配置多个
+      eagle.base-service[0].id=baseService
+      eagle.base-service[0].group=eagleGroup
+      eagle.base-service[0].export=proto:9200
+      eagle.base-service[0].registry=regCenter 
+    ```
+    
+    
 
 2. 创建接口，并打上Refer注解。
 
