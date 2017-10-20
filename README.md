@@ -26,7 +26,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark.jpeg)
 
 # 例子
-> 内置zookeeper，仅测试使用，生产环境请更换真实zookeeper地址，使用内置zookeeper有可能会报警告，更换真实zk地址即可。运行要求:
+> 内置zookeeper，仅测试使用。生产环境请更换真实zookeeper地址，使用内置zookeeper有可能会报连接警告或者异常，更换真实zk地址即可。运行要求:
 >  * JDK 1.7 or above
 >  * 编译工具 [Maven][maven] or [Gradle][gradle]
 
