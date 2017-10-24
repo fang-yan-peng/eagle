@@ -23,11 +23,11 @@ import java.lang.annotation.*;
  * Created by fangyanpeng on 2017/8/18.
  */
 @Documented
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Refer {
 
-    String id()default "";
+   /* String id()default "";*/
 
     String protocol()default "";
 
@@ -119,4 +119,5 @@ public @interface Refer {
     String callbackQueueSize() default "";
 
     String callbackWaitTime() default "";
+
 }

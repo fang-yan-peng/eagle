@@ -17,12 +17,10 @@
 
 package eagle.jfaster.org.service;
 
-import eagle.jfaster.org.config.annotation.Refer;
 
 /**
  * Created by fangyanpeng1 on 2017/8/9.
  */
-@Refer(id = "calculateRef",baseRefer = "baseRefer")
 public interface Calculate {
 
     int add(int a, int b);

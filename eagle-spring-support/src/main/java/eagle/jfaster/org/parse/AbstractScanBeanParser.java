@@ -17,7 +17,9 @@
 
 package eagle.jfaster.org.parse;
 
+import eagle.jfaster.org.bean.ReferInjectPostProcessor;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -44,8 +46,15 @@ public abstract class AbstractScanBeanParser implements BeanDefinitionParser {
 
     protected static MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
 
+    private boolean register = false;
+
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
+        if(!register){
+            register = true;
+            BeanDefinitionBuilder injectReferBuilder = BeanDefinitionBuilder.rootBeanDefinition(ReferInjectPostProcessor.class);
+            parserContext.getRegistry().registerBeanDefinition(ReferInjectPostProcessor.class.getName(),injectReferBuilder.getBeanDefinition());
+        }
         String[] basePackages = StringUtils.tokenizeToStringArray(element.getAttribute(PACKAGE), ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
         for(String basePackage : basePackages){
             registerCandidateComponents(element,basePackage,parserContext);

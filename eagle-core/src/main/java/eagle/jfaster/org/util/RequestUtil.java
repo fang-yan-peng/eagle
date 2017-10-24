@@ -16,6 +16,8 @@
  */
 
 package eagle.jfaster.org.util;
+import com.google.common.base.Strings;
+import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
@@ -24,6 +26,7 @@ import eagle.jfaster.org.rpc.support.EagleResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -36,6 +39,8 @@ import static eagle.jfaster.org.constant.EagleConstants.*;
 public class RequestUtil {
 
     private static final String REQ_FORMAT="%s.%s";
+
+    private static final String SERVICE_FORMAT="%s:%s";
 
     public static boolean isRequest(short magicCode){
         return (magicCode & EAGLE_TYPE_REQ) == EAGLE_TYPE_REQ;
@@ -96,6 +101,21 @@ public class RequestUtil {
 
     public static String getRequestDesc(Request request){
         return String.format(REQ_FORMAT,request.getInterfaceName(),ReflectUtil.getMethodDesc(request.getMethodName(),request.getParameterDesc()));
+    }
+
+    public static String getServiceKey(String interfaceName,String version){
+        if(Strings.isNullOrEmpty(version)){
+            version = ConfigEnum.version.getValue();
+        }
+        return String.format(SERVICE_FORMAT,interfaceName,version);
+    }
+
+    public static String getServiceKey(String interfaceName,Map<String,String> attachments){
+        String version;
+        if(CollectionUtil.isEmpty(attachments) || Strings.isNullOrEmpty(version = attachments.get(ConfigEnum.version.getName()))){
+            version = ConfigEnum.version.getValue();
+        }
+        return String.format(SERVICE_FORMAT,interfaceName,version);
     }
 
 }

@@ -1,6 +1,6 @@
 eagle:
   #扫描eagle服务，多个包用逗号分隔
-  base-package: eagle.jfaster.org.service
+  base-package: eagle.jfaster.org
 
   #注册中心配置，可以配置多个
   registry:

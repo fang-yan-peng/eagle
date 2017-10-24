@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static eagle.jfaster.org.util.RequestUtil.getServiceKey;
+
 /**
  * 一个端口对应一个路由
  *
@@ -67,7 +69,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
     @Override
     public Response routeAndInvoke(Request message) {
-        String serviceKey = message.getInterfaceName();
+        String serviceKey = getServiceKey(message.getInterfaceName(),message.getAttachments());
         RemoteInvoke invoker = services.get(serviceKey);
         if(invoker == null){
             logger.info(String.format("Error invoke service %s not exist ",serviceKey));
@@ -88,7 +90,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
     @Override
     public void addRemoteInvoke(RemoteInvoke invoke){
-        String serviceKey = invoke.getConfig().getInterfaceName();
+        String serviceKey = getServiceKey(invoke.getConfig().getInterfaceName(),invoke.getConfig().getVersion());
         if(services.containsKey(serviceKey)){
             throw new EagleFrameException("Error service %s has explored",serviceKey);
         }

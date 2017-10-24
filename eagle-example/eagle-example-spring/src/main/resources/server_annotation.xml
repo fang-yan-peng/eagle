@@ -11,7 +11,7 @@
                         http://eagle.jfaster.org/schema/eagle/eagle.xsd
                         ">
 
-    <context:component-scan base-package="eagle.jfaster.org" />
+    <context:component-scan base-package="eagle.jfaster.org.anno" />
 
     <context:annotation-config/>
 

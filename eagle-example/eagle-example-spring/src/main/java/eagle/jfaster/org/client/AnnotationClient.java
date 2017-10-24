@@ -17,17 +17,28 @@
 
 package eagle.jfaster.org.client;
 
+import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.service.Hello;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by fangyanpeng on 2017/8/18.
  */
+@Service
 public class AnnotationClient {
+
+    @Refer(baseRefer = "baseRefer")
+    private Hello hello;
+
+    @Refer(baseRefer = "baseRefer",version = "1.1")
+    private Hello hello1;
+
     public static void main(String[] args) {
         ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("client_annotation.xml");
         appCtx.start();
-        Hello hello = appCtx.getBean("helloAnno",Hello.class);
-        System.out.println(hello.hello());
+        AnnotationClient client = appCtx.getBean(AnnotationClient.class);
+        System.out.println(client.hello.hello());
+        System.out.println(client.hello1.hello());
     }
 }

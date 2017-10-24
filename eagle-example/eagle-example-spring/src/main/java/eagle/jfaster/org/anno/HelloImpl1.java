@@ -23,10 +23,10 @@ import eagle.jfaster.org.service.Hello;
 /**
  * Created by fangyanpeng on 2017/8/18.
  */
-@Service(baseService = "baseService",export = "proto:28000")
-public class HelloImpl implements Hello {
+@Service(baseService = "baseService",export = "proto:28001",version = "1.1")
+public class HelloImpl1 implements Hello {
 
     public String hello() {
-        return "hello eagle 1.0";
+        return "hello eagle 1.1";
     }
 }

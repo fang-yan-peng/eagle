@@ -16,8 +16,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 >  * cd eagle-benchmark
 >  * mvn clean install
 >  * cd eagle-benchmark-server/target
->  * tar -zxvf eagle-benchmark-server-1.0-assembly.tar.gz
->  * cd eagle-benchmark-server-1.0
+>  * tar -zxvf eagle-benchmark-server-1.1-assembly.tar.gz
+>  * cd eagle-benchmark-server-1.1
 >  * bin/start.sh
 >  * cd eagle-benchmark/eagle-benchmark-client
 >  * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
@@ -36,22 +36,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-core</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-registry-zookeeper</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-transport-netty</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-spring-support</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
    ```
    如果是springBoot,添加如下:
@@ -59,22 +59,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-core</artifactId>
-       <version>1.0</version>
+       <version>1.1</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-registry-zookeeper</artifactId>
-       <version>1.0</version>
+       <version>1.1</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-transport-netty</artifactId>
-       <version>1.0</version>
+       <version>1.1</version>
    </dependency>
    <dependency>
      <groupId>org.jfaster.eagle</groupId>
      <artifactId>spring-boot-starter-eagle</artifactId>
-     <version>1.0</version>
+     <version>1.1</version>
    </dependency>
   ```
 ## 同步调用
@@ -325,17 +325,14 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
 ## 注解的方式
 
-1. 创建接口，并打上Refer注解。
+1. 创建接口
 
     `src/main/java/eagle/jfaster/org/service/Hello.java`
 
     ```java
     
     package eagle.jfaster.org.service;
-    
-    import eagle.jfaster.org.config.annotation.Refer;
-    
-    @Refer(id = "helloAnno",baseRefer = "baseRefer")
+        
     public interface Hello {
         String hello();
     }
@@ -378,7 +375,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
                             http://eagle.jfaster.org/schema/eagle/eagle.xsd
                             ">
     
-        <context:component-scan base-package="eagle.jfaster.org" />
+        <context:component-scan base-package="eagle.jfaster.org.anno" />
     
         <context:annotation-config/>
     
@@ -404,6 +401,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     
     import java.util.concurrent.CountDownLatch;
     public class ServerAnnotation {
+     
+     
         public static void main(String[] args) throws InterruptedException {
             //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址         
             EmbedZookeeperServer.start(4181);
@@ -433,7 +432,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
                             http://eagle.jfaster.org/schema/eagle/eagle.xsd
                             ">
     
-        <context:component-scan base-package="eagle.jfaster.org" />
+        <context:component-scan base-package="eagle.jfaster.org.client" />
     
         <context:annotation-config/>
     
@@ -445,7 +444,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     
         <eagle:base-refer id="baseRefer" request-timeout="300" actives="20000" actives-wait="300" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
     
-        <eagle:component-scan base-package="eagle.jfaster.org.service"/>
+        <eagle:component-scan base-package="eagle.jfaster.org.client"/>
     
     </beans>
     ```
@@ -455,15 +454,25 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    ```java
    package eagle.jfaster.org.client;
    
+   import eagle.jfaster.org.config.annotation.Refer;
    import eagle.jfaster.org.service.Hello;
-   import org.springframework.context.ApplicationContext;
    import org.springframework.context.support.ClassPathXmlApplicationContext;
+   import org.springframework.stereotype.Service;
    
+   /**
+    * Created by fangyanpeng on 2017/8/18.
+    */
+   @Service
    public class AnnotationClient {
+   
+       @Refer(baseRefer = "baseRefer")
+       private Hello hello;
+   
        public static void main(String[] args) {
-           ApplicationContext appCtx = new ClassPathXmlApplicationContext("client_annotation.xml");
-           Hello hello = appCtx.getBean("helloAnno",Hello.class);
-           System.out.println(hello.hello());
+           ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("client_annotation.xml");
+           appCtx.start();
+           AnnotationClient client = appCtx.getBean(AnnotationClient.class);
+           System.out.println(client.hello.hello());
        }
    }
 
@@ -479,7 +488,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     ```xml
     eagle:
       #扫描eagle服务，多个包用逗号分隔
-      base-package: eagle.jfaster.org.service
+      base-package: eagle.jfaster.org
     
       #注册中心配置，可以配置多个
       registry:
@@ -530,7 +539,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
     ```xml
       #扫描eagle服务，多个包用逗号分隔
-      eagle.base-package=eagle.jfaster.org.service
+      eagle.base-package=eagle.jfaster.org
       
       #注册中心配置，可以配置多个
       eagle.registry[0].name=regCenter
@@ -575,20 +584,17 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     
     
 
-2. 创建接口，并打上Refer注解。
+2. 创建接口
 
     `src/main/java/eagle/jfaster/org/service/Calculate.java`
 
     ```java
     
     package eagle.jfaster.org.service;
-    
-    import eagle.jfaster.org.config.annotation.Refer;
-    
+        
     /**
      * Created by fangyanpeng1 on 2017/8/9.
      */
-    @Refer(id = "calculateRef",baseRefer = "baseRefer")
     public interface Calculate {
     
         int add(int a, int b);
@@ -624,32 +630,55 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
     ```
 4. 启动服务端和客户端
+
+    `src/main/java/eagle/jfaster/org/service/Calculator.java`
+    
+    ```java
+        package eagle.jfaster.org.service;
+        
+        import eagle.jfaster.org.config.annotation.Refer;
+        import org.springframework.stereotype.Service;
+        
+        /**
+         * Created by fangyanpeng on 2017/10/24.
+         */
+        @Service
+        public class Calculator {
+        
+            @Refer(baseRefer = "baseRefer")
+            public Calculate calculate;
+        
+        }
+    ```
     
     `src/main/java/eagle/jfaster/org/SpringBootSartup.java`
 
     ```java
-    package eagle.jfaster.org;
-    
-    import eagle.jfaster.org.service.Calculate;
-    import org.springframework.boot.SpringApplication;
-    import org.springframework.boot.autoconfigure.SpringBootApplication;
-    import org.springframework.context.ApplicationContext;
-    
-    /**
-     * Created by fangyanpeng1 on 2017/8/11.
-     */
-    @SpringBootApplication
-    public class SpringBootSartup {
-    
-        public static void main(String[] args) {
-            //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
-            EmbedZookeeperServer.start(4181);
-            ApplicationContext ctx =  SpringApplication.run(SpringBootSartup.class, args);
-            Calculate calculate = (Calculate) ctx.getBean("calculateRef");
-            System.out.println(calculate.add(1,2));
-            System.out.println(calculate.sub(9,5));
+        package eagle.jfaster.org;
+        
+        import eagle.jfaster.org.service.Calculator;
+        import org.springframework.boot.SpringApplication;
+        import org.springframework.boot.autoconfigure.SpringBootApplication;
+        import org.springframework.context.ApplicationContext;
+        
+        import java.util.concurrent.TimeUnit;
+        
+        /**
+         * Created by fangyanpeng1 on 2017/8/11.
+         */
+        @SpringBootApplication
+        public class SpringBootSartup {
+        
+            public static void main(String[] args) throws InterruptedException {
+                //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
+                EmbedZookeeperServer.start(4181);
+                ApplicationContext ctx =  SpringApplication.run(SpringBootSartup.class, args);
+                TimeUnit.SECONDS.sleep(2);
+                Calculator calculator = ctx.getBean(Calculator.class);
+                System.out.println(calculator.calculate.add(1,2));
+                System.out.println(calculator.calculate.sub(9,5));
+            }
         }
-    }
     ```
      SpringBoot方式同样支持同步调用和异步调用两种方式，只要在Refer注解里指定callback属性为MethodInvokeCallBack实现的全限定性名即可。Refer和Service注解里的属性与xml配置的属性一一对应。
      注意此例子中，由于Refer和Service在同一个工程，所以运行main方法Refer和Service就都启动了，实际生产环境中一般都是服务的调用和服务的实现部署在不同的进程中。
@@ -723,8 +752,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 # 后台管理界面
    > eagle 提供可视化的后台管理，方便查看和修改配置。
    > 启动后台的步骤
-   * tar -zxvf eagle-ui-1.0.tar.gz
-   * cd eagle-ui-1.0
+   * tar -zxvf eagle-ui-1.1.tar.gz
+   * cd eagle-ui-1.1
    * vim conf/eagle.conf 修改用户名、密码、jvm参数、日志路径、端口号等
    * sh bin/eagle.sh start
    

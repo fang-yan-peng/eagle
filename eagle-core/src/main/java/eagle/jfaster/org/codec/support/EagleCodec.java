@@ -296,21 +296,22 @@ public class EagleCodec implements Codec {
         if (size <= 0) {
             return null;
         }
-        byte[] data = new byte[size];
-        ByteBuffer attachBuffer = ByteBuffer.wrap(data);
+        /*byte[] data = new byte[size];
+        buffer.get(data);
+        ByteBuffer attachBuffer = ByteBuffer.wrap(data);*/
         short keySize;
         byte[] keyContent;
         int valSize;
         byte[] valContent;
         Map<String, String> attachments = new HashMap();
-        while (attachBuffer.hasRemaining()){
-            keySize = attachBuffer.getShort();
+        while (buffer.hasRemaining()){
+            keySize = buffer.getShort();
             keyContent = new byte[keySize];
-            attachBuffer.get(keyContent);
+            buffer.get(keyContent);
 
-            valSize = attachBuffer.getInt();
+            valSize = buffer.getInt();
             valContent = new byte[valSize];
-            attachBuffer.get(valContent);
+            buffer.get(valContent);
 
             attachments.put(new String(keyContent, CHARSET_UTF8), new String(valContent, CHARSET_UTF8));
         }
