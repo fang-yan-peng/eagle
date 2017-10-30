@@ -49,8 +49,6 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
 
     private String interfaceName;
 
-    private String version;
-
     private static final Object[] NO_ARGS = {};
 
     public AbstractReferInvokeHandler(List<ReferCluster<T>> clusters, Class<T> clz) {
@@ -58,7 +56,6 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         this.clz = clz;
         this.interfaceName = clz.getName();
         selectDefaultCluster();
-        this.version = defaultCluster.getConfig().getVersion();
         this.compress = defaultCluster.getConfig().getExtBoolean(ConfigEnum.compress.getName(),ConfigEnum.compress.isBooleanValue());
     }
 
@@ -96,7 +93,6 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         request.setParameters(args);
         request.setMethodName(method.getName());
         request.setNeedCompress(compress);
-        request.setAttachment(ConfigEnum.version.getName(),version);
         request.setParameterDesc(ReflectUtil.getMethodParamDesc(method));
         try {
             return handle(method,request);

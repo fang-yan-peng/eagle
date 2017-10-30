@@ -62,19 +62,19 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
         String strategyName = config.getExt(ConfigEnum.protectStrategy.getName(),ConfigEnum.protectStrategy.getValue());
         protectStrategy = SpiClassLoader.getClassLoader(ProtectStrategy.class).getExtension(strategyName);
         if(protectStrategy == null){
-            throw new EagleFrameException("Error protect strategy name %s not exists",strategyName);
+            throw new EagleFrameException("Error protect strategy name '%s' not exists",strategyName);
         }
         addRemoteInvoke(invoke);
     }
 
     @Override
     public Response routeAndInvoke(Request message) {
-        String serviceKey = getServiceKey(message.getInterfaceName(),message.getAttachments());
+        String serviceKey = message.getInterfaceName();
         RemoteInvoke invoker = services.get(serviceKey);
         if(invoker == null){
-            logger.info(String.format("Error invoke service %s not exist ",serviceKey));
+            logger.info(String.format("Error invoke service '%s' not exist ",serviceKey));
             EagleResponse response = new EagleResponse();
-            response.setException(new EagleFrameException("Error invoke service %s not exist",serviceKey));
+            response.setException(new EagleFrameException("Error invoke service '%s' not exist",serviceKey));
             return response;
         }
         try {
@@ -90,9 +90,9 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
     @Override
     public void addRemoteInvoke(RemoteInvoke invoke){
-        String serviceKey = getServiceKey(invoke.getConfig().getInterfaceName(),invoke.getConfig().getVersion());
+        String serviceKey = invoke.getConfig().getInterfaceName();
         if(services.containsKey(serviceKey)){
-            throw new EagleFrameException("Error service %s has explored",serviceKey);
+            throw new EagleFrameException("Error service '%s' has explored on '%d',please use another port",serviceKey,invoke.getConfig().getPort());
         }
         services.put(serviceKey,invoke);
         List<Method> methods = ReflectUtil.getPublicMethod(invoke.getInterface());
