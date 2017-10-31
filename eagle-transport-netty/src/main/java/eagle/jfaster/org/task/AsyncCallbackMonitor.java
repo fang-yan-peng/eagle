@@ -46,7 +46,7 @@ public class AsyncCallbackMonitor implements Runnable{
         int callbackWait = config.getExtInt(ConfigEnum.callbackWaitTime.getName(),ConfigEnum.callbackWaitTime.getIntValue());
         BlockingQueue<Runnable> callbackQueue = client.getCallbackQueue();
         try {
-            if (callbackQueue.isEmpty()) {
+            if (!callbackQueue.isEmpty()) {
                 final FutureTaskExt runnable = (FutureTaskExt) callbackQueue.peek();
                 if (null == runnable) {
                     client.setSuspend(false);
