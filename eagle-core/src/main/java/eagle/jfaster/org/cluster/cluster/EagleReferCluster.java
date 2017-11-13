@@ -120,7 +120,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
         try {
             return haStrategy.call(request,loadBalance);
         } catch (Throwable e) {
-            logger.error(String.format("Cluster.call fail,interface:%s,host:%s,cause:%s",config.getInterfaceName(),config.identity(),e.getMessage()));
+            logger.error(String.format("Cluster.call fail, interface: '%s',host: '%s',cause: '%s'",config.getInterfaceName(),config.identity(),e.getMessage()));
             return dealCallFail(request,e);
         }
     }
@@ -153,7 +153,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
             try {
                 return mock.getMockValue(request.getInterfaceName(),request.getMethodName(),request.getParameters(),e);
             } catch (Throwable e1) {
-                throw new MockException("Call exception: %s--Mock exception: %s ",e.getMessage(),e1.getMessage());
+                throw new MockException("Call exception: '%s' -- Mock exception: '%s' ",e.getMessage(),e1.getMessage());
             }
         }
         if(e instanceof EagleFrameException){

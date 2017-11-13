@@ -98,7 +98,7 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
     }
 
     @Override
-    public boolean isExport(){
+    public boolean needExport(){
         return export.compareAndSet(false,true);
     }
 }

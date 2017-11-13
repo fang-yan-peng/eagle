@@ -27,5 +27,5 @@ import eagle.jfaster.org.rpc.RemoteInvoke;
 public interface InvokeRouter <I,O> {
     O routeAndInvoke(I message);
     void addRemoteInvoke(RemoteInvoke invoke);
-    boolean isExport();
+    boolean needExport();
 }

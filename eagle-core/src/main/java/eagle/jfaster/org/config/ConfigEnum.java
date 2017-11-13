@@ -77,7 +77,7 @@ public enum ConfigEnum {
     sessionTimeoutMilliseconds("sessionTimeoutMilliseconds", 0),
     connectionTimeoutMilliseconds("connectionTimeoutMilliseconds", 0),
     digest("digest", ""),
-    serviceType("serviceType", ServiceTypeEnum.JDK.type),/*jdk 或者 cglib*/
+    serviceType("serviceType", ServiceTypeEnum.JDK.getType()),/*jdk 或者 cglib*/
 
     cluster("cluster", CLUSTER_DEFAULT),
     loadbalance("loadbalance", "activeWeight"),

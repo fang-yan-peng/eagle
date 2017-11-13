@@ -90,12 +90,12 @@ public class NettyRefer <T> implements Refer <T> {
                     lock.release();
                 }
             }else {
-                String warn = String.format("%s too much request,more than actives:%d",config.identity(),lock.getMaxPermits());
+                String warn = String.format("'%s' too much request, more than actives: '%d'",config.identity(),lock.getMaxPermits());
                 logger.warn(warn);
                 throw new EagleFrameException(warn);
             }
         } catch (Throwable e) {
-            throw new EagleFrameException("NettyRefer request failed,refer:%s,host:%s,cause:%s",config.getInterfaceName(),config.identity(),e.getMessage());
+            throw new EagleFrameException("NettyRefer request failed, refer: '%s', host: '%s', cause: '%s'",config.getInterfaceName(),config.identity(),e.getMessage());
         }finally {
             activeCnt.decrementAndGet();
         }

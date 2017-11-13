@@ -261,7 +261,7 @@ public class NettyClient implements Client,StatisticCallback {
             channel = connPool.getConnection();
             return channel.request(request,connPool);
         } catch (Throwable e) {
-            logger.error("NettyClient request error,interface:"+config.getInterfaceName()+",host:"+config.identity(),e);
+            logger.error("NettyClient request error, interface: '"+config.getInterfaceName()+"', host: '" + config.identity() + "'",e);
             if(channel != null){
                 connPool.invalidateConnection(channel);
             }
@@ -277,7 +277,7 @@ public class NettyClient implements Client,StatisticCallback {
         // 如果节点是可用状态，同时当前连续失败的次数超过限制maxClientConnection次，那么把该节点标示为不可用
         if (count >= maxInvokeError && stat.get()) {
             if(stat.compareAndSet(true,false)){
-                logger.error("NettyClient unavailable Error: config=" + config.getInterfaceName() + " " + config.identity());
+                logger.error("NettyClient unavailable Error: config='" + config.getInterfaceName() + "' '" + config.identity() + "'");
             }
         }
     }
@@ -288,7 +288,7 @@ public class NettyClient implements Client,StatisticCallback {
     public void resetErrorCount() {
         errorCount.set(0);
         if(!stat.get() && init.get() && errorCount.intValue() < maxInvokeError && stat.compareAndSet(false,true)){
-            logger.info("NettyClient recover available: interfaceName=" + config.getInterfaceName() + " " + config.identity());
+            logger.info("NettyClient recover available: interfaceName='" + config.getInterfaceName() + "' '" + config.identity() + "'");
         }
     }
 
@@ -303,7 +303,7 @@ public class NettyClient implements Client,StatisticCallback {
                 return null;
             }
         }
-        return String.format("[%s] callbackMapSize: %d asyncCallbackQueueSize: %d",config.identity(), callbackMap.size(), callbackQueue == null ? 0 : callbackQueue.size());
+        return String.format("[%s] callbackMapSize: '%d' asyncCallbackQueueSize: '%d'",config.identity(), callbackMap.size(), callbackQueue == null ? 0 : callbackQueue.size());
     }
 
 }

@@ -62,7 +62,7 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
             ByteBuffer byteBuffer = frame.nioBuffer();
             short magicCode = byteBuffer.getShort();
             if(isNotIllegal(magicCode)){
-                throw new EagleFrameException("Error the type: %d is not supported",magicCode);
+                throw new EagleFrameException("Error the type: '%d' is not supported",magicCode);
             }
             int opaque = byteBuffer.getInt();
             try {

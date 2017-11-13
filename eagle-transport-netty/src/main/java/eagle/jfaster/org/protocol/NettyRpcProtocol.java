@@ -55,7 +55,7 @@ public class NettyRpcProtocol<T> implements Protocol<T> {
         MergeConfig config = invoker.getConfig();
         InvokeRouter<Request,Response> router = getInvokeRouter(invoker);
         Server nettyServer;
-        if(router.isExport()){
+        if(router.needExport()){
             //添加心跳响应
             HeartBeatFactory heartBeatFactory = SpiClassLoader.getClassLoader(HeartBeatFactory.class).getExtension(config.getExt(ConfigEnum.heartbeatFactory.getName(),ConfigEnum.heartbeatFactory.getValue()));
             if(heartBeatFactory == null){

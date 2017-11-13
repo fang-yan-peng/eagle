@@ -25,6 +25,7 @@ import eagle.jfaster.org.cluster.proxy.SyncInvokeHandler;
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.ServiceTypeEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
+import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.protocol.Protocol;
@@ -36,6 +37,7 @@ import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.spi.SpiInfo;
 import eagle.jfaster.org.util.RegistryUtil;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.List;
 
@@ -68,17 +70,22 @@ public class EagleRpcHandler implements RpcHandler {
 
     @Override
     public <T> Exporter<T> export(Class<T> interfaceClass, T ref, MergeConfig serviceConfig, List<MergeConfig> registryConfigs) {
-        String protoName = serviceConfig.getProtocol();
-        Protocol<T> protocol = SpiClassLoader.getClassLoader(Protocol.class).getExtension(protoName);
-        String serviceType = serviceConfig.getExt(ConfigEnum.serviceType.getName(),ConfigEnum.serviceType.getValue());
-        RemoteInvoke<T> invoke = ServiceTypeEnum.typeOf(serviceType) == ServiceTypeEnum.CGLIB ? new EagleRpcCglibRemoteInvoke<T>(interfaceClass,ref,serviceConfig) : new EagleRpcJdkRemoteInvoke<T>(interfaceClass,ref,serviceConfig);
-        Exporter<T> exporter = protocol.createServer(invoke);
-        RegistryCenterManage registryManage;
-        for(MergeConfig regConfig : registryConfigs){
-            registryManage = SpiClassLoader.getClassLoader(RegistryCenterManage.class).getExtension(regConfig.getProtocol());
-            registryManage.registerService(regConfig,serviceConfig);
+        try {
+            String protoName = serviceConfig.getProtocol();
+            Protocol<T> protocol = SpiClassLoader.getClassLoader(Protocol.class).getExtension(protoName);
+            String serviceType = serviceConfig.getExt(ConfigEnum.serviceType.getName(),ConfigEnum.serviceType.getValue());
+            //RemoteInvoke<T> invoke = ServiceTypeEnum.typeOf(serviceType) == ServiceTypeEnum.CGLIB ? new EagleRpcCglibRemoteInvoke<T>(interfaceClass,ref,serviceConfig) : new EagleRpcJdkRemoteInvoke<T>(interfaceClass,ref,serviceConfig);
+            RemoteInvoke<T> invoke = ServiceTypeEnum.getRemoteInvoke(serviceType,interfaceClass,ref,serviceConfig);
+            Exporter<T> exporter = protocol.createServer(invoke);
+            RegistryCenterManage registryManage;
+            for(MergeConfig regConfig : registryConfigs){
+                registryManage = SpiClassLoader.getClassLoader(RegistryCenterManage.class).getExtension(regConfig.getProtocol());
+                registryManage.registerService(regConfig,serviceConfig);
+            }
+            return exporter;
+        } catch (Exception e) {
+            throw new EagleFrameException(e);
         }
-        return exporter;
     }
 
     @Override

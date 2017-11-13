@@ -58,11 +58,11 @@ public class ConcurrentOverloadProtectStrategy implements ProtectStrategy {
             }
             //如果该方法请求大于最大线程的1／2，并且所有方法的总请求量大于线程的 3／4则进行保护
             if(methodReqCnt > (maxWorkerThread / 2) && totalReqCnt > (maxWorkerThread * 3 / 4)){
-                return buildRejectResponse(String.format("Not allow invoke service %s because of too many invoke at the same time",reqKey));
+                return buildRejectResponse(String.format("Not allow invoke service '%s' because of too many invoke at the same time",reqKey));
             }
             //如果总量达到量3／4，并且暴露的方法较多，则进行保护
             if(methodCnt >= 4 && totalReqCnt > (maxWorkerThread * 3 / 4) && methodReqCnt > (maxWorkerThread * 1 / 4)){
-                return buildRejectResponse(String.format("Not allow invoke service %s because of too many invoke at the same time",reqKey));
+                return buildRejectResponse(String.format("Not allow invoke service '%s' because of too many invoke at the same time",reqKey));
             }
             return invoker.invoke(request);
         } finally {
