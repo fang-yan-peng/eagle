@@ -23,7 +23,7 @@ import eagle.jfaster.org.service.Hello;
 /**
  * Created by fangyanpeng on 2017/8/18.
  */
-@Service(baseService = "baseService",export = "proto:28001",version = "1.1")
+@Service(baseService = "baseService",export = "proto:28001",version = "1.1",serviceType = "cglib")
 public class HelloImpl1 implements Hello {
 
     public String hello() {

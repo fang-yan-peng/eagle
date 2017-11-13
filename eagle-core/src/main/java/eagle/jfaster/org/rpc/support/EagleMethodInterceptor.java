@@ -15,33 +15,28 @@
  * </p>
  */
 
-package eagle.jfaster.org.cluster.proxy;
+package eagle.jfaster.org.rpc.support;
 
-import eagle.jfaster.org.cluster.ReferCluster;
-import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.util.ReflectUtil;
+import lombok.RequiredArgsConstructor;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by fangyanpeng1 on 2017/8/7.
+ * Created by fangyanpeng on 2017/11/13.
  */
-public class AsyncInvokeHandler<T> extends AbstractReferInvokeHandler<T> {
+@RequiredArgsConstructor
+public class EagleMethodInterceptor implements MethodInterceptor {
 
-    public AsyncInvokeHandler(List<ReferCluster<T>> referClusters, Class<T> clz) {
-        super(referClusters, clz);
-    }
+    private final Map<String,MethodProxy>  proxyMap;
 
     @Override
-    protected Object handle(Method method,Request request) {
-        Object ret = this.defaultCluster.call(request);
-        if(ret != null){
-            return ret;
-        }
+    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        String methodDesc = ReflectUtil.getMethodDesc(method);
+        proxyMap.put(methodDesc, proxy);
         return ReflectUtil.getDefaultReturnValue(method.getReturnType());
     }
-
 }

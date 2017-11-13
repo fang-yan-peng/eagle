@@ -50,29 +50,31 @@ public @interface Service {
     String filter() default "";
 
     // 最大并发调用
-    String actives()default "";
+    String actives() default "";
 
     // 并发等待时间
-    String activesWait()default "";
+    String activesWait() default "";
 
     // 服务接口的失败mock实现类名
-    String mock()default "";
+    String mock() default "";
 
     // 是否注册
-    String register()default "";
+    String register() default "";
 
     // 是否记录访问日志，true记录，false不记录
-    String statsLog()default "";
+    String statsLog() default "";
 
     // 重试次数
-    String retries()default "";
+    String retries() default "";
 
-    String host()default "";
+    String host() default "";
 
-    String export()default "";
+    String export() default "";
 
-    String baseService()default "";
+    String baseService() default "";
 
     String weight() default "";
+
+    String serviceType() default "";
 
 }

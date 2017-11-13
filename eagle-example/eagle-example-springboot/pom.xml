@@ -9,7 +9,7 @@
 
   <groupId>org.jfaster.eagle</groupId>
   <artifactId>eagle-example-springboot</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <packaging>jar</packaging>
 
   <name>eagle-example-springboot</name>
@@ -58,22 +58,22 @@
     <dependency>
       <groupId>org.jfaster.eagle</groupId>
       <artifactId>eagle-core</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.jfaster.eagle</groupId>
       <artifactId>eagle-registry-zookeeper</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.jfaster.eagle</groupId>
       <artifactId>eagle-transport-netty</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.jfaster.eagle</groupId>
       <artifactId>spring-boot-starter-eagle</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>

@@ -157,14 +157,19 @@
     <xsd:complexType name="abstractBaseService">
       <xsd:complexContent>
         <xsd:extension base="abstractInterfaceConfig">
-          <xsd:attribute name="export" type="xsd:string" use="optional">
-            <xsd:annotation>
-              <xsd:documentation><![CDATA[ 暴露的协议及端口，多个协议端口之间用","分隔 ]]></xsd:documentation>
-            </xsd:annotation>
-          </xsd:attribute>
+            <xsd:attribute name="export" type="xsd:string" use="optional">
+                <xsd:annotation>
+                  <xsd:documentation><![CDATA[ 暴露的协议及端口，多个协议端口之间用","分隔 ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
             <xsd:attribute name="weight" type="xsd:string" use="optional">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[权重配置]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="service-type" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[service类型 jdk or cglib]]></xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
         </xsd:extension>

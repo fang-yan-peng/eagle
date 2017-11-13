@@ -3,7 +3,7 @@
   <parent>
     <artifactId>eagle</artifactId>
     <groupId>org.jfaster.eagle</groupId>
-    <version>1.1</version>
+    <version>1.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -46,6 +46,10 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>log4j-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>

@@ -26,7 +26,7 @@ import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.pool.SuspendResumeLock;
 import eagle.jfaster.org.rpc.*;
-import eagle.jfaster.org.rpc.support.EagleRpcRemoteInvoke;
+import eagle.jfaster.org.rpc.support.EagleRpcJdkRemoteInvoke;
 import eagle.jfaster.org.server.NettyServer;
 import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.spi.SpiInfo;
@@ -62,7 +62,7 @@ public class NettyRpcProtocol<T> implements Protocol<T> {
                 throw new EagleFrameException("HeartBeatFactory not exist,name: %s",config.getExt(ConfigEnum.heartbeatFactory.getName(),""));
             }
             HeartBeat heartBeat = heartBeatFactory.createHeartBeat(config.copy());
-            router.addRemoteInvoke(new EagleRpcRemoteInvoke(HeartBeat.class,heartBeat,heartBeat.getConfig()));
+            router.addRemoteInvoke(new EagleRpcJdkRemoteInvoke(HeartBeat.class,heartBeat,heartBeat.getConfig()));
             //
             nettyServer = new NettyServer(config,router);
             nettyServer.start();

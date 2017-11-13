@@ -25,7 +25,7 @@
 
     <eagle:base-service id="baseService" group="eagleGroupWrk" export="proto:9400" registry="regCenter"/>
 
-    <eagle:service interface="eagle.jfaster.org.benchmark.api.EagleBenchmarkService" ref="eagleBenchmarkServiceImpl" base-service="baseService" />
+    <eagle:service interface="eagle.jfaster.org.benchmark.api.EagleBenchmarkService" ref="eagleBenchmarkServiceImpl" base-service="baseService" service-type="cglib"/>
 
     <!--dubbo-->
     <dubbo:application name="dubbo-benchmark"/>

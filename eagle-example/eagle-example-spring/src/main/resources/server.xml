@@ -24,7 +24,7 @@
 
     <eagle:base-service id="baseService1" group="eagleGroup" export="proto1:9200" registry="regCenter"/>
 
-    <eagle:service interface="eagle.jfaster.org.service.HelloWorld" ref="hello" base-service="baseService1" />
+    <eagle:service interface="eagle.jfaster.org.service.HelloWorld" ref="hello" base-service="baseService1" service-type="cglib"/>
 
     <eagle:service interface="eagle.jfaster.org.service.Calculate" ref="calculate" base-service="baseService1" export="proto1:9300"/>
 

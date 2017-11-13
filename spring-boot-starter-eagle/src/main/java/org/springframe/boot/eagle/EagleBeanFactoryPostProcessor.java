@@ -262,6 +262,9 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
                         if(!Strings.isNullOrEmpty(serviceAnnotation.weight())){
                             service.addPropertyValue("weight",serviceAnnotation.weight());
                         }
+                        if(!Strings.isNullOrEmpty(serviceAnnotation.serviceType())){
+                            service.addPropertyValue("serviceType",serviceAnnotation.serviceType());
+                        }
                         if(!Strings.isNullOrEmpty(serviceAnnotation.version())){
                             service.addPropertyValue("version",serviceAnnotation.version());
                         }

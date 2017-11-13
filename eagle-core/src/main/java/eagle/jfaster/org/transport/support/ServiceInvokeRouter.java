@@ -37,8 +37,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static eagle.jfaster.org.util.RequestUtil.getServiceKey;
-
 /**
  * 一个端口对应一个路由
  *

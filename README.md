@@ -16,8 +16,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 >  * cd eagle-benchmark
 >  * mvn clean install
 >  * cd eagle-benchmark-server/target
->  * tar -zxvf eagle-benchmark-server-1.1-assembly.tar.gz
->  * cd eagle-benchmark-server-1.1
+>  * tar -zxvf eagle-benchmark-server-1.2-assembly.tar.gz
+>  * cd eagle-benchmark-server-1.2
 >  * bin/start.sh
 >  * cd eagle-benchmark/eagle-benchmark-client
 >  * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
@@ -36,22 +36,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-core</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-registry-zookeeper</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-transport-netty</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-spring-support</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
     </dependency>
    ```
    如果是springBoot,添加如下:
@@ -59,22 +59,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-core</artifactId>
-       <version>1.1</version>
+       <version>1.2</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-registry-zookeeper</artifactId>
-       <version>1.1</version>
+       <version>1.2</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-transport-netty</artifactId>
-       <version>1.1</version>
+       <version>1.2</version>
    </dependency>
    <dependency>
      <groupId>org.jfaster.eagle</groupId>
      <artifactId>spring-boot-starter-eagle</artifactId>
-     <version>1.1</version>
+     <version>1.2</version>
    </dependency>
   ```
 ## 同步调用
@@ -348,7 +348,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     import eagle.jfaster.org.config.annotation.Service;
     import eagle.jfaster.org.service.Hello;
     
-    @Service(baseService = "baseService",export = "proto:28000")
+    @Service(baseService = "baseService",export = "proto:28000", serviceType = "cglib")
     public class HelloImpl implements Hello {
     
         public String hello() {
@@ -748,12 +748,13 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    * class: 如果没有配置ref，会根据class加载接口实现类。
    * export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
    * weight: 权重，与权重负载均衡算法联合使用。
+   * service-type: 服务调用类型，支持jdk和cglib两种配置。如果是jdk，采用反射机制调用实现类的方法；如果是cglib，采用cglib索引机制直接调用实现类的方法，性能更好，但是要求实现类只有默认的构造方法。
    
 # 后台管理界面
    > eagle 提供可视化的后台管理，方便查看和修改配置。
    > 启动后台的步骤
-   * tar -zxvf eagle-ui-1.1.tar.gz
-   * cd eagle-ui-1.1
+   * tar -zxvf eagle-ui-1.2.tar.gz
+   * cd eagle-ui-1.2
    * vim conf/eagle.conf 修改用户名、密码、jvm参数、日志路径、端口号等
    * sh bin/eagle.sh start
    

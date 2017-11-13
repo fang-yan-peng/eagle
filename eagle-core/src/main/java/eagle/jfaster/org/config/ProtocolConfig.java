@@ -86,7 +86,7 @@ public class ProtocolConfig extends AbstractConfig {
     @Getter
     protected Integer workerQueueSize;
 
-    // proxy type, like jdk or javassist
+    // proxy type, like jdk or cglib
     @Setter
     @Getter
     protected String proxy;

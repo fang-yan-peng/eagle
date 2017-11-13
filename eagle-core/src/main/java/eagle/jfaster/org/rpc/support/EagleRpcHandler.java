@@ -22,6 +22,8 @@ import eagle.jfaster.org.cluster.cluster.ReferClusterManage;
 import eagle.jfaster.org.cluster.proxy.AbstractReferInvokeHandler;
 import eagle.jfaster.org.cluster.proxy.AsyncInvokeHandler;
 import eagle.jfaster.org.cluster.proxy.SyncInvokeHandler;
+import eagle.jfaster.org.config.ConfigEnum;
+import eagle.jfaster.org.config.ServiceTypeEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
@@ -68,7 +70,8 @@ public class EagleRpcHandler implements RpcHandler {
     public <T> Exporter<T> export(Class<T> interfaceClass, T ref, MergeConfig serviceConfig, List<MergeConfig> registryConfigs) {
         String protoName = serviceConfig.getProtocol();
         Protocol<T> protocol = SpiClassLoader.getClassLoader(Protocol.class).getExtension(protoName);
-        RemoteInvoke<T> invoke = new EagleRpcRemoteInvoke<T>(interfaceClass,ref,serviceConfig);
+        String serviceType = serviceConfig.getExt(ConfigEnum.serviceType.getName(),ConfigEnum.serviceType.getValue());
+        RemoteInvoke<T> invoke = ServiceTypeEnum.typeOf(serviceType) == ServiceTypeEnum.CGLIB ? new EagleRpcCglibRemoteInvoke<T>(interfaceClass,ref,serviceConfig) : new EagleRpcJdkRemoteInvoke<T>(interfaceClass,ref,serviceConfig);
         Exporter<T> exporter = protocol.createServer(invoke);
         RegistryCenterManage registryManage;
         for(MergeConfig regConfig : registryConfigs){

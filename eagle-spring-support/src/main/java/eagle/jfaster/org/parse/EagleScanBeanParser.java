@@ -124,6 +124,9 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                         if(!Strings.isNullOrEmpty(serviceAnnotation.weight())){
                             service.addPropertyValue("weight",serviceAnnotation.weight());
                         }
+                        if(!Strings.isNullOrEmpty(serviceAnnotation.serviceType())){
+                            service.addPropertyValue("serviceType",serviceAnnotation.serviceType());
+                        }
                         if(!Strings.isNullOrEmpty(serviceAnnotation.version())){
                             service.addPropertyValue("version",serviceAnnotation.version());
                         }

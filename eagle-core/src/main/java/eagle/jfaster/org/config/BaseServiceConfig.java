@@ -33,6 +33,10 @@ public class BaseServiceConfig extends AbstractInterfaceConfig {
     @Getter
     protected  Integer weight;
 
+    @Setter
+    @Getter
+    protected String serviceType;
+
     @ConfigDesc(excluded = true)
     public String getExport() {
         return export;

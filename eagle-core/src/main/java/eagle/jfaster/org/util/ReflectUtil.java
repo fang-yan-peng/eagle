@@ -242,4 +242,50 @@ public class ReflectUtil {
         return ret;
     }
 
+    public static Object[] getParameterDefaultVals(Method method){
+        Class[] clzs = method.getParameterTypes();
+        if(clzs == null || clzs.length == 0){
+            return new Object[0];
+        }
+        Object[] vals = new Object[clzs.length];
+        for (int i = 0; i < clzs.length; ++i){
+            vals[i] = PrimitiveDefault.getDefaultValue(clzs[i]);
+        }
+        return vals;
+
+    }
+
+    public static Object getDefaultReturnValue(Class<?> returnType){
+        return PrimitiveDefault.getDefaultValue(returnType);
+    }
+
+    private static class PrimitiveDefault {
+        private static boolean defaultBoolean;
+        private static char defaultChar;
+        private static byte defaultByte;
+        private static short defaultShort;
+        private static int defaultInt;
+        private static long defaultLong;
+        private static float defaultFloat;
+        private static double defaultDouble;
+
+        private static Map<Class<?>, Object> primitiveValues = new HashMap<Class<?>, Object>();
+
+        static {
+            primitiveValues.put(boolean.class, defaultBoolean);
+            primitiveValues.put(char.class, defaultChar);
+            primitiveValues.put(byte.class, defaultByte);
+            primitiveValues.put(short.class, defaultShort);
+            primitiveValues.put(int.class, defaultInt);
+            primitiveValues.put(long.class, defaultLong);
+            primitiveValues.put(float.class, defaultFloat);
+            primitiveValues.put(double.class, defaultDouble);
+        }
+
+        public static Object getDefaultValue(Class<?> valType) {
+            return primitiveValues.get(valType);
+        }
+
+    }
+
 }
