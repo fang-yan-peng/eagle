@@ -25,7 +25,6 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.RemoteInvoke;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
-import eagle.jfaster.org.transport.HeartBeat;
 import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.ReflectUtil;
 import net.sf.cglib.proxy.Enhancer;
@@ -49,29 +48,29 @@ public class EagleRpcCglibRemoteInvoke<T> implements RemoteInvoke<T> {
 
     private final MergeConfig config;
 
-    private final Map<String,MethodProxy> cglibMethodInvoke = Maps.newHashMap();
+    private final Map<String,MethodProxy> methodInvoke = Maps.newHashMap();
 
     public EagleRpcCglibRemoteInvoke(Class<T> interfaceClz, T invokeImpl, MergeConfig config) {
         this.interfaceClz = interfaceClz;
-        Enhancer enhancer = new Enhancer();
-        enhancer.setCallback(new EagleMethodInterceptor(cglibMethodInvoke));
-        enhancer.setSuperclass(invokeImpl.getClass());
-        this.invokeImpl = (T) enhancer.create();
+        this.invokeImpl = invokeImpl;
         this.config = config;
-        initMethodInvoke();
+        Enhancer enhancer = new Enhancer();
+        enhancer.setCallback(new EagleMethodInterceptor(methodInvoke));
+        enhancer.setInterfaces(new Class[]{interfaceClz});
+        initMethodInvoke((T) enhancer.create());
     }
 
     @Override
     public Response invoke(Request request) {
         String methodDesc = ReflectUtil.getMethodDesc(request.getMethodName(), request.getParameterDesc());
-        MethodProxy methodProxy = cglibMethodInvoke.get(methodDesc);
+        MethodProxy methodProxy = methodInvoke.get(methodDesc);
         EagleResponse response = new EagleResponse();
         if(methodProxy == null){
             response.setException(new EagleFrameException("Error - invoke method '%s' is not exist",methodDesc));
             return response;
         }
         try {
-            Object value = methodProxy.invokeSuper(invokeImpl,request.getParameters());
+            Object value = methodProxy.invoke(invokeImpl,request.getParameters());
             response.setValue(value);
         } catch (Throwable e) {
             logger.error("EagleRpcJdkRemoteInvoke invoke error",e);
@@ -90,11 +89,11 @@ public class EagleRpcCglibRemoteInvoke<T> implements RemoteInvoke<T> {
         return interfaceClz;
     }
 
-    private void initMethodInvoke() {
+    private void initMethodInvoke(T proxy) {
         try {
             Method[] methods = interfaceClz.getMethods();
             for (Method method : methods) {
-                method.invoke(invokeImpl,ReflectUtil.getParameterDefaultVals(method));
+                method.invoke(proxy,ReflectUtil.getParameterDefaultVals(method));
             }
         } catch (Exception e) {
             throw new EagleFrameException(e);
