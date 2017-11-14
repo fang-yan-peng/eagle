@@ -21,9 +21,16 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 >  * bin/start.sh
 >  * cd eagle-benchmark/eagle-benchmark-client
 >  * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
+>  * 注（修改benchmark.sh 中的 -t 参数修改线程数）
    
+> macOs上的结果（16g内存，2.5 GHz Intel Core i7），启动16个线程。
    
-   ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark.jpeg)
+   ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark_mac.jpeg)
+
+> linux上的结果（64g内存，24核），启动24个线程。
+   
+   ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark_linux.jpeg)
+
 
 # 例子
 > 内置zookeeper，仅测试使用。生产环境请更换真实zookeeper地址，使用内置zookeeper有可能会报连接警告或者异常，更换真实zk地址即可。运行要求:

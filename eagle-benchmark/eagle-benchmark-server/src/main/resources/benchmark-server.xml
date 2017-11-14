@@ -34,7 +34,7 @@
 
     <dubbo:protocol name="dubbo" port="20888"/>
 
-    <dubbo:provider timeout="30000" threadpool="fixed" threads="100" accepts="1000"/>
+    <dubbo:provider timeout="30000" threadpool="fixed" threads="200" accepts="20000"/>
 
     <dubbo:service retries="0" interface="eagle.jfaster.org.benchmark.api.EagleBenchmarkService" ref="eagleBenchmarkServiceImpl"/>
 
