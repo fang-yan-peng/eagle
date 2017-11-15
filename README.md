@@ -27,7 +27,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    
    ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark_mac.jpeg)
 
-> linux上的结果（64g内存，24核），启动24个线程。
+> linux上的结果（64g内存，24核），启动40个线程。
    
    ![Image text](https://raw.githubusercontent.com/fang-yan-peng/eagle/master/benchmark_linux.jpeg)
 
