@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * 编解码器
  *
- * 请求协议：magicCode(2个字节) + opaque(4个字节)
+ * 请求协议：magicCode(2个字节) + opaque(32个字节)
  * + interfaceName长度(2个字节) +interfaceName
  * + methodName长度(2个字节) + methodName
  * + parameterDesc长度(4个字节)  + parameterDesc

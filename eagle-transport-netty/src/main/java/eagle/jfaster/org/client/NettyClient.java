@@ -37,6 +37,7 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.ResponseFuture;
+import eagle.jfaster.org.rpc.support.TraceContext;
 import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.statistic.EagleStatsManager;
 import eagle.jfaster.org.statistic.StatisticCallback;
@@ -207,10 +208,13 @@ public class NettyClient implements Client,StatisticCallback {
             runInThisThread = true;
         }
         if (runInThisThread) {
+            TraceContext.setOpaque(((NettyResponseFuture)responseFuture).getOpaque());
             try {
                 responseFuture.executeCallback();
             } catch (Throwable e) {
                 logger.info("executeInvokeCallback Exception", e);
+            }finally {
+                TraceContext.clear();
             }
         }
     }

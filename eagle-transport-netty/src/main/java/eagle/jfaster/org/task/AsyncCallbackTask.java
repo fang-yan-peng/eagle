@@ -38,12 +38,13 @@ public class AsyncCallbackTask implements Runnable{
 
     @Override
     public void run() {
+        TraceContext.setOpaque(((NettyResponseFuture)responseFuture).getOpaque());
         try {
-            TraceContext.setOpaque(((NettyResponseFuture)responseFuture).getOpaque());
             responseFuture.executeCallback();
-            TraceContext.clear();
         } catch (Throwable e) {
             logger.info("execute callback in executor exception, and callback throw", e);
+        }finally {
+            TraceContext.clear();
         }
     }
 }
