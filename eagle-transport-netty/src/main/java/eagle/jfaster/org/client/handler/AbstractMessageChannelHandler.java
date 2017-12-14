@@ -37,7 +37,7 @@ public abstract class AbstractMessageChannelHandler extends SimpleChannelInbound
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Response response) throws Exception {
-        int opaque = response.getOpaque();
+        String opaque = response.getOpaque();
         NettyResponseFuture future = client.removeCallBack(opaque);
         if(future != null){
             handle(response,future);

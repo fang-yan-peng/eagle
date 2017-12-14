@@ -31,7 +31,7 @@ import java.util.Map;
 public class EagleRequest implements Request {
 
     @Setter
-    private int opaque;
+    private String opaque;
 
     @Setter
     private String interfaceName;
@@ -52,7 +52,7 @@ public class EagleRequest implements Request {
     private Map<String,String> attachments;
 
     @Override
-    public int getOpaque() {
+    public String getOpaque() {
         return opaque;
     }
 

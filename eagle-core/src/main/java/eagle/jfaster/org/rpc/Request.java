@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public interface Request {
 
-    int getOpaque();
+    String getOpaque();
 
     String getInterfaceName();
 

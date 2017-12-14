@@ -11,7 +11,10 @@
                         http://eagle.jfaster.org/schema/eagle/eagle.xsd
                         ">
 
-    <context:component-scan base-package="eagle.jfaster.org" />
+    <context:component-scan base-package="eagle.jfaster.org" >
+        <!--过滤调HelloWorldImpl,因为HelloWorldImpl中有一个对calculateTrace的注入，此注入在客户端没有-->
+        <context:exclude-filter type="assignable" expression="eagle.jfaster.org.service.impl.HelloWorldImpl"/>
+    </context:component-scan>
 
     <context:annotation-config/>
 

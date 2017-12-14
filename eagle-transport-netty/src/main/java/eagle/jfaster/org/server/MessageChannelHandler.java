@@ -24,6 +24,7 @@ import eagle.jfaster.org.rpc.support.EagleRequest;
 import eagle.jfaster.org.rpc.support.EagleResponse;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.Response;
+import eagle.jfaster.org.rpc.support.TraceContext;
 import eagle.jfaster.org.transport.InvokeRouter;
 import eagle.jfaster.org.transport.StandardThreadExecutor;
 import io.netty.channel.ChannelHandlerContext;
@@ -53,7 +54,9 @@ public class MessageChannelHandler extends SimpleChannelInboundHandler<EagleRequ
             threadExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
+                    TraceContext.setOpaque(request.getOpaque());
                     EagleResponse response= (EagleResponse) invokeRouter.routeAndInvoke(request);
+                    TraceContext.clear();
                     response.setOpaque(request.getOpaque());
                     response.setNeedCompress(request.isNeedCompress());
                     ctx.writeAndFlush(response);
@@ -62,12 +65,11 @@ public class MessageChannelHandler extends SimpleChannelInboundHandler<EagleRequ
         } catch (RejectedExecutionException e) {
             EagleResponse response = new EagleResponse();
             response.setOpaque(request.getOpaque());
-            response.setException(new EagleFrameException("process thread pool is full, reject %s", e.getMessage()));
+            response.setException(new EagleFrameException("process thread pool is full, reject '%s'", e.getMessage()));
             ctx.writeAndFlush(response);
-            logger.info("process thread pool is full, reject, active={} poolSize={} corePoolSize={} maxPoolSize={} taskCount={} requestId={}",
+            logger.info(String.format("process thread pool is full, reject, active='%d' poolSize='%d' corePoolSize='%d' maxPoolSize='%d' taskCount='%d'",
                     threadExecutor.getActiveCount(), threadExecutor.getPoolSize(),
-                    threadExecutor.getCorePoolSize(), threadExecutor.getMaximumPoolSize(),
-                    threadExecutor.getTaskCount(), request.getOpaque());
+                    threadExecutor.getCorePoolSize(), threadExecutor.getMaximumPoolSize(), threadExecutor.getTaskCount()));
         }
     }
 }

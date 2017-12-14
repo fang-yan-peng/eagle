@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import static eagle.jfaster.org.constant.EagleConstants.RPC_HANDLER;
+import static eagle.jfaster.org.util.PidUtil.getPid;
 
 /**
  * Created by fangyanpeng1 on 2017/8/8.
@@ -130,7 +131,7 @@ public class ReferConfig<T> extends BaseReferConfig {
                 }
                 MergeConfig referConfig = new MergeConfig();
                 referConfig.setHost(host);
-                referConfig.setPort(Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]));
+                referConfig.setPort(getPid());
                 referConfig.setInterfaceName(interfaceClass.getName());
                 referConfig.setProtocol(protocolName);
                 referConfig.setVersion(Strings.isNullOrEmpty(version)? ConfigEnum.version.getValue() : version);

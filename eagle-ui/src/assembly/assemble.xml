@@ -31,7 +31,7 @@
 
         <!-- lib file -->
         <file>
-            <source>target/eagle-ui-1.3.jar</source>
+            <source>target/eagle-ui-${project.version}.jar</source>
             <outputDirectory>lib</outputDirectory>
         </file>
 

@@ -17,6 +17,7 @@
 
 package eagle.jfaster.org.cluster.proxy;
 
+import com.google.common.base.Strings;
 import eagle.jfaster.org.cluster.ReferCluster;
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.logging.InternalLogger;
@@ -24,6 +25,7 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.support.EagleRequest;
 import eagle.jfaster.org.rpc.support.OpaqueGenerator;
+import eagle.jfaster.org.rpc.support.TraceContext;
 import eagle.jfaster.org.util.ReflectUtil;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -89,7 +91,12 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         }
         EagleRequest request = new EagleRequest();
         request.setInterfaceName(interfaceName);
-        request.setOpaque(OpaqueGenerator.getOpaque());
+        String opaque = TraceContext.getOpaque();
+        if(Strings.isNullOrEmpty(opaque)){
+            opaque = OpaqueGenerator.getDistributeOpaque();
+            TraceContext.setOpaque(opaque);
+        }
+        request.setOpaque(opaque);
         request.setParameters(args);
         request.setMethodName(method.getName());
         request.setNeedCompress(compress);
@@ -100,15 +107,15 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
             ReferCluster<T> tmp = this.defaultCluster;
             selectDefaultCluster();
             if(tmp != defaultCluster){
-                logger.info(String.format("ReferInvokeHandler.invoke,interface:%s,from %s to %s",interfaceName,tmp.getConfig().identity(),defaultCluster.getConfig().identity()));
+                logger.info(String.format("ReferInvokeHandler invoke,interface: '%s',from '%s' to '%s'",interfaceName,tmp.getConfig().identity(),defaultCluster.getConfig().identity()));
                 try {
                     return handle(method,request);
                 } catch (Throwable e1) {
-                    logger.error(String.format("ReferInvokeHandler.invoke,interface:%s,protocol:%s",interfaceName,defaultCluster.getConfig().identity()),e1);
+                    logger.error(String.format("ReferInvokeHandler invoke,interface: '%s',protocol: '%s'",interfaceName,defaultCluster.getConfig().identity()),e1);
                     throw e1;
                 }
             }else {
-                logger.error(String.format("ReferInvokeHandler.invoke,interface:%s,protocol:%s",interfaceName,defaultCluster.getConfig().identity()),e);
+                logger.error(String.format("ReferInvokeHandler invoke,interface: '%s',protocol: '%s'",interfaceName,defaultCluster.getConfig().identity()),e);
                 throw e;
             }
 

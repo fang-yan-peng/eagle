@@ -26,4 +26,12 @@ public class MockException extends RuntimeException {
         super(String.format(format,args));
     }
 
+    public MockException(Exception e){
+        super(e);
+    }
+
+    public MockException(Throwable e){
+        super(e);
+    }
+
 }

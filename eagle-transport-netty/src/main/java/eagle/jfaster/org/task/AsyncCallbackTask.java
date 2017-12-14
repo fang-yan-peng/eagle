@@ -17,9 +17,11 @@
 
 package eagle.jfaster.org.task;
 
+import eagle.jfaster.org.client.NettyResponseFuture;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.ResponseFuture;
+import eagle.jfaster.org.rpc.support.TraceContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +39,9 @@ public class AsyncCallbackTask implements Runnable{
     @Override
     public void run() {
         try {
+            TraceContext.setOpaque(((NettyResponseFuture)responseFuture).getOpaque());
             responseFuture.executeCallback();
+            TraceContext.clear();
         } catch (Throwable e) {
             logger.info("execute callback in executor exception, and callback throw", e);
         }

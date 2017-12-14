@@ -17,9 +17,14 @@
 
 package eagle.jfaster.org.service.impl;
 
+import eagle.jfaster.org.logging.InternalLoggerFactory;
+import eagle.jfaster.org.service.Calculate;
 import eagle.jfaster.org.service.HelloWorld;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +35,13 @@ import java.util.List;
 @Service("hello")
 public class HelloWorldImpl implements HelloWorld {
 
+    private static final Logger logger = LoggerFactory.getLogger(HelloWorldImpl.class);
+
+    @Resource(name = "calculateTrace")
+    private Calculate calculateTrace;
+
     public String hello() {
+        logger.info("remote invoke result: " + calculateTrace.add(100,100));
         return "Hello World";
     }
 

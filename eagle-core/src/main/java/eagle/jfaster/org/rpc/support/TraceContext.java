@@ -14,28 +14,27 @@
  * limitations under the License.
  * </p>
  */
-
-package eagle.jfaster.org.rpc;
-
-import java.util.Map;
+package eagle.jfaster.org.rpc.support;
 
 /**
- * Created by fangyanpeng1 on 2017/7/28.
+ * Created by fangyanpeng on 2017/12/13.
  */
-public interface Response {
-    //正常的返回值
-    Object getValue();
+public class TraceContext {
 
-    //返回异常
-    Exception getException();
+    private static InheritableThreadLocal<String> opaqueManager = new InheritableThreadLocal<>();
 
-    boolean isNeedCompress();
+    public static String getOpaque(){
+        return opaqueManager.get();
+    }
 
-    //请求的唯一标识
-    String getOpaque();
+    public static void setOpaque(String opaque){
+        opaqueManager.set(opaque);
+    }
 
-    //附加信息
-    Map<String, String> getAttachments();
+    public static void clear(){
+        opaqueManager.remove();
+    }
 
-    void setAttachment(String name, String value);
+
+
 }

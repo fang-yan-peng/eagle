@@ -36,7 +36,7 @@ public class NettyResponseFuture<T> implements ResponseFuture <T> {
 
     //请求唯一标识
     @Getter
-    private final int opaque;
+    private final String opaque;
 
     //超时时间
     @Getter

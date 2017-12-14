@@ -37,13 +37,13 @@ public class SyncClient {
         //测试统计
         while (cnt < 30) {
             ++cnt;
-            System.out.println(calculate.add(1, 3));
             System.out.println(calculate.sub(8, 3));
             TimeUnit.SECONDS.sleep(2);
         }
         //测试mock
         System.out.println(calculate.div(2,0));
         HelloWorld helloWorld = appCtx.getBean("hello1",HelloWorld.class);
+        //测试TraceId追踪
         System.out.println(helloWorld.hello());
         System.out.println(helloWorld.hellos().size());
         //测试无参返回

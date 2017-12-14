@@ -29,6 +29,7 @@ import eagle.jfaster.org.rpc.Mock;
 import eagle.jfaster.org.rpc.Refer;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.spi.SpiInfo;
+import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.ReferUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +121,6 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
         try {
             return haStrategy.call(request,loadBalance);
         } catch (Throwable e) {
-            logger.error(String.format("Cluster.call fail, interface: '%s',host: '%s',cause: '%s'",config.getInterfaceName(),config.identity(),e.getMessage()));
             return dealCallFail(request,e);
         }
     }
@@ -153,13 +153,10 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
             try {
                 return mock.getMockValue(request.getInterfaceName(),request.getMethodName(),request.getParameters(),e);
             } catch (Throwable e1) {
-                throw new MockException("Call exception: '%s' -- Mock exception: '%s' ",e.getMessage(),e1.getMessage());
+                logger.error("Execute mock fail",e1);
+                throw new MockException(e);
             }
         }
-        if(e instanceof EagleFrameException){
-            throw (EagleFrameException)e;
-        }else {
-            throw new EagleFrameException(e.getMessage());
-        }
+        throw ExceptionUtil.handleException(e);
     }
 }

@@ -18,7 +18,10 @@
 package eagle.jfaster.org.service.impl;
 
 import eagle.jfaster.org.service.Calculate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 
 /**
  * Created by fangyanpeng1 on 2017/8/9.
@@ -26,8 +29,11 @@ import org.springframework.stereotype.Service;
 @Service("calculate")
 public class CalculateImpl implements Calculate {
 
+    private static final Logger logger = LoggerFactory.getLogger(CalculateImpl.class);
+
     @Override
     public int add(int a, int b) {
+        logger.info(String.format("execute %d + %d",a,b));
         return a+b;
     }
 

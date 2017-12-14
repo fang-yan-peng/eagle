@@ -5,6 +5,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 
 # 特点
 - 借助[Zookeeper][zookeeper]实现服务注册和发现。
+- 分布式ID追踪，方便查询问题。
 - 基于AQS实现高性能连接池。
 - 提供failover和failfast两种高可用策略。
 - 支持同步和异步回调两种机制。
@@ -16,8 +17,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 >  * cd eagle-benchmark
 >  * mvn clean install
 >  * cd eagle-benchmark-server/target
->  * tar -zxvf eagle-benchmark-server-1.3-assembly.tar.gz
->  * cd eagle-benchmark-server-1.3
+>  * tar -zxvf eagle-benchmark-server-1.4-assembly.tar.gz
+>  * cd eagle-benchmark-server-1.4
 >  * bin/start.sh
 >  * cd eagle-benchmark/eagle-benchmark-client
 >  * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
@@ -43,22 +44,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-core</artifactId>
-        <version>1.3</version>
+        <version>1.4</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-registry-zookeeper</artifactId>
-        <version>1.3</version>
+        <version>1.4</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-transport-netty</artifactId>
-        <version>1.3</version>
+        <version>1.4</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-spring-support</artifactId>
-        <version>1.3</version>
+        <version>1.4</version>
     </dependency>
    ```
    如果是springBoot,添加如下:
@@ -66,24 +67,53 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-core</artifactId>
-       <version>1.3</version>
+       <version>1.4</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-registry-zookeeper</artifactId>
-       <version>1.3</version>
+       <version>1.4</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-transport-netty</artifactId>
-       <version>1.3</version>
+       <version>1.4</version>
    </dependency>
    <dependency>
      <groupId>org.jfaster.eagle</groupId>
      <artifactId>spring-boot-starter-eagle</artifactId>
-     <version>1.3</version>
+     <version>1.4</version>
    </dependency>
   ```
+## 分布式调用追踪
+在应用中一个接口通常会涉及到一系列服务的rpc调用，由于服务分布式部署导致出现问题排查相对困难。eagle框架在一次调用中生成的traceId是相同的，只要通过ELK等日志搜集系统把日志集中处理，那么输入traceId就可以获取整个链路的调用过程。
+            C
+           /    
+例如 A - B      A调用B，B又调用D和C，那么在一次调用中，可以通过traceId，把整个调用串联起来。
+           \
+            D
+在业务代码中，当打印日志的时候，可以通过TraceContex.getOpaque()方法获取当前调用链中的traceId。打印出traceId，logger.info(TraceContex.getOpaque() + "xxxxxx")。这样就可以根据日志追踪整个调用过程。
+更简单的方式是使用eagle框架提供了日志组件，配置如下：
+
+### logback的配置
+- 如果当前上下文中存在traceId，logback将在输出traceId。%traceId来展示traceId。
+```xml
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+        <layout class="eagle.jfaster.org.logging.trace.logback.TraceIdPatternLogbackLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%traceId] [%thread] %-5level %logger{36} -%msg%n</Pattern>
+        </layout>
+    </encoder>
+</appender>
+```
+### log4j的配置
+- 配置layout
+log4j.appender.CONSOLE.layout=eagle.jfaster.org.logging.trace.log4j.TraceIdPatternLayout
+- 在layout.ConversionPattern中设置 %T来展示traceId
+log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
+
+### 注意：由于tomcat等web应用使用了线程池技术，所以在写web项目的时候，要写拦截器，在请求完成时调用TraceContext.clear()方法。如果不调用TraceContext.clear()方法，不影响框架的功能，只是traceId有重复，不能实现分布式追踪，后续版本中会采用java instrument技术实现清空traceId的功能代替手动清空。eagle 1.4以前版本不支持分布式追踪功能，不用考虑此问题，1.4版本还没有上传到maven中央仓库。
+
 ## 同步调用
 
 1. 创建一个接口类。
@@ -760,8 +790,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 # 后台管理界面
    > eagle 提供可视化的后台管理，方便查看和修改配置。
    > 启动后台的步骤
-   * tar -zxvf eagle-ui-1.3.tar.gz
-   * cd eagle-ui-1.3
+   * tar -zxvf eagle-ui-1.4.tar.gz
+   * cd eagle-ui-1.
    * vim conf/eagle.conf 修改用户名、密码、jvm参数、日志路径、端口号等
    * sh bin/eagle.sh start
    

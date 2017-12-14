@@ -67,8 +67,8 @@ public class EagleRpcJdkRemoteInvoke<T> implements RemoteInvoke<T> {
             Object value = method.invoke(invokeImpl,request.getParameters());
             response.setValue(value);
         } catch (Throwable e) {
-            logger.error("EagleRpcRemoteInvoke invoke error",e);
-            response.setException(new EagleFrameException(ExceptionUtil.transform(e)));
+            logger.error(String.format("%s EagleRpcJdkRemoteInvoke invoke error",request.getOpaque()),e);
+            response.setException(new EagleFrameException(e.getMessage()));
         }
         return response;
     }

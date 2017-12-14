@@ -23,8 +23,11 @@ import eagle.jfaster.org.rpc.support.EagleResponse;
 import eagle.jfaster.org.codec.Codec;
 import eagle.jfaster.org.codec.Serialization;
 import eagle.jfaster.org.exception.EagleFrameException;
+
+import static eagle.jfaster.org.constant.EagleConstants.CHARSET_UTF8;
 import static eagle.jfaster.org.util.RequestUtil.*;
 
+import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -64,11 +67,13 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
             if(isNotIllegal(magicCode)){
                 throw new EagleFrameException("Error the type: '%d' is not supported",magicCode);
             }
-            int opaque = byteBuffer.getInt();
+            byte[] opBytes = new byte[32];
+            byteBuffer.get(opBytes);
+            String opaque = new String(opBytes,CHARSET_UTF8);
             try {
                 return codec.decode(byteBuffer,serialization,opaque,magicCode);
             }catch (Throwable e){
-                logger.error("Error codec decode ",e);
+                logger.error(String.format("%s Error codec decode ",opaque),e);
                 EagleResponse response;
                 if(e instanceof EagleFrameException){
                     response = buildExceptionResponse(opaque,(Exception)e);
@@ -85,7 +90,7 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
         } catch (Throwable e){
             logger.error("Error decode message ",e);
             RemotingUtil.closeChannel(ctx.channel(),"NettyEncoder decode");
-            throw new EagleFrameException(e.getMessage());
+            throw ExceptionUtil.handleException(e);
         } finally {
             if (null != frame) {
                 frame.release();

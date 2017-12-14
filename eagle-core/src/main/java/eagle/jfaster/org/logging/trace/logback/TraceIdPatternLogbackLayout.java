@@ -14,28 +14,16 @@
  * limitations under the License.
  * </p>
  */
+package eagle.jfaster.org.logging.trace.logback;
 
-package eagle.jfaster.org.rpc;
-
-import java.util.Map;
+import ch.qos.logback.classic.PatternLayout;
+import eagle.jfaster.org.logging.trace.logback.LogbackPatternConverter;
 
 /**
- * Created by fangyanpeng1 on 2017/7/28.
+ * Created by fangyanpeng on 2017/12/14.
  */
-public interface Response {
-    //正常的返回值
-    Object getValue();
-
-    //返回异常
-    Exception getException();
-
-    boolean isNeedCompress();
-
-    //请求的唯一标识
-    String getOpaque();
-
-    //附加信息
-    Map<String, String> getAttachments();
-
-    void setAttachment(String name, String value);
+public class TraceIdPatternLogbackLayout extends PatternLayout {
+    static {
+        defaultConverterMap.put("traceId", LogbackPatternConverter.class.getName());
+    }
 }

@@ -15,27 +15,25 @@
  * </p>
  */
 
-package eagle.jfaster.org.rpc;
 
-import java.util.Map;
+package eagle.jfaster.org.logging.trace.log4j;
+
+import org.apache.log4j.helpers.PatternParser;
 
 /**
- * Created by fangyanpeng1 on 2017/7/28.
+ * Created by fangyanpeng on 2017/12/14.
  */
-public interface Response {
-    //正常的返回值
-    Object getValue();
+public class TraceIdPatternParser extends PatternParser {
+    public TraceIdPatternParser(String pattern) {
+        super(pattern);
+    }
 
-    //返回异常
-    Exception getException();
-
-    boolean isNeedCompress();
-
-    //请求的唯一标识
-    String getOpaque();
-
-    //附加信息
-    Map<String, String> getAttachments();
-
-    void setAttachment(String name, String value);
+    @Override
+    protected void finalizeConverter(char c) {
+        if ('T' == c) {
+            addConverter(new TraceIdPatternConverter());
+        } else {
+            super.finalizeConverter(c);
+        }
+    }
 }

@@ -40,15 +40,15 @@ public class TimeoutMonitorTask implements Runnable {
 
     @Override
     public void run() {
-        Iterator<Map.Entry<Integer, NettyResponseFuture>> it = client.getCallbackMap().entrySet().iterator();
+        Iterator<Map.Entry<String, NettyResponseFuture>> it = client.getCallbackMap().entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<Integer, NettyResponseFuture> next = it.next();
+            Map.Entry<String, NettyResponseFuture> next = it.next();
             NettyResponseFuture rep = next.getValue();
             if ((rep.getBeginTimestamp() + rep.getTimeoutMillis() + 300) <= System.currentTimeMillis()) {
                 if(rep.getCallBack() == null){
-                    rep.onFail(new EagleFrameException("%s request timeout，requestid:%d,timeout:%d ms", client.getConfig().getInterfaceName(),rep.getOpaque(),rep.getTimeoutMillis()));
+                    rep.onFail(new EagleFrameException("%s request timeout, timeout: [%d] ms", client.getConfig().getInterfaceName(),rep.getTimeoutMillis()));
                 }else {
-                    rep.setException(new EagleFrameException("%s request timeout，requestid:%d,timeout:%d ms", client.getConfig().getInterfaceName(),rep.getOpaque(),rep.getTimeoutMillis()));
+                    rep.setException(new EagleFrameException("%s request timeout, timeout: [%d] ms", client.getConfig().getInterfaceName(),rep.getTimeoutMillis()));
                     client.executeInvokeCallback(rep);
                 }
                 it.remove();

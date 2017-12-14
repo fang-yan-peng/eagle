@@ -25,6 +25,7 @@ import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.statistic.EagleStatsManager;
 import eagle.jfaster.org.transport.Client;
 import eagle.jfaster.org.util.ClockSource;
+import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.ReflectUtil;
 
 /**
@@ -56,12 +57,12 @@ public class StatsNettyRefer<T> extends NettyRefer<T> {
                     EagleStatsManager.incInvoke(statsKey, ReflectUtil.getMethodDesc(request.getMethodName(),request.getParameterDesc()), ClockSource.MILLINSTANCE.elapsedMillis(start));
                 }
             }else {
-                String warn = String.format("%s too much request,more than actives:%d",config.identity(),lock.getMaxPermits());
+                String warn = String.format("'%s' too much request,more than actives:[%d]",config.identity(),lock.getMaxPermits());
                 logger.warn(warn);
                 throw new EagleFrameException(warn);
             }
         } catch (Throwable e) {
-            throw new EagleFrameException("NettyRefer request failed,refer:%s,host:%s,cause:%s",config.getInterfaceName(),config.identity(),e.getMessage());
+            throw ExceptionUtil.handleException(e);
         }finally {
             activeCnt.decrementAndGet();
         }

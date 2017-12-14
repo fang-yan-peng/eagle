@@ -71,7 +71,7 @@ public abstract class AbstractNettyChannel {
 
     public Object request(Request request, NettySharedConnPool connPool) throws Exception {
         int timeout = config.getExtInt(ConfigEnum.requestTimeout.getName(),ConfigEnum.requestTimeout.getIntValue());
-        final int opaque = request.getOpaque();
+        final String opaque = request.getOpaque();
         final NettyResponseFuture responseFuture = new NettyResponseFuture(opaque,timeout,callBack);
         try {
             if(timeout < 0){

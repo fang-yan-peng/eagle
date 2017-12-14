@@ -25,6 +25,7 @@ import eagle.jfaster.org.pool.SuspendResumeLock;
 import eagle.jfaster.org.rpc.Refer;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.transport.Client;
+import eagle.jfaster.org.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -90,12 +91,12 @@ public class NettyRefer <T> implements Refer <T> {
                     lock.release();
                 }
             }else {
-                String warn = String.format("'%s' too much request, more than actives: '%d'",config.identity(),lock.getMaxPermits());
+                String warn = String.format("'%s' too much request, more than actives: [%d]",config.identity(),lock.getMaxPermits());
                 logger.warn(warn);
                 throw new EagleFrameException(warn);
             }
         } catch (Throwable e) {
-            throw new EagleFrameException("NettyRefer request failed, refer: '%s', host: '%s', cause: '%s'",config.getInterfaceName(),config.identity(),e.getMessage());
+            throw ExceptionUtil.handleException(e);
         }finally {
             activeCnt.decrementAndGet();
         }

@@ -17,6 +17,7 @@
 
 package eagle.jfaster.org.util;
 
+import eagle.jfaster.org.exception.EagleFrameException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -46,5 +47,12 @@ public final class ExceptionUtil {
             cause.printStackTrace(writer);
         }
         return result.toString();
+    }
+
+    public static EagleFrameException handleException(Throwable e){
+        if(e instanceof  EagleFrameException){
+            return (EagleFrameException)e;
+        }
+        return new EagleFrameException(e);
     }
 }

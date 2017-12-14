@@ -30,4 +30,11 @@
 
     <eagle:service interface="eagle.jfaster.org.service.Notify" ref="notify" base-service="baseService1" export="proto1:9300,proto1:9400"/>
 
+
+    <!--客户端配置-->
+    <eagle:protocol id="proto2" name="eagle" serialization="kryo" use-default="true" cluster="eagle" max-content-length="16777216"/>
+    <eagle:base-refer id="baseReferTrace" request-timeout="300" actives="20000" actives-wait="300" loadbalance="roundrobin" ha-strategy="failfast" protocol="proto2" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
+    <eagle:refer id="calculateTrace" interface="eagle.jfaster.org.service.Calculate" base-refer="baseReferTrace" max-invoke-error="10" max-client-connection="20"/>
+
+
 </beans>

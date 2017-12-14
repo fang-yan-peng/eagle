@@ -30,6 +30,7 @@ import eagle.jfaster.org.coder.NettyEncoder;
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import static eagle.jfaster.org.constant.EagleConstants.*;
+
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
@@ -45,6 +46,7 @@ import eagle.jfaster.org.task.HeartBeatTask;
 import eagle.jfaster.org.task.TimeoutMonitorTask;
 import eagle.jfaster.org.thread.AsyncCallbackExecutor;
 import eagle.jfaster.org.transport.Client;
+import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -97,7 +99,7 @@ public class NettyClient implements Client,StatisticCallback {
     private AtomicLong errorCount = new AtomicLong(0);
 
     @Getter
-    private Map<Integer,NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
+    private Map<String,NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
 
     private ScheduledFuture<?> asyncCallbackMonitorFuture = null;
 
@@ -184,11 +186,11 @@ public class NettyClient implements Client,StatisticCallback {
         return this.callBack == null ? new SyncNettyChannel(this,channel) : new AsyncNettyChannel(this,channel);
     }
 
-    public NettyResponseFuture removeCallBack(Integer opaque){
+    public NettyResponseFuture removeCallBack(String opaque){
         return callbackMap.remove(opaque);
     }
 
-    public void addCallBack(Integer opaque,NettyResponseFuture future){
+    public void addCallBack(String opaque,NettyResponseFuture future){
         callbackMap.put(opaque,future);
     }
 
@@ -265,7 +267,7 @@ public class NettyClient implements Client,StatisticCallback {
             if(channel != null){
                 connPool.invalidateConnection(channel);
             }
-            throw new EagleFrameException(e.getMessage());
+            throw ExceptionUtil.handleException(e);
         }
     }
 

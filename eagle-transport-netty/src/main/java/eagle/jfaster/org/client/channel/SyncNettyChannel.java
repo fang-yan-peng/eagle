@@ -47,7 +47,7 @@ public class SyncNettyChannel extends AbstractNettyChannel {
         if(responseFuture.isSendRequestOK() && !responseFuture.isTimeout()){
             return ret;
         }else {
-            throw new EagleFrameException("Request timeout,timeout: %d",timeout);
+            throw new EagleFrameException("Request timeout,timeout: [%d]",timeout);
         }
     }
 }

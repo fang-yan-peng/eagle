@@ -14,28 +14,16 @@
  * limitations under the License.
  * </p>
  */
+package eagle.jfaster.org.util;
 
-package eagle.jfaster.org.rpc;
-
-import java.util.Map;
+import java.lang.management.ManagementFactory;
 
 /**
- * Created by fangyanpeng1 on 2017/7/28.
+ * Created by fangyanpeng on 2017/12/13.
  */
-public interface Response {
-    //正常的返回值
-    Object getValue();
+public class PidUtil {
 
-    //返回异常
-    Exception getException();
-
-    boolean isNeedCompress();
-
-    //请求的唯一标识
-    String getOpaque();
-
-    //附加信息
-    Map<String, String> getAttachments();
-
-    void setAttachment(String name, String value);
+    public static int getPid(){
+        return Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+    }
 }

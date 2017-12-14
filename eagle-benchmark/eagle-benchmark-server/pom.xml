@@ -3,7 +3,7 @@
     <parent>
         <artifactId>eagle-benchmark</artifactId>
         <groupId>org.jfaster.eagle</groupId>
-        <version>1.3</version>
+        <version>1.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-benchmark-api</artifactId>
-            <version>1.3</version>
+            <version>${project.version}</version>
         </dependency>
         <!--logback-->
         <dependency>
@@ -43,11 +43,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
@@ -81,22 +76,22 @@
         <dependency>
             <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-core</artifactId>
-            <version>1.3</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-registry-zookeeper</artifactId>
-            <version>1.3</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-transport-netty</artifactId>
-            <version>1.3</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jfaster.eagle</groupId>
             <artifactId>eagle-spring-support</artifactId>
-            <version>1.3</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!--spring-->
