@@ -117,7 +117,7 @@ log4j.appender.CONSOLE.layout=eagle.jfaster.org.logging.trace.log4j.TraceIdPatte
 log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
 ```
 
-### 注意：由于tomcat等web应用使用了线程池技术，所以在写web项目的时候，要写拦截器，在请求完成时调用TraceContext.clear()方法。如果不调用TraceContext.clear()方法，不影响框架的功能，只是traceId有重复，不能实现分布式追踪，后续版本中会采用java instrument技术实现清空traceId的功能代替手动清空。eagle 1.4以前版本不支持分布式追踪功能，不用考虑此问题，1.4版本还没有上传到maven中央仓库。
+### 注意：由于tomcat等web应用使用了线程池技术，所以在写web项目的时候，要写拦截器，在请求完成时调用TraceContext.clear()方法。如果不调用TraceContext.clear()方法，不影响框架的功能，只是traceId有重复，不能实现分布式追踪。eagle 1.4以前版本不支持分布式追踪功能，不用考虑此问题，1.4版本还没有上传到maven中央仓库。
 
 ## 同步调用
 
