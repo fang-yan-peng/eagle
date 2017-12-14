@@ -86,6 +86,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
    </dependency>
   ```
 ## 分布式调用追踪
+```xml
 在应用中一个接口通常会涉及到一系列服务的rpc调用，由于服务分布式部署导致出现问题排查相对困难。eagle框架在一次调用中生成的traceId是相同的，只要通过ELK等日志搜集系统把日志集中处理，那么输入traceId就可以获取整个链路的调用过程。
             C
            /    
@@ -94,7 +95,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
             D
 在业务代码中，当打印日志的时候，可以通过TraceContex.getOpaque()方法获取当前调用链中的traceId。打印出traceId，logger.info(TraceContex.getOpaque() + "xxxxxx")。这样就可以根据日志追踪整个调用过程。
 更简单的方式是使用eagle框架提供了日志组件，配置如下：
-
+```
 ### logback的配置
 - 如果当前上下文中存在traceId，logback将在输出traceId。%traceId来展示traceId。
 ```xml
@@ -108,9 +109,13 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
 ```
 ### log4j的配置
 - 配置layout
+```xml
 log4j.appender.CONSOLE.layout=eagle.jfaster.org.logging.trace.log4j.TraceIdPatternLayout
+```
 - 在layout.ConversionPattern中设置 %T来展示traceId
+```xml
 log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
+```
 
 ### 注意：由于tomcat等web应用使用了线程池技术，所以在写web项目的时候，要写拦截器，在请求完成时调用TraceContext.clear()方法。如果不调用TraceContext.clear()方法，不影响框架的功能，只是traceId有重复，不能实现分布式追踪，后续版本中会采用java instrument技术实现清空traceId的功能代替手动清空。eagle 1.4以前版本不支持分布式追踪功能，不用考虑此问题，1.4版本还没有上传到maven中央仓库。
 
