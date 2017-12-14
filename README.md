@@ -1,7 +1,7 @@
 # Eagle
 
 # 概要
-Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]、[Hessian][hessian]等序列化协议，默认序列化使用kryo。提供Spring和SpringBoot插件，方便与Spring和SpringBoot集成。
+Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追踪，支持[Kryo][kryo]、[Hessian][hessian]等序列化协议，默认序列化使用kryo。提供Spring和SpringBoot插件，方便与Spring和SpringBoot集成。
 
 # 特点
 - 借助[Zookeeper][zookeeper]实现服务注册和发现。
@@ -94,7 +94,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持[Kryo][kryo]
            \
             D
 在业务代码中，当打印日志的时候，可以通过TraceContex.getOpaque()方法获取当前调用链中的traceId。打印出traceId，logger.info(TraceContex.getOpaque() + "xxxxxx")。这样就可以根据日志追踪整个调用过程。
-更简单的方式是使用eagle框架提供了日志组件，配置如下：
+更简单的方式是使用eagle框架提供的日志组件，配置如下：
 ```
 ### logback的配置
 - 如果当前上下文中存在traceId，logback将在输出traceId。%traceId来展示traceId。
