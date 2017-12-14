@@ -90,7 +90,7 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
 在应用中一个接口通常会涉及到一系列服务的rpc调用，由于服务分布式部署导致出现问题排查相对困难。eagle框架在一次调用中生成的traceId是相同的，只要通过ELK等日志搜集系统把日志集中处理，那么输入traceId就可以获取整个链路的调用过程。
             C
            /    
-例如 A - B      A调用B，B又调用D和C，那么在一次调用中，可以通过traceId，把整个调用串联起来。
+例如 A - B      A调用B，B又调用D和C，那么在一次调用中，可以通过traceId，把整个调用串联起来。traceId是根据ip+进程号+时间戳+计数，生成的全局唯一id，如果框架内部获取的ip不准确可以通过，如-Dhost=10.110.69.17指定。
            \
             D
 在业务代码中，当打印日志的时候，可以通过TraceContex.getOpaque()方法获取当前调用链中的traceId。打印出traceId，logger.info(TraceContex.getOpaque() + "xxxxxx")。这样就可以根据日志追踪整个调用过程。
@@ -796,7 +796,7 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
    > eagle 提供可视化的后台管理，方便查看和修改配置。
    > 启动后台的步骤
    * tar -zxvf eagle-ui-1.4.tar.gz
-   * cd eagle-ui-1.
+   * cd eagle-ui-1.4
    * vim conf/eagle.conf 修改用户名、密码、jvm参数、日志路径、端口号等
    * sh bin/eagle.sh start
    
