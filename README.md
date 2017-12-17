@@ -17,8 +17,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
 >  * cd eagle-benchmark
 >  * mvn clean install
 >  * cd eagle-benchmark-server/target
->  * tar -zxvf eagle-benchmark-server-1.4-assembly.tar.gz
->  * cd eagle-benchmark-server-1.4
+>  * tar -zxvf eagle-benchmark-server-1.5-assembly.tar.gz
+>  * cd eagle-benchmark-server-1.5
 >  * bin/start.sh
 >  * cd eagle-benchmark/eagle-benchmark-client
 >  * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
@@ -44,22 +44,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-core</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-registry-zookeeper</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-transport-netty</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-spring-support</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </dependency>
    ```
    如果是springBoot,添加如下:
@@ -67,22 +67,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-core</artifactId>
-       <version>1.4</version>
+       <version>1.5</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-registry-zookeeper</artifactId>
-       <version>1.4</version>
+       <version>1.5</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-transport-netty</artifactId>
-       <version>1.4</version>
+       <version>1.5</version>
    </dependency>
    <dependency>
      <groupId>org.jfaster.eagle</groupId>
      <artifactId>spring-boot-starter-eagle</artifactId>
-     <version>1.4</version>
+     <version>1.5</version>
    </dependency>
   ```
 ## 分布式调用追踪
@@ -841,8 +841,8 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
 # 后台管理界面
    > eagle 提供可视化的后台管理，方便查看和修改配置。
    > 启动后台的步骤
-   * tar -zxvf eagle-ui-1.4.tar.gz
-   * cd eagle-ui-1.4
+   * tar -zxvf eagle-ui-1.5.tar.gz
+   * cd eagle-ui-1.5
    * vim conf/eagle.conf 修改用户名、密码、jvm参数、日志路径、端口号等
    * sh bin/eagle.sh start
    
