@@ -839,7 +839,7 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
    * service-type: 服务调用类型，支持jdk和cglib两种配置，默认是jdk。如果是jdk，采用反射机制调用实现类的方法；如果是cglib，采用cglib索引机制直接调用实现类的方法，性能更好。
    
 ## 分布式追踪配置（eagle:trace）
-  * 在spring的配置文件中，增加`<eagle:trace/>`配置。配合@Trace注解实现追踪功能。@Trace打在类上，则这个类的所有方法被追踪。打在方法上，则只有这个方法被追踪。只要在最外层调用，
+  * 在spring的配置文件中，增加`<eagle:trace/>`配置。配合@Trace注解实现追踪功能。@Trace打在类上，则这个类的所有方法被追踪。打在方法上，则只有这个方法被追踪。只要在最外层调用
   打注解即可，内层的调用会自动并入当前的调用链中。同一调用链中的日志打印会带有相同的traceId。
 # 后台管理界面
    > eagle 提供可视化的后台管理，方便查看和修改配置。
