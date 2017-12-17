@@ -14,28 +14,37 @@
  * limitations under the License.
  * </p>
  */
-
 package eagle.jfaster.org.service.impl;
 
 import eagle.jfaster.org.config.annotation.Service;
-import eagle.jfaster.org.service.Calculate;
+import eagle.jfaster.org.service.City;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Created by fangyanpeng1 on 2017/8/9.
+ * Created by fangyanpeng on 2017/12/17.
  */
-@Service(id = "calculateService",baseService = "baseService",export = "proto:29001")
-public class CalculateImpl implements Calculate {
+@Service(baseService = "baseService")
+public class CityImpl implements City{
 
-    private static final Logger logger = LoggerFactory.getLogger(CalculateImpl.class);
-    public int add(int a, int b) {
-        logger.info("execute {} + {}",a,b);
-        return a + b;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(CityImpl.class);
 
-    public int sub(int a, int b) {
-        logger.info("execute {} - {}",a,b);
-        return a - b;
+
+    private Map<Integer,String> cityNames = new HashMap(){
+        {
+            this.put(1,"北京");
+            this.put(2,"上海");
+            this.put(3,"广州");
+            this.put(4,"深圳");
+        }
+    };
+
+    @Override
+    public String getCityName(int code) {
+        logger.info("execute get city name by {}",code);
+        return cityNames.get(code);
     }
 }

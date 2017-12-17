@@ -36,5 +36,6 @@ public class EagleNamespaceHandler extends NamespaceHandlerSupport{
         registerBeanDefinitionParser("base-refer", new EagleBeanParser(BaseReferBean.class));
         registerBeanDefinitionParser("spi", new SpiBeanParser(SpiBean.class));
         registerBeanDefinitionParser("component-scan", new EagleScanBeanParser());
+        registerBeanDefinitionParser("trace", new EagleTraceBeanParser());
     }
 }

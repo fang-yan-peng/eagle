@@ -14,26 +14,29 @@
  * limitations under the License.
  * </p>
  */
-package eagle.jfaster.org.context;
-
-import eagle.jfaster.org.config.annotation.Refer;
-
+package eagle.jfaster.org.bean.trace;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by fangyanpeng on 2017/10/24.
+ * Created by fangyanpeng on 2017/12/16.
  */
-public class ReferContext {
+public class EagleTraceMethodRecods {
 
-    private static Map<ReferCacheKey,String> refer2Name = new HashMap<>();
+    private static Map<MethodCacheKey,Boolean> traces = new HashMap<>();
 
-    public static void register(Refer refer,Class<?> targetClass,String name){
-        refer2Name.put(new ReferCacheKey(targetClass,refer),name);
+    public static boolean needTrace(Method method,Class<?> targetClass){
+        Boolean trace = traces.get(new MethodCacheKey(method,targetClass));
+        if(trace == null){
+            return false;
+        }
+        return trace;
     }
 
-    public static String getName(Refer refer,Class<?> targetClass){
-        return refer2Name.get(new ReferCacheKey(targetClass,refer));
+    public static synchronized void recordTrace(Method method,Class<?> targetClass,boolean trace){
+        traces.put(new MethodCacheKey(method,targetClass),trace);
     }
+
 
 }

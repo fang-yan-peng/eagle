@@ -97,11 +97,11 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
 更简单的方式是使用eagle框架提供的日志组件，配置如下：
 ```
 ### logback的配置
-- 如果当前上下文中存在traceId，logback将在输出traceId。%traceId来展示traceId。
+- 如果当前上下文中存在traceId，logback将在输出traceId，如果不存在traceId则输出N/A。用%traceId来展示traceId。
 ```xml
 <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-        <layout class="eagle.jfaster.org.logging.trace.logback.TraceIdPatternLogbackLayout">
+        <layout class="eagle.jfaster.org.trace.logback.TraceIdPatternLogbackLayout">
             <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%traceId] [%thread] %-5level %logger{36} -%msg%n</Pattern>
         </layout>
     </encoder>
@@ -110,14 +110,60 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
 ### log4j的配置
 - 配置layout
 ```xml
-log4j.appender.CONSOLE.layout=eagle.jfaster.org.logging.trace.log4j.TraceIdPatternLayout
+log4j.appender.CONSOLE.layout=eagle.jfaster.org.trace.log4j.TraceIdPatternLayout
 ```
 - 在layout.ConversionPattern中设置 %T来展示traceId
 ```xml
 log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
 ```
 
-### 注意：由于tomcat等web应用使用了线程池技术，所以在写web项目的时候，要写拦截器，在请求完成时调用TraceContext.clear()方法。如果不调用TraceContext.clear()方法，不影响框架的功能，只是traceId有重复，不能实现分布式追踪。eagle 1.4以前版本不支持分布式追踪功能，不用考虑此问题，1.4版本还没有上传到maven中央仓库。
+### 分布式追踪在程序中的应用
+
+- 在spring配置文件中，添加<eagle:trace/> 配置，springboot不用添加额外配置。然后在需要追踪的类或者方法上打上@Trace注解
+
+`src/main/java/eagle/jfaster/org/controller/TraceController.java`
+
+```java
+    package eagle.jfaster.org.controller;
+    
+    import eagle.jfaster.org.config.annotation.Refer;
+    import eagle.jfaster.org.service.Calculate;
+    import eagle.jfaster.org.service.Hello;
+    import eagle.jfaster.org.trace.annotation.Trace;
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+    import org.springframework.web.bind.annotation.RequestMapping;
+    import org.springframework.web.bind.annotation.RequestParam;
+    import org.springframework.web.bind.annotation.RestController;
+    
+    /**
+     * Created by fangyanpeng on 2017/12/16.
+     */
+    @RestController
+    @RequestMapping("/")
+    public class TraceController {
+    
+        private static final Logger logger = LoggerFactory.getLogger(TraceController.class);
+    
+        @Refer(baseRefer = "baseRefer")
+        private Calculate calculate;
+    
+        @Refer(baseRefer = "baseRefer")
+        private Hello hello;
+    
+        @Trace
+        @RequestMapping("/cal")
+        public String cal(@RequestParam int a, @RequestParam int b,@RequestParam int code){
+            //log会打印出TraceId
+            logger.info(hello.hello(code));
+            int res = calculate.add(a, b);
+            logger.info("calculate {}",res);
+            return String.valueOf(res);
+        }
+    }
+
+```
+
 
 ## 同步调用
 

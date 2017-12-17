@@ -14,16 +14,12 @@
  * limitations under the License.
  * </p>
  */
-package eagle.jfaster.org.logging.trace.logback;
-
-import ch.qos.logback.classic.PatternLayout;
-import eagle.jfaster.org.logging.trace.logback.LogbackPatternConverter;
+package eagle.jfaster.org.service;
 
 /**
- * Created by fangyanpeng on 2017/12/14.
+ * Created by fangyanpeng on 2017/12/17.
  */
-public class TraceIdPatternLogbackLayout extends PatternLayout {
-    static {
-        defaultConverterMap.put("traceId", LogbackPatternConverter.class.getName());
-    }
+public interface Hello {
+
+    String hello(int code);
 }

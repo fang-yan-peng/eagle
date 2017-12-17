@@ -20,11 +20,14 @@ import com.google.common.base.Strings;
 import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.context.ReferContext;
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.util.AopTargetUtil;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
@@ -48,27 +51,35 @@ public class ReferInjectPostProcessor implements BeanPostProcessor,ApplicationCo
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         try {
-            Class<?> beanClass = bean.getClass();
-            Field[] fields;
-            try {
-                fields = beanClass.getDeclaredFields();
-            } catch (Throwable e) {
+            final Class<?> targetClass = AopTargetUtil.getTargetClass(bean);
+            final Object targetBean = AopTargetUtil.getTarget(bean);
+            if(AopUtils.isAopProxy(targetBean)){
                 return bean;
             }
-            if(fields != null && fields.length != 0){
-                for (Field field : fields){
-                    if(field.isAnnotationPresent(Refer.class)){
+            try {
+                ReflectionUtils.doWithFields(targetClass,new ReflectionUtils.FieldCallback(){
+
+                    @Override
+                    public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                         Refer refer = field.getAnnotation(Refer.class);
-                        field.setAccessible(true);
-                        String id = ReferContext.getName(refer);
-                        if(Strings.isNullOrEmpty(id)){
-                            continue;
+                        ReflectionUtils.makeAccessible(field);
+                        String id = ReferContext.getName(refer,field.getType());
+                        if(!Strings.isNullOrEmpty(id) && field.get(targetBean) == null){
+                            field.set(targetBean,ctx.getBean(id));
                         }
-                        field.set(bean,ctx.getBean(id));
+
                     }
-                }
+                },new ReflectionUtils.FieldFilter(){
+
+                    @Override
+                    public boolean matches(Field field) {
+                        return field.isAnnotationPresent(Refer.class);
+                    }
+                });
+            } catch (Throwable e) {
+
             }
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new EagleFrameException(e);
         }
         return bean;

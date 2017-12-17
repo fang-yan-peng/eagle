@@ -14,21 +14,12 @@
  * limitations under the License.
  * </p>
  */
-
-
-package eagle.jfaster.org.logging.trace.log4j;
-
-import com.google.common.base.Strings;
-import eagle.jfaster.org.rpc.support.TraceContext;
-import org.apache.log4j.helpers.PatternConverter;
-import org.apache.log4j.spi.LoggingEvent;
+package eagle.jfaster.org.service;
 
 /**
- * Created by fangyanpeng on 2017/12/14.
+ * Created by fangyanpeng on 2017/12/17.
  */
-public class TraceIdPatternConverter extends PatternConverter {
-    @Override
-    protected String convert(LoggingEvent loggingEvent) {
-        return Strings.isNullOrEmpty(TraceContext.getOpaque()) ? "N/A" : TraceContext.getOpaque();
-    }
+public interface Hello {
+
+    String hello(int code);
 }

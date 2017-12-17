@@ -14,28 +14,31 @@
  * limitations under the License.
  * </p>
  */
-
 package eagle.jfaster.org.service.impl;
 
+import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.config.annotation.Service;
-import eagle.jfaster.org.service.Calculate;
+import eagle.jfaster.org.service.City;
+import eagle.jfaster.org.service.Hello;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * Created by fangyanpeng1 on 2017/8/9.
+ * Created by fangyanpeng on 2017/12/17.
  */
-@Service(id = "calculateService",baseService = "baseService",export = "proto:29001")
-public class CalculateImpl implements Calculate {
+@Service(baseService = "baseService")
+public class HelloImpl implements Hello{
 
-    private static final Logger logger = LoggerFactory.getLogger(CalculateImpl.class);
-    public int add(int a, int b) {
-        logger.info("execute {} + {}",a,b);
-        return a + b;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(HelloImpl.class);
 
-    public int sub(int a, int b) {
-        logger.info("execute {} - {}",a,b);
-        return a - b;
+    @Refer(baseRefer = "baseRefer")
+    private City city;
+
+    @Override
+    public String hello(int code) {
+        String cityName = city.getCityName(code);
+        logger.info("execute hello {}",cityName);
+        return "hello " + cityName;
     }
 }

@@ -32,6 +32,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Element;
 
 import java.lang.reflect.Field;
@@ -45,16 +46,16 @@ import static eagle.jfaster.org.util.ParserUtil.register;
 public class EagleScanBeanParser extends AbstractScanBeanParser {
 
     @Override
-    public void registerCandidateComponents(Element element, String basePackage, ParserContext parserContext) {
+    public void registerCandidateComponents(Element element, String basePackage, final ParserContext parserContext) {
         try {
             String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
                     resolveBasePackage(basePackage,parserContext.getDelegate().getEnvironment()) + "/" + this.resourcePattern;
             Resource[] rs = resourcePatternResolver.getResources(packageSearchPath);
-            for (Resource r : rs) {
+            for (final Resource r : rs) {
                 MetadataReader reader = metadataReaderFactory.getMetadataReader(r);
                 AnnotationMetadata annotationMD = reader.getAnnotationMetadata();
                 ClassMetadata clazzMD = reader.getClassMetadata();
-                Class<?> clz = Class.forName(clazzMD.getClassName());
+                final Class<?> clz = Class.forName(clazzMD.getClassName());
                 if (annotationMD.hasAnnotation(Service.class.getName())) {
                     if(clz.isInterface()){
                         throw new EagleFrameException("registried service should not be a interface");
@@ -73,10 +74,9 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                         service.setLazyInit(false);
                         service.addPropertyValue("interface",interfaceName);
                         service.addPropertyReference("ref",serviceId);
-                        if(Strings.isNullOrEmpty(serviceAnnotation.export())){
-                            throw new EagleFrameException("export is not config");
+                        if(!Strings.isNullOrEmpty(serviceAnnotation.export())){
+                            service.addPropertyValue("export",serviceAnnotation.export());
                         }
-                        service.addPropertyValue("export",serviceAnnotation.export());
                         if(!Strings.isNullOrEmpty(serviceAnnotation.registry())){
                             multiRef("registries",serviceAnnotation.registry(),service);
                         }
@@ -136,141 +136,145 @@ public class EagleScanBeanParser extends AbstractScanBeanParser {
                     }
                 }
 
-                if(clz.isInterface() || !(clz.isAnnotationPresent(Service.class) || clz.isAnnotationPresent(org.springframework.stereotype.Service.class))){
+                if(clz.isInterface()){
                     continue;
                 }
 
-                Field[] fields;
                 try {
-                    fields = clz.getDeclaredFields();
-                    if(fields == null || fields.length == 0){
-                        continue;
-                    }
-                } catch (Throwable e) {
-                    continue;
-                }
+                    ReflectionUtils.doWithFields(clz,new ReflectionUtils.FieldCallback(){
 
-                for (Field field : fields){
-                    if(field.isAnnotationPresent(Refer.class)){
-                        Refer referAnnotation = field.getAnnotation(Refer.class);
-                        if(ReferContext.getName(referAnnotation) != null){
-                            continue;
+                        @Override
+                        public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                            Refer referAnnotation = field.getAnnotation(Refer.class);
+
+                            Class<?> interfaceClass = field.getType();
+                            if(ReferContext.getName(referAnnotation,interfaceClass) != null){
+                                return;
+                            }
+                            if(!interfaceClass.isInterface()){
+                                throw new EagleFrameException("Refer should be annotated on a interface");
+                            }
+                            BeanDefinitionBuilder refer = BeanDefinitionBuilder.rootBeanDefinition(ReferBean.class);
+                            refer.setLazyInit(false);
+                            if(!Strings.isNullOrEmpty(referAnnotation.registry())){
+                                multiRef("registries",referAnnotation.registry(),refer);
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.protocol())){
+                                multiRef("protocols",referAnnotation.protocol(),refer);
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.statsLog())){
+                                refer.addPropertyValue("statsLog",referAnnotation.statsLog());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.actives())){
+                                refer.addPropertyValue("actives",referAnnotation.actives());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.activesWait())){
+                                refer.addPropertyValue("activesWait",referAnnotation.activesWait());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.application())){
+                                refer.addPropertyValue("application",referAnnotation.application());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.group())){
+                                refer.addPropertyValue("group",referAnnotation.group());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.baseRefer())){
+                                refer.addPropertyReference("baseRefer",referAnnotation.baseRefer());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.filter())){
+                                refer.addPropertyValue("filter",referAnnotation.filter());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.host())){
+                                refer.addPropertyValue("host",referAnnotation.host());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.module())){
+                                refer.addPropertyValue("module",referAnnotation.module());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.mock())){
+                                refer.addPropertyValue("mock",referAnnotation.mock());
+                                register(referAnnotation.mock(),"failMock",refer,parserContext);
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.retries())){
+                                refer.addPropertyValue("retries",referAnnotation.retries());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.register())){
+                                refer.addPropertyValue("register",referAnnotation.register());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.version())){
+                                refer.addPropertyValue("version",referAnnotation.version());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.compress())){
+                                refer.addPropertyValue("compress",referAnnotation.compress());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.connectTimeout())){
+                                refer.addPropertyValue("connectTimeout",referAnnotation.connectTimeout());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.haStrategy())){
+                                refer.addPropertyValue("haStrategy",referAnnotation.haStrategy());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.check())){
+                                refer.addPropertyValue("check",referAnnotation.check());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.idleTime())){
+                                refer.addPropertyValue("idleTime",referAnnotation.idleTime());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.subscribe())){
+                                refer.addPropertyValue("subscribe",referAnnotation.subscribe());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.maxClientConnection())){
+                                refer.addPropertyValue("maxClientConnection",referAnnotation.maxClientConnection());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.minClientConnection())){
+                                refer.addPropertyValue("minClientConnection",referAnnotation.minClientConnection());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.maxLifetime())){
+                                refer.addPropertyValue("maxLifetime",referAnnotation.maxLifetime());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.minClientConnection())){
+                                refer.addPropertyValue("minClientConnection",referAnnotation.minClientConnection());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.loadbalance())){
+                                refer.addPropertyValue("loadbalance",referAnnotation.loadbalance());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.maxInvokeError())){
+                                refer.addPropertyValue("maxInvokeError",referAnnotation.maxInvokeError());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.minCompressSize())){
+                                refer.addPropertyValue("minCompressSize",referAnnotation.minCompressSize());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.requestTimeout())){
+                                refer.addPropertyValue("requestTimeout",referAnnotation.requestTimeout());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.proxy())){
+                                refer.addPropertyValue("proxy",referAnnotation.proxy());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.callbackThread())){
+                                refer.addPropertyValue("callbackThread",referAnnotation.callbackThread());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.callbackQueueSize())){
+                                refer.addPropertyValue("callbackQueueSize",referAnnotation.callbackQueueSize());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.callbackWaitTime())){
+                                refer.addPropertyValue("callbackWaitTime",referAnnotation.callbackWaitTime());
+                            }
+                            if(!Strings.isNullOrEmpty(referAnnotation.callback())){
+                                refer.addPropertyValue("callback",referAnnotation.callback());
+                                register(referAnnotation.callback(),"invokeCallback",refer,parserContext);
+                            }
+                            refer.addPropertyValue("interface",interfaceClass);
+                            String referId = String.format("%s.%s",clz.getCanonicalName(),field.getName());
+                            ReferContext.register(referAnnotation,interfaceClass,referId);
+                            parserContext.getRegistry().registerBeanDefinition(referId,refer.getBeanDefinition());
+
                         }
-                        Class<?> interfaceClass = field.getType();
-                        if(!interfaceClass.isInterface()){
-                            throw new EagleFrameException("Refer should be annotated on a interface");
+                    },new ReflectionUtils.FieldFilter(){
+
+                        @Override
+                        public boolean matches(Field field) {
+                            return field.isAnnotationPresent(Refer.class);
                         }
-                        BeanDefinitionBuilder refer = BeanDefinitionBuilder.rootBeanDefinition(ReferBean.class);
-                        refer.setLazyInit(false);
-                        if(!Strings.isNullOrEmpty(referAnnotation.registry())){
-                            multiRef("registries",referAnnotation.registry(),refer);
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.protocol())){
-                            multiRef("protocols",referAnnotation.protocol(),refer);
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.statsLog())){
-                            refer.addPropertyValue("statsLog",referAnnotation.statsLog());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.actives())){
-                            refer.addPropertyValue("actives",referAnnotation.actives());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.activesWait())){
-                            refer.addPropertyValue("activesWait",referAnnotation.activesWait());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.application())){
-                            refer.addPropertyValue("application",referAnnotation.application());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.group())){
-                            refer.addPropertyValue("group",referAnnotation.group());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.baseRefer())){
-                            refer.addPropertyReference("baseRefer",referAnnotation.baseRefer());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.filter())){
-                            refer.addPropertyValue("filter",referAnnotation.filter());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.host())){
-                            refer.addPropertyValue("host",referAnnotation.host());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.module())){
-                            refer.addPropertyValue("module",referAnnotation.module());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.mock())){
-                            refer.addPropertyValue("mock",referAnnotation.mock());
-                            register(referAnnotation.mock(),"failMock",refer,parserContext);
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.retries())){
-                            refer.addPropertyValue("retries",referAnnotation.retries());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.register())){
-                            refer.addPropertyValue("register",referAnnotation.register());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.version())){
-                            refer.addPropertyValue("version",referAnnotation.version());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.compress())){
-                            refer.addPropertyValue("compress",referAnnotation.compress());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.connectTimeout())){
-                            refer.addPropertyValue("connectTimeout",referAnnotation.connectTimeout());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.haStrategy())){
-                            refer.addPropertyValue("haStrategy",referAnnotation.haStrategy());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.check())){
-                            refer.addPropertyValue("check",referAnnotation.check());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.idleTime())){
-                            refer.addPropertyValue("idleTime",referAnnotation.idleTime());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.subscribe())){
-                            refer.addPropertyValue("subscribe",referAnnotation.subscribe());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.maxClientConnection())){
-                            refer.addPropertyValue("maxClientConnection",referAnnotation.maxClientConnection());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.minClientConnection())){
-                            refer.addPropertyValue("minClientConnection",referAnnotation.minClientConnection());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.maxLifetime())){
-                            refer.addPropertyValue("maxLifetime",referAnnotation.maxLifetime());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.minClientConnection())){
-                            refer.addPropertyValue("minClientConnection",referAnnotation.minClientConnection());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.loadbalance())){
-                            refer.addPropertyValue("loadbalance",referAnnotation.loadbalance());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.maxInvokeError())){
-                            refer.addPropertyValue("maxInvokeError",referAnnotation.maxInvokeError());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.minCompressSize())){
-                            refer.addPropertyValue("minCompressSize",referAnnotation.minCompressSize());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.requestTimeout())){
-                            refer.addPropertyValue("requestTimeout",referAnnotation.requestTimeout());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.proxy())){
-                            refer.addPropertyValue("proxy",referAnnotation.proxy());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.callbackThread())){
-                            refer.addPropertyValue("callbackThread",referAnnotation.callbackThread());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.callbackQueueSize())){
-                            refer.addPropertyValue("callbackQueueSize",referAnnotation.callbackQueueSize());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.callbackWaitTime())){
-                            refer.addPropertyValue("callbackWaitTime",referAnnotation.callbackWaitTime());
-                        }
-                        if(!Strings.isNullOrEmpty(referAnnotation.callback())){
-                            refer.addPropertyValue("callback",referAnnotation.callback());
-                            register(referAnnotation.callback(),"invokeCallback",refer,parserContext);
-                        }
-                        refer.addPropertyValue("interface",interfaceClass);
-                        String referId = String.format("%s.%s",clz.getCanonicalName(),field.getName());
-                        ReferContext.register(referAnnotation,referId);
-                        parserContext.getRegistry().registerBeanDefinition(referId,refer.getBeanDefinition());
-                    }
+                    });
+                } catch (Throwable e) {
+
                 }
             }
         }catch (Exception ex){

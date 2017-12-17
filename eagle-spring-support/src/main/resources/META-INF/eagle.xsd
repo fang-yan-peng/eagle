@@ -417,6 +417,6 @@
           </xsd:annotation>
       </xsd:element>
 
-
+    <xsd:element name="trace"/>
 	
 </xsd:schema>

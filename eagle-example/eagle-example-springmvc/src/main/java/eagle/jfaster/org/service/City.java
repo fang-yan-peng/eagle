@@ -14,19 +14,12 @@
  * limitations under the License.
  * </p>
  */
-
-
-package eagle.jfaster.org.logging.trace.log4j;
-
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.helpers.PatternParser;
+package eagle.jfaster.org.service;
 
 /**
- * Created by fangyanpeng on 2017/12/14.
+ * Created by fangyanpeng on 2017/12/17.
  */
-public class TraceIdPatternLayout extends PatternLayout {
-    @Override
-    protected PatternParser createPatternParser(String pattern) {
-        return new TraceIdPatternParser(pattern);
-    }
+public interface City {
+
+    String getCityName(int code);
 }

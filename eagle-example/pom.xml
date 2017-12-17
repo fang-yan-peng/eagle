@@ -8,6 +8,7 @@
   <modules>
     <module>eagle-example-spring</module>
     <module>eagle-example-springboot</module>
+    <module>eagle-example-springmvc</module>
   </modules>
   <packaging>pom</packaging>
   <name>eagle-example</name>

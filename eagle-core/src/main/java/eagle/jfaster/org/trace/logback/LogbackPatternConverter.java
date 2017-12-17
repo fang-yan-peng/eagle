@@ -14,26 +14,19 @@
  * limitations under the License.
  * </p>
  */
-package eagle.jfaster.org.context;
+package eagle.jfaster.org.trace.logback;
 
-import eagle.jfaster.org.config.annotation.Refer;
-
-import java.util.HashMap;
-import java.util.Map;
+import ch.qos.logback.classic.pattern.ClassicConverter;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.google.common.base.Strings;
+import eagle.jfaster.org.rpc.support.TraceContext;
 
 /**
- * Created by fangyanpeng on 2017/10/24.
+ * Created by fangyanpeng on 2017/12/14.
  */
-public class ReferContext {
-
-    private static Map<ReferCacheKey,String> refer2Name = new HashMap<>();
-
-    public static void register(Refer refer,Class<?> targetClass,String name){
-        refer2Name.put(new ReferCacheKey(targetClass,refer),name);
+public class LogbackPatternConverter extends ClassicConverter {
+    @Override
+    public String convert(ILoggingEvent iLoggingEvent) {
+        return Strings.isNullOrEmpty(TraceContext.getOpaque()) ? "N/A" : TraceContext.getOpaque();
     }
-
-    public static String getName(Refer refer,Class<?> targetClass){
-        return refer2Name.get(new ReferCacheKey(targetClass,refer));
-    }
-
 }

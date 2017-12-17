@@ -183,6 +183,9 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
     @Override
     public List<String> getChildrenKeys(final String key) {
         try {
+            if(!isExisted(key)){
+                return Collections.emptyList();
+            }
             List<String> result = client.getChildren().forPath(key);
             Collections.sort(result, new Comparator<String>() {
 

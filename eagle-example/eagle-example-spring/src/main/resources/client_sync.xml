@@ -31,4 +31,5 @@
     <eagle:refer id="notify1" interface="eagle.jfaster.org.service.Notify" base-refer="baseRefer1" actives="5000" actives-wait="1000"/>
 
     <eagle:refer id="hello1" interface="eagle.jfaster.org.service.HelloWorld" base-refer="baseRefer1" loadbalance="random" ha-strategy="failover"  compress="true"/>
+
 </beans>

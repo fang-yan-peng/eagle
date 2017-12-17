@@ -14,19 +14,26 @@
  * limitations under the License.
  * </p>
  */
-package eagle.jfaster.org.logging.trace.logback;
 
-import ch.qos.logback.classic.pattern.ClassicConverter;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.google.common.base.Strings;
-import eagle.jfaster.org.rpc.support.TraceContext;
+
+package eagle.jfaster.org.trace.log4j;
+
+import org.apache.log4j.helpers.PatternParser;
 
 /**
  * Created by fangyanpeng on 2017/12/14.
  */
-public class LogbackPatternConverter extends ClassicConverter {
+public class TraceIdPatternParser extends PatternParser {
+    public TraceIdPatternParser(String pattern) {
+        super(pattern);
+    }
+
     @Override
-    public String convert(ILoggingEvent iLoggingEvent) {
-        return Strings.isNullOrEmpty(TraceContext.getOpaque()) ? "N/A" : TraceContext.getOpaque();
+    protected void finalizeConverter(char c) {
+        if ('T' == c) {
+            addConverter(new TraceIdPatternConverter());
+        } else {
+            super.finalizeConverter(c);
+        }
     }
 }

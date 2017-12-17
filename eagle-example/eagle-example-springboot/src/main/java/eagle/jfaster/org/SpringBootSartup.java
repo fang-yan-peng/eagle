@@ -17,10 +17,8 @@
 
 package eagle.jfaster.org;
 
-import eagle.jfaster.org.service.Calculator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,10 +31,8 @@ public class SpringBootSartup {
     public static void main(String[] args) throws InterruptedException {
         //启动Curator框架提供的内置zookeeper 仅供测试使用，生产环境请使用真实zookeeper地址
         EmbedZookeeperServer.start(4181);
-        ApplicationContext ctx =  SpringApplication.run(SpringBootSartup.class, args);
+        SpringApplication.run(SpringBootSartup.class, args);
         TimeUnit.SECONDS.sleep(2);
-        Calculator calculator = ctx.getBean(Calculator.class);
-        System.out.println(calculator.calculate.add(1,2));
-        System.out.println(calculator.calculate.sub(9,5));
+        System.out.println("==== start success ====");
     }
 }

@@ -14,26 +14,19 @@
  * limitations under the License.
  * </p>
  */
-package eagle.jfaster.org.context;
 
-import eagle.jfaster.org.config.annotation.Refer;
 
-import java.util.HashMap;
-import java.util.Map;
+package eagle.jfaster.org.trace.log4j;
+
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.helpers.PatternParser;
 
 /**
- * Created by fangyanpeng on 2017/10/24.
+ * Created by fangyanpeng on 2017/12/14.
  */
-public class ReferContext {
-
-    private static Map<ReferCacheKey,String> refer2Name = new HashMap<>();
-
-    public static void register(Refer refer,Class<?> targetClass,String name){
-        refer2Name.put(new ReferCacheKey(targetClass,refer),name);
+public class TraceIdPatternLayout extends PatternLayout {
+    @Override
+    protected PatternParser createPatternParser(String pattern) {
+        return new TraceIdPatternParser(pattern);
     }
-
-    public static String getName(Refer refer,Class<?> targetClass){
-        return refer2Name.get(new ReferCacheKey(targetClass,refer));
-    }
-
 }

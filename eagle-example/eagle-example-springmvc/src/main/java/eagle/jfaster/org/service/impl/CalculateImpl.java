@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by fangyanpeng1 on 2017/8/9.
  */
-@Service(id = "calculateService",baseService = "baseService",export = "proto:29001")
+@Service(baseService = "baseService",export = "proto1:29001")
 public class CalculateImpl implements Calculate {
 
     private static final Logger logger = LoggerFactory.getLogger(CalculateImpl.class);
