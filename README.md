@@ -119,7 +119,7 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
 
 ### 分布式追踪在程序中的应用
 
-- 在spring配置文件中，添加```xml<eagle:trace/>``` 配置，springboot不用添加额外配置。然后在需要追踪的类或者方法上打上@Trace注解。
+- 在spring配置文件中，添加`<eagle:trace/>` 配置，springboot不用添加额外配置。然后在需要追踪的类或者方法上打上@Trace注解。
 
 `src/main/java/eagle/jfaster/org/controller/TraceController.java`
 
