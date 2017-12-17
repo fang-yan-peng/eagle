@@ -1,6 +1,7 @@
 package eagle.jfaster.org.bean.trace;
 
 import com.google.common.base.Strings;
+import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.support.OpaqueGenerator;
@@ -117,6 +118,9 @@ public class EagleTraceJdkProxy implements AopProxy, InvocationHandler, Serializ
                         TraceContext.setOpaque(OpaqueGenerator.getDistributeOpaque());
                     }
                     retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);
+                } catch (Throwable e){
+                    logger.error("Eagle trace error:  ",e);
+                    throw new EagleFrameException(e);
                 } finally {
                     if(clear){
                         TraceContext.clear();
