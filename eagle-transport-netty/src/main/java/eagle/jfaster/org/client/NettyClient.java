@@ -100,7 +100,7 @@ public class NettyClient implements Client,StatisticCallback {
     private AtomicLong errorCount = new AtomicLong(0);
 
     @Getter
-    private Map<String,NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
+    private Map<Integer,NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
 
     private ScheduledFuture<?> asyncCallbackMonitorFuture = null;
 
@@ -187,11 +187,11 @@ public class NettyClient implements Client,StatisticCallback {
         return this.callBack == null ? new SyncNettyChannel(this,channel) : new AsyncNettyChannel(this,channel);
     }
 
-    public NettyResponseFuture removeCallBack(String opaque){
+    public NettyResponseFuture removeCallBack(Integer opaque){
         return callbackMap.remove(opaque);
     }
 
-    public void addCallBack(String opaque,NettyResponseFuture future){
+    public void addCallBack(Integer opaque,NettyResponseFuture future){
         callbackMap.put(opaque,future);
     }
 
@@ -208,8 +208,11 @@ public class NettyClient implements Client,StatisticCallback {
             runInThisThread = true;
         }
         if (runInThisThread) {
-            TraceContext.setOpaque(((NettyResponseFuture)responseFuture).getOpaque());
             try {
+                Map<String,String> attachments = ((NettyResponseFuture)responseFuture).getAttachments();
+                if(attachments != null){
+                    TraceContext.setTraceId(attachments.get(TraceContext.TRACE_KEY));
+                }
                 responseFuture.executeCallback();
             } catch (Throwable e) {
                 logger.info("executeInvokeCallback Exception", e);

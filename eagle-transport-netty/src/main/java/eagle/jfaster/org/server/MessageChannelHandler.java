@@ -30,6 +30,8 @@ import eagle.jfaster.org.transport.StandardThreadExecutor;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -54,8 +56,11 @@ public class MessageChannelHandler extends SimpleChannelInboundHandler<EagleRequ
             threadExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    TraceContext.setOpaque(request.getOpaque());
-                    EagleResponse response= (EagleResponse) invokeRouter.routeAndInvoke(request);
+                    Map<String,String> attachments = request.getAttachments();
+                    if(attachments != null){
+                        TraceContext.setTraceId(attachments.get(TraceContext.TRACE_KEY));
+                    }
+                    EagleResponse response = (EagleResponse) invokeRouter.routeAndInvoke(request);
                     TraceContext.clear();
                     response.setOpaque(request.getOpaque());
                     response.setNeedCompress(request.isNeedCompress());

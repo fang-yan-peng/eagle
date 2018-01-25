@@ -27,6 +27,6 @@ import eagle.jfaster.org.rpc.support.TraceContext;
 public class LogbackPatternConverter extends ClassicConverter {
     @Override
     public String convert(ILoggingEvent iLoggingEvent) {
-        return Strings.isNullOrEmpty(TraceContext.getOpaque()) ? "N/A" : TraceContext.getOpaque();
+        return Strings.isNullOrEmpty(TraceContext.getTraceId()) ? "N/A" : TraceContext.getTraceId();
     }
 }

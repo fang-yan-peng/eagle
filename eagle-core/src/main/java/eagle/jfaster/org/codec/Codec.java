@@ -31,5 +31,5 @@ public interface Codec {
 
     ByteBuffer encode(Object message,Serialization serialization) throws IOException;
 
-    Object decode(ByteBuffer buffer,Serialization serialization,String opaque,short magicCode) throws IOException;
+    Object decode(ByteBuffer buffer,Serialization serialization,int opaque,short magicCode) throws IOException;
 }

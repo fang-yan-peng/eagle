@@ -112,10 +112,10 @@ public class EagleTraceJdkProxy implements AopProxy, InvocationHandler, Serializ
             }
 
             if(EagleTraceMethodRecods.needTrace(method,targetClass)){
-                boolean clear = Strings.isNullOrEmpty(TraceContext.getOpaque());
+                boolean clear = Strings.isNullOrEmpty(TraceContext.getTraceId());
                 try {
                     if(clear){
-                        TraceContext.setOpaque(OpaqueGenerator.getDistributeOpaque());
+                        TraceContext.setTraceId(OpaqueGenerator.getDistributeOpaque());
                     }
                     retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);
                 } catch (Throwable e){

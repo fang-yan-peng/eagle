@@ -8,7 +8,7 @@
   </parent>
   <groupId>org.jfaster.eagle</groupId>
   <artifactId>eagle</artifactId>
-  <version>1.4</version>
+  <version>1.6</version>
   <modules>
     <module>eagle-core</module>
     <module>eagle-registry-zookeeper</module>

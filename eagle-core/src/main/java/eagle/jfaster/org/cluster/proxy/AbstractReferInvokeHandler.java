@@ -91,12 +91,11 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         }
         EagleRequest request = new EagleRequest();
         request.setInterfaceName(interfaceName);
-        String opaque = TraceContext.getOpaque();
-        if(Strings.isNullOrEmpty(opaque)){
-            opaque = OpaqueGenerator.getDistributeOpaque();
-            TraceContext.setOpaque(opaque);
+        String traceId = TraceContext.getTraceId();
+        if(!Strings.isNullOrEmpty(traceId)){
+            request.setAttachment(TraceContext.TRACE_KEY,traceId);
         }
-        request.setOpaque(opaque);
+        request.setOpaque(OpaqueGenerator.getOpaque());
         request.setParameters(args);
         request.setMethodName(method.getName());
         request.setNeedCompress(compress);

@@ -22,6 +22,8 @@ import eagle.jfaster.org.rpc.ResponseFuture;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,7 +38,7 @@ public class NettyResponseFuture<T> implements ResponseFuture <T> {
 
     //请求唯一标识
     @Getter
-    private final String opaque;
+    private final int opaque;
 
     //超时时间
     @Getter
@@ -45,6 +47,9 @@ public class NettyResponseFuture<T> implements ResponseFuture <T> {
     //异步回调
     @Getter
     private final MethodInvokeCallBack<T> callBack;
+
+    @Getter
+    private final Map<String,String> attachments;
 
     //请求开始时间
     @Getter

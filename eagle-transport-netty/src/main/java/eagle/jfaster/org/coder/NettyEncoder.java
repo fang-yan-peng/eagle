@@ -17,11 +17,8 @@
 
 package eagle.jfaster.org.coder;
 
-import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
-import eagle.jfaster.org.rpc.Request;
-import eagle.jfaster.org.rpc.Response;
 import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.RemotingUtil;
 import eagle.jfaster.org.codec.Codec;
@@ -53,13 +50,7 @@ public class NettyEncoder extends MessageToByteEncoder {
             ByteBuffer data = codec.encode(message,serialization);
             byteBuf.writeBytes(data);
         } catch (Throwable e) {
-            String opaque = null;
-            if(message instanceof Request){
-                opaque = ((Request) message).getOpaque();
-            }else if(message instanceof Response){
-                opaque = ((Response) message).getOpaque();
-            }
-            logger.error(opaque + " Error encode message "+RemotingUtil.parseChannelRemoteAddr(ctx.channel()),e);
+            logger.error("Error encode message "+RemotingUtil.parseChannelRemoteAddr(ctx.channel()),e);
             RemotingUtil.closeChannel(ctx.channel(),"NettyEncoder encode");
             throw ExceptionUtil.handleException(e);
         }

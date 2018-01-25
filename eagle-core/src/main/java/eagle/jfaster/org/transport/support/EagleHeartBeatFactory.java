@@ -39,7 +39,7 @@ public class EagleHeartBeatFactory implements HeartBeatFactory {
     @Override
     public Request createRequest() {
         EagleRequest request = new EagleRequest();
-        request.setOpaque(OpaqueGenerator.getDistributeOpaque());
+        request.setOpaque(OpaqueGenerator.getOpaque());
         request.setInterfaceName(HEARTBEAT_INTERFACE_NAME);
         request.setMethodName(HEARTBEAT_METHOD_NAME);
         return request;

@@ -71,8 +71,8 @@ public abstract class AbstractNettyChannel {
 
     public Object request(Request request, NettySharedConnPool connPool) throws Exception {
         int timeout = config.getExtInt(ConfigEnum.requestTimeout.getName(),ConfigEnum.requestTimeout.getIntValue());
-        final String opaque = request.getOpaque();
-        final NettyResponseFuture responseFuture = new NettyResponseFuture(opaque,timeout,callBack);
+        final int opaque = request.getOpaque();
+        final NettyResponseFuture responseFuture = new NettyResponseFuture(opaque,timeout,callBack,request.getAttachments());
         try {
             if(timeout < 0){
                 throw new EagleFrameException("The request timeout of %s is not allowed to set 0",timeout);

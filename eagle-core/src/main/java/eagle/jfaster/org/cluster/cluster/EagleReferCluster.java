@@ -21,7 +21,6 @@ import eagle.jfaster.org.cluster.HaStrategy;
 import eagle.jfaster.org.cluster.LoadBalance;
 import eagle.jfaster.org.cluster.ReferCluster;
 import eagle.jfaster.org.config.common.MergeConfig;
-import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.exception.MockException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;

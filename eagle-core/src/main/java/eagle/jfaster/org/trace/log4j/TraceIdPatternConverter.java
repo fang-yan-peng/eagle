@@ -29,6 +29,6 @@ import org.apache.log4j.spi.LoggingEvent;
 public class TraceIdPatternConverter extends PatternConverter {
     @Override
     protected String convert(LoggingEvent loggingEvent) {
-        return Strings.isNullOrEmpty(TraceContext.getOpaque()) ? "N/A" : TraceContext.getOpaque();
+        return Strings.isNullOrEmpty(TraceContext.getTraceId()) ? "N/A" : TraceContext.getTraceId();
     }
 }

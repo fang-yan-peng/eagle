@@ -67,13 +67,11 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
             if(isNotIllegal(magicCode)){
                 throw new EagleFrameException("Error the type: '%d' is not supported",magicCode);
             }
-            byte[] opBytes = new byte[32];
-            byteBuffer.get(opBytes);
-            String opaque = new String(opBytes,CHARSET_UTF8);
+            int opaque = byteBuffer.getInt();
             try {
                 return codec.decode(byteBuffer,serialization,opaque,magicCode);
             }catch (Throwable e){
-                logger.error(String.format("%s Error codec decode ",opaque),e);
+                logger.error("Error codec decode ",e);
                 EagleResponse response;
                 if(e instanceof EagleFrameException){
                     response = buildExceptionResponse(opaque,(Exception)e);

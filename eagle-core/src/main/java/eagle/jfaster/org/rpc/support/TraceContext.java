@@ -21,18 +21,20 @@ package eagle.jfaster.org.rpc.support;
  */
 public class TraceContext {
 
-    private static InheritableThreadLocal<String> opaqueManager = new InheritableThreadLocal<>();
+    public static String TRACE_KEY="traceId";
 
-    public static String getOpaque(){
-        return opaqueManager.get();
+    private static InheritableThreadLocal<String> traceIdManager = new InheritableThreadLocal<>();
+
+    public static String getTraceId(){
+        return traceIdManager.get();
     }
 
-    public static void setOpaque(String opaque){
-        opaqueManager.set(opaque);
+    public static void setTraceId(String traceId){
+        traceIdManager.set(traceId);
     }
 
     public static void clear(){
-        opaqueManager.remove();
+        traceIdManager.remove();
     }
 
 

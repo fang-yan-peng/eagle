@@ -415,10 +415,10 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
                 }
                 Object retVal;
                 if(EagleTraceMethodRecods.needTrace(method,targetClass)){
-                    boolean clear = Strings.isNullOrEmpty(TraceContext.getOpaque());
+                    boolean clear = Strings.isNullOrEmpty(TraceContext.getTraceId());
                     try {
                         if(clear){
-                            TraceContext.setOpaque(OpaqueGenerator.getDistributeOpaque());
+                            TraceContext.setTraceId(OpaqueGenerator.getDistributeOpaque());
                         }
                         retVal = methodProxy.invoke(target, args);
                     } catch (Throwable e){

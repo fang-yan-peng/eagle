@@ -37,7 +37,7 @@ public class EagleResponse implements Response {
     private Exception exception;
 
     @Setter
-    private String opaque;
+    private int opaque;
 
     @Setter
     private boolean needCompress;
@@ -61,7 +61,7 @@ public class EagleResponse implements Response {
     }
 
     @Override
-    public String getOpaque() {
+    public int getOpaque() {
         return opaque;
     }
 

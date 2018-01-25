@@ -25,6 +25,8 @@ import eagle.jfaster.org.rpc.support.TraceContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 /**
  * Created by fangyanpeng on 2017/8/22.
  */
@@ -38,8 +40,11 @@ public class AsyncCallbackTask implements Runnable{
 
     @Override
     public void run() {
-        TraceContext.setOpaque(((NettyResponseFuture)responseFuture).getOpaque());
         try {
+            Map<String,String> attachments = ((NettyResponseFuture)responseFuture).getAttachments();
+            if(attachments != null){
+                TraceContext.setTraceId(attachments.get(TraceContext.TRACE_KEY));
+            }
             responseFuture.executeCallback();
         } catch (Throwable e) {
             logger.info("execute callback in executor exception, and callback throw", e);

@@ -66,7 +66,7 @@ public class RequestUtil {
         return (magicCode & EAGLE_RESPONSE_TYPE) == EAGLE_RESPONSE_VOID;
     }
 
-    public static EagleResponse buildExceptionResponse(String opaque,Exception e){
+    public static EagleResponse buildExceptionResponse(int opaque,Exception e){
         EagleResponse response = new EagleResponse();
         response.setOpaque(opaque);
         response.setException(e);

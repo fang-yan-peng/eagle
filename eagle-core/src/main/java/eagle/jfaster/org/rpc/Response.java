@@ -32,7 +32,7 @@ public interface Response {
     boolean isNeedCompress();
 
     //请求的唯一标识
-    String getOpaque();
+    int getOpaque();
 
     //附加信息
     Map<String, String> getAttachments();

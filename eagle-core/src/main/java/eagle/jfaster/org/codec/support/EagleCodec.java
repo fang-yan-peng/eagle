@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * 编解码器
  *
- * 请求协议：magicCode(2个字节) + opaque(32个字节)
+ * 请求协议：magicCode(2个字节) + opaque(4个字节)
  * + interfaceName长度(2个字节) +interfaceName
  * + methodName长度(2个字节) + methodName
  * + parameterDesc长度(4个字节)  + parameterDesc
@@ -83,7 +83,7 @@ public class EagleCodec implements Codec {
         if(response.isNeedCompress()){
             magicCode |= EAGLE_COMPRESS_TYPE;
         }
-        int dataLen = 38;//totalLen+magic+opaque 4+2+32
+        int dataLen = 10;//totalLen+magic+opaque 4+2+4
         ByteBuffer content;
         if(response.getException() != null){
             content = encodeResponseCommon(response.getException(),dataLen,magicCode,response.getOpaque(),serialization,false,EAGLE_RESPONSE_EXCEPTION);
@@ -93,14 +93,14 @@ public class EagleCodec implements Codec {
             content = ByteBuffer.allocate(dataLen);
             content.putInt(dataLen);
             content.putShort(magicCode);
-            content.put(response.getOpaque().getBytes());
+            content.putInt(response.getOpaque());
         }
         content.flip();
         return content;
 
     }
 
-    private ByteBuffer encodeResponseCommon(Object res,int dataLen,short magicCode,String opaque,Serialization serialization,boolean compress,short flag) throws IOException {
+    private ByteBuffer encodeResponseCommon(Object res,int dataLen,short magicCode,int opaque,Serialization serialization,boolean compress,short flag) throws IOException {
         magicCode |= flag;
         String className = res.getClass().getName();
         byte[] nameData = className.getBytes(CHARSET_UTF8);
@@ -115,7 +115,7 @@ public class EagleCodec implements Codec {
         ByteBuffer content = ByteBuffer.allocate(dataLen);
         content.putInt(dataLen);
         content.putShort(magicCode);
-        content.put(opaque.getBytes(CHARSET_UTF8));
+        content.putInt(opaque);
         content.putShort((short) nameData.length);
         content.put(nameData);
         content.putInt(valData.length);
@@ -132,7 +132,7 @@ public class EagleCodec implements Codec {
         if(request.isNeedCompress()){
             magicCode |= EAGLE_COMPRESS_TYPE;
         }
-        int dataLen = 42;//totalLen+magic+opaque+attachments 4+2+32+4
+        int dataLen = 14;//totalLen+magic+opaque+attachments 4+2+4+4
         String interfaceName = request.getInterfaceName();
         byte[] iNameData = interfaceName.getBytes(CHARSET_UTF8);
         dataLen += iNameData.length + 2;
@@ -181,11 +181,11 @@ public class EagleCodec implements Codec {
         return  content;
     }
 
-    private  ByteBuffer encodeReqCommon(int dataLen,short magicCode,String opaque,byte[] iNameData,byte[] mNameData){
+    private  ByteBuffer encodeReqCommon(int dataLen,short magicCode,int opaque,byte[] iNameData,byte[] mNameData){
         ByteBuffer content = ByteBuffer.allocate(dataLen);
         content.putInt(dataLen);
         content.putShort(magicCode);
-        content.put(opaque.getBytes(CHARSET_UTF8));
+        content.putInt(opaque);
         content.putShort((short) iNameData.length);
         content.put(iNameData);
         content.putShort((short) mNameData.length);
@@ -230,7 +230,7 @@ public class EagleCodec implements Codec {
     }
 
     @Override
-    public Object decode(ByteBuffer buffer, Serialization serialization, String opaque, short magicCode) throws IOException {
+    public Object decode(ByteBuffer buffer, Serialization serialization, int opaque, short magicCode) throws IOException {
         try {
             if(isRequest(magicCode)){
                 return decodeRequest(buffer,serialization,opaque,magicCode);
@@ -242,7 +242,7 @@ public class EagleCodec implements Codec {
         }
     }
 
-    private Object decodeRequest(ByteBuffer buffer,Serialization serialization,String opaque,short magicCode)
+    private Object decodeRequest(ByteBuffer buffer,Serialization serialization,int opaque,short magicCode)
             throws IOException, ClassNotFoundException {
         EagleRequest request = new EagleRequest();
         request.setOpaque(opaque);
@@ -318,7 +318,7 @@ public class EagleCodec implements Codec {
         return attachments;
     }
 
-    public Object decodeResponse(ByteBuffer buffer, Serialization serialization, String opaque, short magicCode)
+    public Object decodeResponse(ByteBuffer buffer, Serialization serialization, int opaque, short magicCode)
             throws ClassNotFoundException, IOException {
         EagleResponse response = new EagleResponse();
         response.setOpaque(opaque);
