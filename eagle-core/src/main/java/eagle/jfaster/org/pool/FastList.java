@@ -47,8 +47,7 @@ public final class FastList<T> extends ArrayList<T> {
     public boolean add(T element) {
         try {
             elementData[size++] = element;
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             final int oldCapacity = elementData.length;
             final int newCapacity = oldCapacity << 1;
             final T[] newElementData = (T[]) Array.newInstance(clazz, newCapacity);
@@ -147,14 +146,12 @@ public final class FastList<T> extends ArrayList<T> {
             private int index;
 
             @Override
-            public boolean hasNext()
-            {
+            public boolean hasNext() {
                 return index < size;
             }
 
             @Override
-            public T next()
-            {
+            public T next() {
                 if (index < size) {
                     return elementData[index++];
                 }
@@ -200,8 +197,7 @@ public final class FastList<T> extends ArrayList<T> {
     }
 
     @Override
-    public void add(int index, T element)
-    {
+    public void add(int index, T element) {
         throw new UnsupportedOperationException();
     }
 

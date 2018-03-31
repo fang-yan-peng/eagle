@@ -30,11 +30,11 @@ import java.util.List;
 public class RegistryUtil {
 
     public static void closeRegistrys(List<MergeConfig> registryConfigs) throws IOException {
-        if(CollectionUtil.isEmpty(registryConfigs)){
+        if (CollectionUtil.isEmpty(registryConfigs)) {
             return;
         }
         RegistryCenterManage registryManage;
-        for(MergeConfig regConfig : registryConfigs){
+        for (MergeConfig regConfig : registryConfigs) {
             registryManage = SpiClassLoader.getClassLoader(RegistryCenterManage.class).getExtension(regConfig.getProtocol());
             registryManage.getRegistry(regConfig).close();
 

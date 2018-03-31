@@ -22,14 +22,14 @@ package eagle.jfaster.org.logging;
  */
 public class ConsoleLoggerFactory extends InternalLoggerFactory {
 
-  public static final InternalLoggerFactory INSTANCE = new ConsoleLoggerFactory();
+    public static final InternalLoggerFactory INSTANCE = new ConsoleLoggerFactory();
 
-  private ConsoleLoggerFactory() {
-  }
+    private ConsoleLoggerFactory() {
+    }
 
-  @Override
-  protected InternalLogger newInstance(String name) {
-    return new ConsoleLogger(name);
-  }
+    @Override
+    protected InternalLogger newInstance(String name) {
+        return new ConsoleLogger(name);
+    }
 
 }

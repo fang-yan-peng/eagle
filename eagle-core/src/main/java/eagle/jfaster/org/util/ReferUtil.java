@@ -20,6 +20,7 @@ package eagle.jfaster.org.util;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.Refer;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,16 +36,18 @@ public class ReferUtil {
     private static ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(10);
 
     private static final int DELAY_TIME = 1000;
-    static{
-        Runtime.getRuntime().addShutdownHook(new Thread(){
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                if(!scheduledExecutor.isShutdown()){
+                if (!scheduledExecutor.isShutdown()) {
                     scheduledExecutor.shutdownNow();
                 }
             }
         });
     }
+
     public static <T> void delayDestroy(final List<Refer<T>> refers) {
         if (refers == null || refers.isEmpty()) {
             return;

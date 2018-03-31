@@ -24,22 +24,23 @@ import eagle.jfaster.org.util.HomeFolderUtils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import java.io.File;
 
 /**
  * 基于XML的数据访问器实现类.
- * 
+ *
  * @param <E> 数据类型
  * @author fangyanpeng
  */
 public abstract class AbstractXmlRepositoryImpl<E> implements XmlRepository<E> {
-    
+
     private final File file;
-    
+
     private final Class<E> clazz;
-    
+
     private JAXBContext jaxbContext;
-    
+
     protected AbstractXmlRepositoryImpl(final String fileName, final Class<E> clazz) {
         file = new File(HomeFolderUtils.getFilePathInHomeFolder(fileName));
         this.clazz = clazz;
@@ -50,7 +51,7 @@ public abstract class AbstractXmlRepositoryImpl<E> implements XmlRepository<E> {
             throw new ServiceConsoleException(ex);
         }
     }
-    
+
     @Override
     public synchronized E load() {
         if (!file.exists()) {
@@ -68,7 +69,7 @@ public abstract class AbstractXmlRepositoryImpl<E> implements XmlRepository<E> {
             throw new ServiceConsoleException(ex);
         }
     }
-    
+
     @Override
     public synchronized void save(final E entity) {
         try {

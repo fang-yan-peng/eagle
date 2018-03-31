@@ -18,6 +18,7 @@
 package eagle.jfaster.org.transport.support;
 
 import com.google.common.collect.Maps;
+
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
@@ -31,6 +32,7 @@ import eagle.jfaster.org.rpc.Response;
 import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.transport.InvokeRouter;
 import eagle.jfaster.org.util.ReflectUtil;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +45,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by fangyanpeng1 on 2017/7/31.
  */
 
-public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
+public class ServiceInvokeRouter implements InvokeRouter<Request, Response> {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(ServiceInvokeRouter.class);
 
-    private final Map<String,RemoteInvoke<?>> services = Maps.newHashMap();
+    private final Map<String, RemoteInvoke<?>> services = Maps.newHashMap();
 
     private AtomicBoolean export = new AtomicBoolean(false);
 
@@ -57,10 +59,10 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
     public ServiceInvokeRouter(RemoteInvoke invoke) {
         MergeConfig config = invoke.getConfig();
-        String strategyName = config.getExt(ConfigEnum.protectStrategy.getName(),ConfigEnum.protectStrategy.getValue());
+        String strategyName = config.getExt(ConfigEnum.protectStrategy.getName(), ConfigEnum.protectStrategy.getValue());
         protectStrategy = SpiClassLoader.getClassLoader(ProtectStrategy.class).getExtension(strategyName);
-        if(protectStrategy == null){
-            throw new EagleFrameException("Error protect strategy name '%s' not exists",strategyName);
+        if (protectStrategy == null) {
+            throw new EagleFrameException("Error protect strategy name '%s' not exists", strategyName);
         }
         addRemoteInvoke(invoke);
     }
@@ -69,16 +71,16 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
     public Response routeAndInvoke(Request message) {
         String serviceKey = message.getInterfaceName();
         RemoteInvoke invoker = services.get(serviceKey);
-        if(invoker == null){
-            logger.info(String.format("Error invoke service '%s' not exist ",serviceKey));
+        if (invoker == null) {
+            logger.info(String.format("Error invoke service '%s' not exist ", serviceKey));
             EagleResponse response = new EagleResponse();
-            response.setException(new EagleFrameException("Error invoke service '%s' not exist",serviceKey));
+            response.setException(new EagleFrameException("Error invoke service '%s' not exist", serviceKey));
             return response;
         }
         try {
-            return protectStrategy.protect(message,invoker,methodCnt.get());
+            return protectStrategy.protect(message, invoker, methodCnt.get());
         } catch (Throwable e) {
-            logger.error(String.format("Invoke '%s' error: ",message.getInterfaceName()),e);
+            logger.error(String.format("Invoke '%s' error: ", message.getInterfaceName()), e);
             EagleResponse response = new EagleResponse();
             response.setException(new EagleFrameException(e.getMessage()));
             return response;
@@ -87,18 +89,18 @@ public class ServiceInvokeRouter implements InvokeRouter<Request,Response> {
 
 
     @Override
-    public void addRemoteInvoke(RemoteInvoke invoke){
+    public void addRemoteInvoke(RemoteInvoke invoke) {
         String serviceKey = invoke.getConfig().getInterfaceName();
-        if(services.containsKey(serviceKey)){
-            throw new EagleFrameException("Error service '%s' has explored on '%d',please use another port",serviceKey,invoke.getConfig().getPort());
+        if (services.containsKey(serviceKey)) {
+            throw new EagleFrameException("Error service '%s' has explored on '%d',please use another port", serviceKey, invoke.getConfig().getPort());
         }
-        services.put(serviceKey,invoke);
+        services.put(serviceKey, invoke);
         List<Method> methods = ReflectUtil.getPublicMethod(invoke.getInterface());
         methodCnt.addAndGet(methods.size());
     }
 
     @Override
-    public boolean needExport(){
-        return export.compareAndSet(false,true);
+    public boolean needExport() {
+        return export.compareAndSet(false, true);
     }
 }

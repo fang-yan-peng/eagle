@@ -23,7 +23,7 @@ import lombok.Setter;
 /**
  * Created by fangyanpeng1 on 2017/8/8.
  */
-public class BaseReferConfig extends AbstractInterfaceConfig{
+public class BaseReferConfig extends AbstractInterfaceConfig {
 
     // 请求超时
     @Setter

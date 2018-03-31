@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by fangyanpeng1 on 2017/8/4.
  */
 @RequiredArgsConstructor
-public class NettyRefer <T> implements Refer <T> {
+public class NettyRefer<T> implements Refer<T> {
 
     protected final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyRefer.class);
 
@@ -65,7 +65,7 @@ public class NettyRefer <T> implements Refer <T> {
 
     @Override
     public void updateConfig(MergeConfig refConfig) {
-        if(config != null){
+        if (config != null) {
             config.update(refConfig);
         }
     }
@@ -83,21 +83,21 @@ public class NettyRefer <T> implements Refer <T> {
     @Override
     public Object request(Request request) {
         try {
-            if(lock.tryAcquire()){
+            if (lock.tryAcquire()) {
                 try {
                     activeCnt.incrementAndGet();
                     return client.request(request);
                 } finally {
                     lock.release();
                 }
-            }else {
-                String warn = String.format("'%s' too much request, more than actives: [%d]",config.identity(),lock.getMaxPermits());
+            } else {
+                String warn = String.format("'%s' too much request, more than actives: [%d]", config.identity(), lock.getMaxPermits());
                 logger.warn(warn);
                 throw new EagleFrameException(warn);
             }
         } catch (Throwable e) {
             throw ExceptionUtil.handleException(e);
-        }finally {
+        } finally {
             activeCnt.decrementAndGet();
         }
     }

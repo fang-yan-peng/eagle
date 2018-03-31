@@ -18,7 +18,9 @@
 package eagle.jfaster.org.parse;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.exception.EagleFrameException;
+
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -36,20 +38,20 @@ public class ServiceBeanParser extends EagleBeanParser {
     }
 
     @Override
-    protected void parse(Element element, BeanDefinitionBuilder beanBuilder,ParserContext parserContext) throws ClassNotFoundException {
+    protected void parse(Element element, BeanDefinitionBuilder beanBuilder, ParserContext parserContext) throws ClassNotFoundException {
         String ref = element.getAttribute("ref");
-        if(Strings.isNullOrEmpty(ref)){
+        if (Strings.isNullOrEmpty(ref)) {
             String clzName = element.getAttribute("class");
-            if(Strings.isNullOrEmpty(clzName)){
+            if (Strings.isNullOrEmpty(clzName)) {
                 throw new EagleFrameException("Error both of ref and class is empty");
             }
             BeanDefinitionBuilder refBuilder = BeanDefinitionBuilder.rootBeanDefinition(clzName);
             parseProperties(element.getChildNodes(), refBuilder);
             String refId = parserContext.getReaderContext().generateBeanName(refBuilder.getBeanDefinition());
-            parserContext.getRegistry().registerBeanDefinition(refId,refBuilder.getBeanDefinition());
+            parserContext.getRegistry().registerBeanDefinition(refId, refBuilder.getBeanDefinition());
             beanBuilder.addPropertyReference("ref", refId);
         }
-        parseInterface(element,beanBuilder);
+        parseInterface(element, beanBuilder);
 
     }
 

@@ -25,11 +25,11 @@ import java.util.Map;
  */
 public class CollectionUtil {
 
-    public  static  boolean isEmpty(Collection collection){
+    public static boolean isEmpty(Collection collection) {
         return collection == null || collection.isEmpty();
     }
 
-    public  static  boolean isEmpty(Map map){
+    public static boolean isEmpty(Map map) {
         return map == null || map.isEmpty();
     }
 

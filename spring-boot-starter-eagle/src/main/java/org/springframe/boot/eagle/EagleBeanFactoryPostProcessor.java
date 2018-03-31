@@ -18,6 +18,7 @@
 package org.springframe.boot.eagle;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.bean.*;
 import eagle.jfaster.org.bean.trace.EagleTraceAutoProxyCreator;
 import eagle.jfaster.org.config.ProtocolConfig;
@@ -27,6 +28,7 @@ import eagle.jfaster.org.config.annotation.Service;
 import eagle.jfaster.org.context.ReferContext;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.util.CollectionUtil;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -74,7 +76,7 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         try {
-            if(eagleConfig == null){ //根据yml或者properties文件解析成EagleConfig
+            if (eagleConfig == null) { //根据yml或者properties文件解析成EagleConfig
                 eagleConfig = getEagleConfig((DefaultListableBeanFactory) beanFactory);
                 registerReferProcessor((DefaultListableBeanFactory) beanFactory);
                 registerTraceProcessor((DefaultListableBeanFactory) beanFactory);
@@ -99,14 +101,14 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
         }
     }
 
-    private void registerReferProcessor(DefaultListableBeanFactory beanFactory){
+    private void registerReferProcessor(DefaultListableBeanFactory beanFactory) {
         BeanDefinitionBuilder beanBuilder = BeanDefinitionBuilder.rootBeanDefinition(ReferInjectPostProcessor.class);
-        beanFactory.registerBeanDefinition(ReferInjectPostProcessor.class.getName(),beanBuilder.getBeanDefinition());
+        beanFactory.registerBeanDefinition(ReferInjectPostProcessor.class.getName(), beanBuilder.getBeanDefinition());
     }
 
-    private void registerTraceProcessor(DefaultListableBeanFactory beanFactory){
+    private void registerTraceProcessor(DefaultListableBeanFactory beanFactory) {
         BeanDefinitionBuilder beanBuilder = BeanDefinitionBuilder.rootBeanDefinition(EagleTraceAutoProxyCreator.class);
-        beanFactory.registerBeanDefinition(EagleTraceAutoProxyCreator.class.getName(),beanBuilder.getBeanDefinition());
+        beanFactory.registerBeanDefinition(EagleTraceAutoProxyCreator.class.getName(), beanBuilder.getBeanDefinition());
     }
 
     /**
@@ -115,14 +117,14 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
      * @throws Exception
      */
     private void registerRegistry(DefaultListableBeanFactory beanFactory) throws Exception {
-        if(CollectionUtil.isEmpty(eagleConfig.getRegistry())){
+        if (CollectionUtil.isEmpty(eagleConfig.getRegistry())) {
             throw new EagleFrameException("eagle.registry not config");
         }
-        for (RegistryConfig config : eagleConfig.getRegistry()){
+        for (RegistryConfig config : eagleConfig.getRegistry()) {
             String id = config.getId();
             id = Strings.isNullOrEmpty(id) ? config.getName() : config.getId();
-            BeanDefinitionBuilder beanBuilder = generateBuilder(config,RegistryBean.class);
-            beanFactory.registerBeanDefinition(generateId(id,beanBuilder,beanFactory), beanBuilder.getBeanDefinition());
+            BeanDefinitionBuilder beanBuilder = generateBuilder(config, RegistryBean.class);
+            beanFactory.registerBeanDefinition(generateId(id, beanBuilder, beanFactory), beanBuilder.getBeanDefinition());
         }
 
     }
@@ -133,14 +135,14 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
      * @throws Exception
      */
     private void registryProtocol(DefaultListableBeanFactory beanFactory) throws Exception {
-        if(CollectionUtil.isEmpty(eagleConfig.getProtocol())){
+        if (CollectionUtil.isEmpty(eagleConfig.getProtocol())) {
             throw new EagleFrameException("eagle.protocol not config");
         }
-        for (ProtocolConfig config : eagleConfig.getProtocol()){
+        for (ProtocolConfig config : eagleConfig.getProtocol()) {
             String id = config.getId();
             id = Strings.isNullOrEmpty(id) ? config.getName() : config.getId();
-            BeanDefinitionBuilder beanBuilder = generateBuilder(config,ProtocolBean.class);
-            beanFactory.registerBeanDefinition(generateId(id,beanBuilder,beanFactory), beanBuilder.getBeanDefinition());
+            BeanDefinitionBuilder beanBuilder = generateBuilder(config, ProtocolBean.class);
+            beanFactory.registerBeanDefinition(generateId(id, beanBuilder, beanFactory), beanBuilder.getBeanDefinition());
         }
     }
 
@@ -149,15 +151,15 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
      * @param beanFactory bean工厂
      * @throws Exception
      */
-    private void registryBaseService(DefaultListableBeanFactory beanFactory) throws Exception{
-        if(CollectionUtil.isEmpty(eagleConfig.getBaseService())){
+    private void registryBaseService(DefaultListableBeanFactory beanFactory) throws Exception {
+        if (CollectionUtil.isEmpty(eagleConfig.getBaseService())) {
             return;
         }
-        for (BootBaseServiceConfig config : eagleConfig.getBaseService()){
+        for (BootBaseServiceConfig config : eagleConfig.getBaseService()) {
             String id = config.getId();
-            BeanDefinitionBuilder beanBuilder = generateBuilder(config,BaseServiceBean.class);
-            multiRef("registries",config.getRegistry(),beanBuilder);
-            beanFactory.registerBeanDefinition(generateId(id,beanBuilder,beanFactory),beanBuilder.getBeanDefinition());
+            BeanDefinitionBuilder beanBuilder = generateBuilder(config, BaseServiceBean.class);
+            multiRef("registries", config.getRegistry(), beanBuilder);
+            beanFactory.registerBeanDefinition(generateId(id, beanBuilder, beanFactory), beanBuilder.getBeanDefinition());
         }
 
     }
@@ -167,16 +169,16 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
      * @param beanFactory bean工厂
      * @throws Exception
      */
-    private void registryBaseRefer(DefaultListableBeanFactory beanFactory) throws Exception{
-        if(CollectionUtil.isEmpty(eagleConfig.getBaseRefer())){
+    private void registryBaseRefer(DefaultListableBeanFactory beanFactory) throws Exception {
+        if (CollectionUtil.isEmpty(eagleConfig.getBaseRefer())) {
             return;
         }
-        for (BootBaseReferConfig config : eagleConfig.getBaseRefer()){
+        for (BootBaseReferConfig config : eagleConfig.getBaseRefer()) {
             String id = config.getId();
-            BeanDefinitionBuilder beanBuilder = generateBuilder(config,BaseReferBean.class);
-            multiRef("registries",config.getRegistry(),beanBuilder);
-            multiRef("protocols",config.getProtocol(),beanBuilder);
-            beanFactory.registerBeanDefinition(generateId(id,beanBuilder,beanFactory),beanBuilder.getBeanDefinition());
+            BeanDefinitionBuilder beanBuilder = generateBuilder(config, BaseReferBean.class);
+            multiRef("registries", config.getRegistry(), beanBuilder);
+            multiRef("protocols", config.getProtocol(), beanBuilder);
+            beanFactory.registerBeanDefinition(generateId(id, beanBuilder, beanFactory), beanBuilder.getBeanDefinition());
         }
 
     }
@@ -192,7 +194,7 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
         String[] basePackages = StringUtils.tokenizeToStringArray(eagleConfig.getBasePackage(), ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
         MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
-        for(String basePackage : basePackages){
+        for (String basePackage : basePackages) {
             String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + basePackage.replaceAll("\\.", "/") + "/**/*.class";
             Resource[] rs = resourcePatternResolver.getResources(packageSearchPath);
             for (Resource r : rs) {
@@ -201,97 +203,100 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
                 ClassMetadata clazzMD = reader.getClassMetadata();
                 final Class<?> clz = Class.forName(clazzMD.getClassName());
                 if (annotationMD.hasAnnotation(Service.class.getName())) {
-                    if(clz.isInterface()){
+                    if (clz.isInterface()) {
                         throw new EagleFrameException("registried service should not be a interface");
                     }
                     Service serviceAnnotation = clz.getAnnotation(Service.class);
                     GenericBeanDefinition bf = new GenericBeanDefinition();
                     bf.setBeanClass(clz);
                     bf.setLazyInit(false);
-                    String serviceId = Strings.isNullOrEmpty(serviceAnnotation.id()) ? beanNameGenerator.generateBeanName(bf,beanFactory) : serviceAnnotation.id();
+                    String serviceId = Strings.isNullOrEmpty(serviceAnnotation.id()) ? beanNameGenerator.generateBeanName(bf, beanFactory) : serviceAnnotation.id();
                     //注册实现类
-                    beanFactory.registerBeanDefinition(serviceId,bf);
+                    beanFactory.registerBeanDefinition(serviceId, bf);
 
                     Class<?>[] interfaces = clz.getInterfaces();
-                    for(Class<?> interfaceName : interfaces){
+                    for (Class<?> interfaceName : interfaces) {
                         //注册ServiceBean
                         BeanDefinitionBuilder service = BeanDefinitionBuilder.rootBeanDefinition(ServiceBean.class);
                         service.setLazyInit(false);
-                        service.addPropertyValue("interface",interfaceName);
-                        service.addPropertyReference("ref",serviceId);
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.export())){
-                            service.addPropertyValue("export",serviceAnnotation.export());
+                        service.addPropertyValue("interface", interfaceName);
+                        service.addPropertyReference("ref", serviceId);
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.export())) {
+                            service.addPropertyValue("export", serviceAnnotation.export());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.registry())){
-                            multiRef("registries",serviceAnnotation.registry(),service);
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.registry())) {
+                            multiRef("registries", serviceAnnotation.registry(), service);
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.protocol())){
-                            multiRef("protocols",serviceAnnotation.protocol(),service);
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.protocol())) {
+                            multiRef("protocols", serviceAnnotation.protocol(), service);
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.statsLog())){
-                            service.addPropertyValue("statsLog",serviceAnnotation.statsLog());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.interceptor())) {
+                            multiRef("interceptors", serviceAnnotation.interceptor(), service);
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.actives())){
-                            service.addPropertyValue("actives",serviceAnnotation.actives());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.statsLog())) {
+                            service.addPropertyValue("statsLog", serviceAnnotation.statsLog());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.activesWait())){
-                            service.addPropertyValue("activesWait",serviceAnnotation.activesWait());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.actives())) {
+                            service.addPropertyValue("actives", serviceAnnotation.actives());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.application())){
-                            service.addPropertyValue("application",serviceAnnotation.application());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.activesWait())) {
+                            service.addPropertyValue("activesWait", serviceAnnotation.activesWait());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.group())){
-                            service.addPropertyValue("group",serviceAnnotation.group());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.application())) {
+                            service.addPropertyValue("application", serviceAnnotation.application());
+                        }
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.group())) {
+                            service.addPropertyValue("group", serviceAnnotation.group());
                         }
 
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.baseService())){
-                            service.addPropertyReference("baseService",serviceAnnotation.baseService());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.baseService())) {
+                            service.addPropertyReference("baseService", serviceAnnotation.baseService());
                         }
 
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.filter())){
-                            service.addPropertyValue("filter",serviceAnnotation.filter());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.filter())) {
+                            service.addPropertyValue("filter", serviceAnnotation.filter());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.host())){
-                            service.addPropertyValue("host",serviceAnnotation.host());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.host())) {
+                            service.addPropertyValue("host", serviceAnnotation.host());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.module())){
-                            service.addPropertyValue("module",serviceAnnotation.module());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.module())) {
+                            service.addPropertyValue("module", serviceAnnotation.module());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.mock())){
-                            service.addPropertyValue("mock",serviceAnnotation.mock());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.mock())) {
+                            service.addPropertyValue("mock", serviceAnnotation.mock());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.retries())){
-                            service.addPropertyValue("retries",serviceAnnotation.retries());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.retries())) {
+                            service.addPropertyValue("retries", serviceAnnotation.retries());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.register())){
-                            service.addPropertyValue("register",serviceAnnotation.register());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.register())) {
+                            service.addPropertyValue("register", serviceAnnotation.register());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.weight())){
-                            service.addPropertyValue("weight",serviceAnnotation.weight());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.weight())) {
+                            service.addPropertyValue("weight", serviceAnnotation.weight());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.serviceType())){
-                            service.addPropertyValue("serviceType",serviceAnnotation.serviceType());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.serviceType())) {
+                            service.addPropertyValue("serviceType", serviceAnnotation.serviceType());
                         }
-                        if(!Strings.isNullOrEmpty(serviceAnnotation.version())){
-                            service.addPropertyValue("version",serviceAnnotation.version());
+                        if (!Strings.isNullOrEmpty(serviceAnnotation.version())) {
+                            service.addPropertyValue("version", serviceAnnotation.version());
                         }
-                        beanFactory.registerBeanDefinition(beanNameGenerator.generateBeanName(service.getBeanDefinition(),beanFactory),service.getBeanDefinition());
+                        beanFactory.registerBeanDefinition(beanNameGenerator.generateBeanName(service.getBeanDefinition(), beanFactory), service.getBeanDefinition());
 
                     }
                 }
 
-                if(clz.isInterface()){
+                if (clz.isInterface()) {
                     continue;
                 }
 
                 try {
-                    ReflectionUtils.doWithFields(clz,new ReflectionUtils.FieldCallback(){
+                    ReflectionUtils.doWithFields(clz, new ReflectionUtils.FieldCallback() {
 
                         @Override
                         public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                             Refer referAnnotation = field.getAnnotation(Refer.class);
                             Class<?> interfaceClass = field.getType();
-                            if (ReferContext.getName(referAnnotation,interfaceClass) != null) {
+                            if (ReferContext.getName(referAnnotation, interfaceClass) != null) {
                                 return;
                             }
                             if (!interfaceClass.isInterface()) {
@@ -304,6 +309,9 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
                             }
                             if (!Strings.isNullOrEmpty(referAnnotation.protocol())) {
                                 multiRef("protocols", referAnnotation.protocol(), refer);
+                            }
+                            if (!Strings.isNullOrEmpty(referAnnotation.interceptor())) {
+                                multiRef("interceptors", referAnnotation.interceptor(), refer);
                             }
                             if (!Strings.isNullOrEmpty(referAnnotation.statsLog())) {
                                 refer.addPropertyValue("statsLog", referAnnotation.statsLog());
@@ -405,11 +413,11 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
                             }
                             refer.addPropertyValue("interface", interfaceClass);
                             String referId = String.format("%s.%s", clz.getCanonicalName(), field.getName());
-                            ReferContext.register(referAnnotation,interfaceClass,referId);
+                            ReferContext.register(referAnnotation, interfaceClass, referId);
                             beanFactory.registerBeanDefinition(referId, refer.getBeanDefinition());
 
                         }
-                    }, new ReflectionUtils.FieldFilter(){
+                    }, new ReflectionUtils.FieldFilter() {
 
                         @Override
                         public boolean matches(Field field) {
@@ -427,42 +435,42 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
         BeanDefinitionBuilder beanBuilder = BeanDefinitionBuilder.rootBeanDefinition(clz);
         BeanInfo beanInfo = Introspector.getBeanInfo(config.getClass());
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor property : propertyDescriptors ){
+        for (PropertyDescriptor property : propertyDescriptors) {
             String name = property.getName();
-            if("class".equals(name)){
+            if ("class".equals(name)) {
                 continue;
             }
-            if(clz == BaseServiceBean.class || clz == BaseReferBean.class){
-                if("registry".equals(name) || "protocol".equals(name)){
+            if (clz == BaseServiceBean.class || clz == BaseReferBean.class) {
+                if ("registry".equals(name) || "protocol".equals(name)) {
                     continue;
                 }
             }
             Method readMethod = property.getReadMethod();
             Object value = readMethod.invoke(config);
-            if(value != null){
-                beanBuilder.addPropertyValue(name,value);
+            if (value != null) {
+                beanBuilder.addPropertyValue(name, value);
             }
         }
         return beanBuilder;
     }
 
-    private String generateId(String id,BeanDefinitionBuilder beanBuilder,DefaultListableBeanFactory beanFactory){
-        if(!Strings.isNullOrEmpty(id)){
+    private String generateId(String id, BeanDefinitionBuilder beanBuilder, DefaultListableBeanFactory beanFactory) {
+        if (!Strings.isNullOrEmpty(id)) {
             return id;
         }
-        return beanNameGenerator.generateBeanName(beanBuilder.getBeanDefinition(),beanFactory);
+        return beanNameGenerator.generateBeanName(beanBuilder.getBeanDefinition(), beanFactory);
     }
 
-    private void register(String beanClassName, String propertyName, BeanDefinitionBuilder beanBuilder, BeanNameGenerator beanNameGenerator, DefaultListableBeanFactory beanFactory){
-        if(!Strings.isNullOrEmpty(beanClassName)){
+    private void register(String beanClassName, String propertyName, BeanDefinitionBuilder beanBuilder, BeanNameGenerator beanNameGenerator, DefaultListableBeanFactory beanFactory) {
+        if (!Strings.isNullOrEmpty(beanClassName)) {
             BeanDefinitionBuilder injectBuilder = BeanDefinitionBuilder.rootBeanDefinition(beanClassName);
-            String injectId = beanNameGenerator.generateBeanName(injectBuilder.getBeanDefinition(),beanFactory);
-            beanFactory.registerBeanDefinition(injectId,injectBuilder.getBeanDefinition());
+            String injectId = beanNameGenerator.generateBeanName(injectBuilder.getBeanDefinition(), beanFactory);
+            beanFactory.registerBeanDefinition(injectId, injectBuilder.getBeanDefinition());
             beanBuilder.addPropertyReference(propertyName, injectId);
         }
     }
 
-    private EagleConfig getEagleConfig(DefaultListableBeanFactory beanFactory){
+    private EagleConfig getEagleConfig(DefaultListableBeanFactory beanFactory) {
         EagleConfig bean = new EagleConfig();
         Object target = bean;
         PropertiesConfigurationFactory<Object> factory = new PropertiesConfigurationFactory<Object>(target);
@@ -475,8 +483,7 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
         factory.setTargetName("eagle");
         try {
             factory.bindPropertiesToTarget();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new EagleFrameException(ex);
         }
         return bean;
@@ -548,8 +555,7 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
                 for (PropertySource<?> childSource : environment.getPropertySources()) {
                     flattenPropertySources(childSource, result);
                 }
-            }
-            else {
+            } else {
                 result.addLast(propertySource);
             }
         }

@@ -37,7 +37,7 @@ import static eagle.jfaster.org.util.RequestUtil.buildRejectResponse;
 public class MemoryProtectStrategy implements ProtectStrategy {
     @Override
     public Response protect(Request request, RemoteInvoke invoker, int methodCnt) {
-        if(EagleStatsManager.getMemoryUsedPct() > 90.0){
+        if (EagleStatsManager.getMemoryUsedPct() > 90.0) {
             return buildRejectResponse(String.format("Not allow invoke service %s because of memory usages of the server is over 90%", RequestUtil.getRequestDesc(request)));
         }
         return invoker.invoke(request);

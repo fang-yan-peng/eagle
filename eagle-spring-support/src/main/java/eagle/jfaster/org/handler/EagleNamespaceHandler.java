@@ -19,12 +19,13 @@ package eagle.jfaster.org.handler;
 
 import eagle.jfaster.org.bean.*;
 import eagle.jfaster.org.parse.*;
+
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * Created by fangyanpeng1 on 2017/8/8.
  */
-public class EagleNamespaceHandler extends NamespaceHandlerSupport{
+public class EagleNamespaceHandler extends NamespaceHandlerSupport {
 
     @Override
     public void init() {

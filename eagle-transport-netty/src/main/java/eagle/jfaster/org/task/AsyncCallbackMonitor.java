@@ -32,7 +32,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by fangyanpeng on 2017/8/22.
  */
 @RequiredArgsConstructor
-public class AsyncCallbackMonitor implements Runnable{
+public class AsyncCallbackMonitor implements Runnable {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(AsyncCallbackMonitor.class);
 
@@ -41,9 +41,9 @@ public class AsyncCallbackMonitor implements Runnable{
     @Override
     public void run() {
         MergeConfig config = client.getConfig();
-        int callbackQueueSize = config.getExtInt(ConfigEnum.callbackQueueSize.getName(),ConfigEnum.callbackQueueSize.getIntValue());
-        int warThreshold = callbackQueueSize*2/3 == 0 ? 1 : callbackQueueSize/3;
-        int callbackWait = config.getExtInt(ConfigEnum.callbackWaitTime.getName(),ConfigEnum.callbackWaitTime.getIntValue());
+        int callbackQueueSize = config.getExtInt(ConfigEnum.callbackQueueSize.getName(), ConfigEnum.callbackQueueSize.getIntValue());
+        int warThreshold = callbackQueueSize * 2 / 3 == 0 ? 1 : callbackQueueSize / 3;
+        int callbackWait = config.getExtInt(ConfigEnum.callbackWaitTime.getName(), ConfigEnum.callbackWaitTime.getIntValue());
         BlockingQueue<Runnable> callbackQueue = client.getCallbackQueue();
         try {
             if (!callbackQueue.isEmpty()) {
@@ -52,7 +52,7 @@ public class AsyncCallbackMonitor implements Runnable{
                     client.setSuspend(false);
                     return;
                 }
-                if(callbackQueue.size() >= warThreshold) {
+                if (callbackQueue.size() >= warThreshold) {
                     logger.info(String.format("%d task need to execute,maybe some callbacks execute too slow please check", callbackQueue.size()));
                 }
                 AsyncCallbackTask callbackTask = (AsyncCallbackTask) runnable.getRunnable();
@@ -60,16 +60,16 @@ public class AsyncCallbackMonitor implements Runnable{
                 final long behind = System.currentTimeMillis() - responseFuture.getBeginTimestamp();
                 // 如果队列过长，并且队头的任务等待时间过长，则将此client挂起。
                 if (behind >= callbackWait && callbackQueue.size() >= warThreshold) {
-                    logger.info(String.format("peek callback is not yet execute,has waited %ds and %d task need to execute,so stop accepting request",behind/1000, callbackQueue.size()));
+                    logger.info(String.format("peek callback is not yet execute,has waited %ds and %d task need to execute,so stop accepting request", behind / 1000, callbackQueue.size()));
                     client.setSuspend(true);
-                }else {
+                } else {
                     client.setSuspend(false);
                 }
-            }else {
+            } else {
                 client.setSuspend(false);
             }
         } catch (Throwable e) {
-            logger.error("AsyncCallbackMonitor:",e);
+            logger.error("AsyncCallbackMonitor:", e);
         }
     }
 }

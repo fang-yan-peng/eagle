@@ -16,6 +16,7 @@
  */
 
 package eagle.jfaster.org.transport.support;
+
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.transport.HeartBeat;
 import lombok.RequiredArgsConstructor;

@@ -29,7 +29,7 @@ import java.nio.ByteBuffer;
 @Spi(scope = Scope.PROTOTYPE)
 public interface Codec {
 
-    ByteBuffer encode(Object message,Serialization serialization) throws IOException;
+    ByteBuffer encode(Object message, Serialization serialization) throws IOException;
 
-    Object decode(ByteBuffer buffer,Serialization serialization,int opaque,short magicCode) throws IOException;
+    Object decode(ByteBuffer buffer, Serialization serialization, int opaque, short magicCode) throws IOException;
 }

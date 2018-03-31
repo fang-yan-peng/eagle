@@ -47,22 +47,22 @@ public class ConcurrentOverloadProtectStrategy implements ProtectStrategy {
 
     @Override
     public Response protect(Request request, RemoteInvoke invoker, int methodCnt) {
-        int maxWorkerThread = invoker.getConfig().getExtInt(ConfigEnum.maxWorkerThread.getName(),ConfigEnum.maxWorkerThread.getIntValue());
+        int maxWorkerThread = invoker.getConfig().getExtInt(ConfigEnum.maxWorkerThread.getName(), ConfigEnum.maxWorkerThread.getIntValue());
         String reqKey = RequestUtil.getRequestDesc(request);
         try {
             int totalReqCnt = totalCounter.incrementAndGet();
             int methodReqCnt = incrRequestCounter(reqKey);
             //如果只有一个方法暴露则不进行保护，如果并发过多，业务处理不过来，提交线程池任务根据拒绝策略处理
-            if(methodCnt == 1){
+            if (methodCnt == 1) {
                 return invoker.invoke(request);
             }
             //如果该方法请求大于最大线程的1／2，并且所有方法的总请求量大于线程的 3／4则进行保护
-            if(methodReqCnt > (maxWorkerThread / 2) && totalReqCnt > (maxWorkerThread * 3 / 4)){
-                return buildRejectResponse(String.format("Not allow invoke service '%s' because of too many invoke at the same time",reqKey));
+            if (methodReqCnt > (maxWorkerThread / 2) && totalReqCnt > (maxWorkerThread * 3 / 4)) {
+                return buildRejectResponse(String.format("Not allow invoke service '%s' because of too many invoke at the same time", reqKey));
             }
             //如果总量达到量3／4，并且暴露的方法较多，则进行保护
-            if(methodCnt >= 4 && totalReqCnt > (maxWorkerThread * 3 / 4) && methodReqCnt > (maxWorkerThread * 1 / 4)){
-                return buildRejectResponse(String.format("Not allow invoke service '%s' because of too many invoke at the same time",reqKey));
+            if (methodCnt >= 4 && totalReqCnt > (maxWorkerThread * 3 / 4) && methodReqCnt > (maxWorkerThread * 1 / 4)) {
+                return buildRejectResponse(String.format("Not allow invoke service '%s' because of too many invoke at the same time", reqKey));
             }
             return invoker.invoke(request);
         } finally {

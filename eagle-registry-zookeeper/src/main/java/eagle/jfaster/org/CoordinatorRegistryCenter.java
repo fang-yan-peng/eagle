@@ -18,6 +18,7 @@
 package eagle.jfaster.org;
 
 import eagle.jfaster.org.registry.RegistryCenter;
+
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 
 import java.util.List;
@@ -82,7 +83,7 @@ public interface CoordinatorRegistryCenter extends RegistryCenter {
      * @param cachePath 需加入缓存的路径
      * @Param cacheData 是否缓存节点数据
      */
-    PathChildrenCache addChildrenCacheData(String cachePath,boolean cacheData);
+    PathChildrenCache addChildrenCacheData(String cachePath, boolean cacheData);
 
     /**
      * 获取注册中心数据缓存对象.

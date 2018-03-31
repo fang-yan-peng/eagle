@@ -38,32 +38,32 @@ public class StatsNettyRefer<T> extends NettyRefer<T> {
 
     private final String statsKey;
 
-    public StatsNettyRefer(Client client, MergeConfig config, Class<T> type, SuspendResumeLock lock,InternalLogger log) {
+    public StatsNettyRefer(Client client, MergeConfig config, Class<T> type, SuspendResumeLock lock, InternalLogger log) {
         super(client, config, type, lock);
         statsKey = config.identity();
-        EagleStatsManager.registerStatsItem(statsKey,log);
+        EagleStatsManager.registerStatsItem(statsKey, log);
     }
 
     @Override
     public Object request(Request request) {
         try {
-            if(lock.tryAcquire()){
+            if (lock.tryAcquire()) {
                 long start = ClockSource.MILLINSTANCE.currentTime();
                 try {
                     activeCnt.incrementAndGet();
                     return client.request(request);
                 } finally {
                     lock.release();
-                    EagleStatsManager.incInvoke(statsKey, ReflectUtil.getMethodDesc(request.getMethodName(),request.getParameterDesc()), ClockSource.MILLINSTANCE.elapsedMillis(start));
+                    EagleStatsManager.incInvoke(statsKey, ReflectUtil.getMethodDesc(request.getMethodName(), request.getParameterDesc()), ClockSource.MILLINSTANCE.elapsedMillis(start));
                 }
-            }else {
-                String warn = String.format("'%s' too much request,more than actives:[%d]",config.identity(),lock.getMaxPermits());
+            } else {
+                String warn = String.format("'%s' too much request,more than actives:[%d]", config.identity(), lock.getMaxPermits());
                 logger.warn(warn);
                 throw new EagleFrameException(warn);
             }
         } catch (Throwable e) {
             throw ExceptionUtil.handleException(e);
-        }finally {
+        } finally {
             activeCnt.decrementAndGet();
         }
     }

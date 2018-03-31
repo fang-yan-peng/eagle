@@ -33,18 +33,18 @@ public interface RegistryCenterManage {
 
     RegistryCenter getRegistry(MergeConfig regConfig);
 
-    void registerService(MergeConfig regConfig,MergeConfig serviceConfig);
+    void registerService(MergeConfig regConfig, MergeConfig serviceConfig);
 
-    void registerRef(MergeConfig regConfig,MergeConfig refConfig);
+    void registerRef(MergeConfig regConfig, MergeConfig refConfig);
 
-    void addServiceListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener);
+    void addServiceListener(MergeConfig regConfig, MergeConfig refConfig, ServiceChangeListener listener);
 
-    void addConnectionStatListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener) ;
+    void addConnectionStatListener(MergeConfig regConfig, MergeConfig refConfig, ServiceChangeListener listener);
 
-    void addRefListener(MergeConfig regConfig,MergeConfig refConfig,ServiceChangeListener listener);
+    void addRefListener(MergeConfig regConfig, MergeConfig refConfig, ServiceChangeListener listener);
 
-    List<MergeConfig> getRegisterServices(MergeConfig regConfig,MergeConfig refConfig);
+    List<MergeConfig> getRegisterServices(MergeConfig regConfig, MergeConfig refConfig);
 
-    List<MergeConfig> getSubscribeServices(MergeConfig regConfig,MergeConfig refConfig);
+    List<MergeConfig> getSubscribeServices(MergeConfig regConfig, MergeConfig refConfig);
 
 }

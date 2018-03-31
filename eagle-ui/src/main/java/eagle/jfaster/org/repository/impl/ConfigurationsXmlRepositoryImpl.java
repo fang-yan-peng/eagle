@@ -27,7 +27,7 @@ import eagle.jfaster.org.repository.ConfigurationsXmlRepository;
  * @author fangyanpeng
  */
 public final class ConfigurationsXmlRepositoryImpl extends AbstractXmlRepositoryImpl<GlobalConfiguration> implements ConfigurationsXmlRepository {
-    
+
     public ConfigurationsXmlRepositoryImpl() {
         super("Configurations.xml", GlobalConfiguration.class);
     }

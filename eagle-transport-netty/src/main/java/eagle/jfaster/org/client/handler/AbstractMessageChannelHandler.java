@@ -39,11 +39,11 @@ public abstract class AbstractMessageChannelHandler extends SimpleChannelInbound
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Response response) throws Exception {
         int opaque = response.getOpaque();
         NettyResponseFuture future = client.removeCallBack(opaque);
-        if(future != null){
-            handle(response,future);
+        if (future != null) {
+            handle(response, future);
         }
 
     }
 
-    protected abstract void handle(Response response,NettyResponseFuture future);
+    protected abstract void handle(Response response, NettyResponseFuture future);
 }

@@ -31,7 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EagleMethodInterceptor implements MethodInterceptor {
 
-    private final Map<String,MethodProxy>  proxyMap;
+    private final Map<String, MethodProxy> proxyMap;
 
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {

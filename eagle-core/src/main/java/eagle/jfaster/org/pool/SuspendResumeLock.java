@@ -30,18 +30,22 @@ import java.util.concurrent.TimeUnit;
  */
 public class SuspendResumeLock {
 
-    public static final SuspendResumeLock FAUX_LOCK = new SuspendResumeLock(false,0,0) {
+    public static final SuspendResumeLock FAUX_LOCK = new SuspendResumeLock(false, 0, 0) {
         @Override
-        public void acquire() {}
+        public void acquire() {
+        }
 
         @Override
-        public void release() {}
+        public void release() {
+        }
 
         @Override
-        public void suspend() {}
+        public void suspend() {
+        }
 
         @Override
-        public void resume() {}
+        public void resume() {
+        }
 
         @Override
         public boolean tryAcquire() throws InterruptedException {
@@ -58,11 +62,11 @@ public class SuspendResumeLock {
     private final Semaphore acquisitionSemaphore;
 
 
-    public SuspendResumeLock(int maxPermits,long waitMs) {
-        this(true,maxPermits,waitMs);
+    public SuspendResumeLock(int maxPermits, long waitMs) {
+        this(true, maxPermits, waitMs);
     }
 
-    private SuspendResumeLock(final boolean createSemaphore,int maxPermits,long waitMs) {
+    private SuspendResumeLock(final boolean createSemaphore, int maxPermits, long waitMs) {
         this.maxPermits = maxPermits;
         this.waitMs = waitMs;
         acquisitionSemaphore = (createSemaphore ? new Semaphore(maxPermits, true) : null);
@@ -85,6 +89,6 @@ public class SuspendResumeLock {
     }
 
     public boolean tryAcquire() throws InterruptedException {
-        return acquisitionSemaphore.tryAcquire(waitMs,TimeUnit.MILLISECONDS);
+        return acquisitionSemaphore.tryAcquire(waitMs, TimeUnit.MILLISECONDS);
     }
 }

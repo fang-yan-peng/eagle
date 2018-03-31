@@ -77,4 +77,6 @@ public @interface Service {
 
     String serviceType() default "";
 
+    String interceptor() default "";
+
 }

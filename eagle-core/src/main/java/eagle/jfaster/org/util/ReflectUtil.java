@@ -45,13 +45,13 @@ public class ReflectUtil {
 
     private static final ConcurrentMap<Class<?>, String> class2NameCache = new ConcurrentHashMap<Class<?>, String>();
 
-    private static final String[] PRIMITIVE_NAMES = new String[] { "boolean", "byte", "char", "double", "float", "int",
+    private static final String[] PRIMITIVE_NAMES = new String[]{"boolean", "byte", "char", "double", "float", "int",
             "long", "short",
-            "void" };
+            "void"};
 
-    private static final Class<?>[] PRIMITIVE_CLASSES = new Class[] { boolean.class, byte.class, char.class,
+    private static final Class<?>[] PRIMITIVE_CLASSES = new Class[]{boolean.class, byte.class, char.class,
             double.class, float.class,
-            int.class, long.class, short.class, Void.TYPE };
+            int.class, long.class, short.class, Void.TYPE};
 
     private static final int PRIMITIVE_CLASS_NAME_MAX_LENGTH = 7;
 
@@ -97,9 +97,9 @@ public class ReflectUtil {
      */
     public static String getMethodDesc(String methodName, String paramDesc) {
         if (paramDesc == null) {
-            return String.format(METHOD_DESC_VOID,methodName);
+            return String.format(METHOD_DESC_VOID, methodName);
         } else {
-            return String.format(METHOD_DESC_PARAM,methodName, paramDesc);
+            return String.format(METHOD_DESC_PARAM, methodName, paramDesc);
         }
     }
 
@@ -242,20 +242,20 @@ public class ReflectUtil {
         return ret;
     }
 
-    public static Object[] getParameterDefaultVals(Method method){
+    public static Object[] getParameterDefaultVals(Method method) {
         Class[] clzs = method.getParameterTypes();
-        if(clzs == null || clzs.length == 0){
+        if (clzs == null || clzs.length == 0) {
             return new Object[0];
         }
         Object[] vals = new Object[clzs.length];
-        for (int i = 0; i < clzs.length; ++i){
+        for (int i = 0; i < clzs.length; ++i) {
             vals[i] = PrimitiveDefault.getDefaultValue(clzs[i]);
         }
         return vals;
 
     }
 
-    public static Object getDefaultReturnValue(Class<?> returnType){
+    public static Object getDefaultReturnValue(Class<?> returnType) {
         return PrimitiveDefault.getDefaultValue(returnType);
     }
 

@@ -23,7 +23,7 @@ import lombok.Setter;
 /**
  * Created by fangyanpeng on 2017/8/25.
  */
-public class ServiceBriefInfo{
+public class ServiceBriefInfo {
 
     @Setter
     @Getter

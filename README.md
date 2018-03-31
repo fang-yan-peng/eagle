@@ -17,8 +17,8 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
 >  * cd eagle-benchmark
 >  * mvn clean install
 >  * cd eagle-benchmark-server/target
->  * tar -zxvf eagle-benchmark-server-1.6-assembly.tar.gz
->  * cd eagle-benchmark-server-1.6
+>  * tar -zxvf eagle-benchmark-server-1.7-assembly.tar.gz
+>  * cd eagle-benchmark-server-1.7
 >  * bin/start.sh
 >  * cd eagle-benchmark/eagle-benchmark-client
 >  * 在linux上运行 sh benchmark.sh，在window上运行 benchmark.cmd
@@ -44,22 +44,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-core</artifactId>
-        <version>1.6</version>
+        <version>1.7</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-registry-zookeeper</artifactId>
-        <version>1.6</version>
+        <version>1.7</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-transport-netty</artifactId>
-        <version>1.6</version>
+        <version>1.7</version>
     </dependency>
     <dependency>
         <groupId>org.jfaster.eagle</groupId>
         <artifactId>eagle-spring-support</artifactId>
-        <version>1.6</version>
+        <version>1.7</version>
     </dependency>
    ```
    如果是springBoot,添加如下:
@@ -67,22 +67,22 @@ Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-core</artifactId>
-       <version>1.6</version>
+       <version>1.7</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-registry-zookeeper</artifactId>
-       <version>1.6</version>
+       <version>1.7</version>
    </dependency>
    <dependency>
        <groupId>org.jfaster.eagle</groupId>
        <artifactId>eagle-transport-netty</artifactId>
-       <version>1.6</version>
+       <version>1.7</version>
    </dependency>
    <dependency>
      <groupId>org.jfaster.eagle</groupId>
      <artifactId>spring-boot-starter-eagle</artifactId>
-     <version>1.6</version>
+     <version>1.7</version>
    </dependency>
   ```
 ## 分布式调用追踪
@@ -771,6 +771,59 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
      SpringBoot方式同样支持同步调用和异步调用两种方式，只要在Refer注解里指定callback属性为MethodInvokeCallBack实现的全限定性名即可。Refer和Service注解里的属性与xml配置的属性一一对应。
      注意此例子中，由于Refer和Service在同一个工程，所以运行main方法Refer和Service就都启动了，实际生产环境中一般都是服务的调用和服务的实现部署在不同的进程中。
 
+## 拦截器的使用
+> 调用端和服务端都可以使用，以记录方法的远程调用执行时间为例。通过CurrentExecutionContext可以在拦截器的各个方法之间传递参数。
+### 实现ExecutionInterceptor接口
+
+`src/main/java/eagle/jfaster/org/interceptor/ClientInterceptor.java`
+
+```java
+    package eagle.jfaster.org.interceptor;
+    
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+    import org.springframework.stereotype.Service;
+    
+    import eagle.jfaster.org.interceptor.context.CurrentExecutionContext;
+    
+    /**
+     * Created by fangyanpeng1 on 2018/3/31.
+     */
+    @Service("clientInterceptor")
+    public class ClientInterceptor implements ExecutionInterceptor {
+    
+        private static final Logger logger = LoggerFactory.getLogger(ClientInterceptor.class);
+    
+        @Override
+        public void onBefore(String interfaceName, String method, Object[] args) {
+            logger.info("{}.{} start....", interfaceName, method);
+            CurrentExecutionContext.setVariable("begin", System.nanoTime());
+        }
+    
+        @Override
+        public void onAfter(String interfaceName, String method, Object[] args) {
+            logger.info("{}.{} end....", interfaceName, method);
+            long starTime = (long) CurrentExecutionContext.getVariable("begin");
+            logger.info("{}.{} spent {} ns", interfaceName, method, System.nanoTime() - starTime);
+        }
+    
+        @Override
+        public void onError(String interfaceName, String method, Object[] args, Throwable e) {
+            logger.info("{}.{} error....", interfaceName, method, e);
+            long starTime = (long) CurrentExecutionContext.getVariable("begin");
+            logger.info("{}.{} spent {} ns", interfaceName, method, System.nanoTime() - starTime);
+        }
+    }
+```
+### 配置配置文件
+1. xml配置
+```xml
+   <eagle:refer id="calculate1" interface="eagle.jfaster.org.service.Calculate" 
+                    base-refer="baseRefer1" max-invoke-error="10" max-client-connection="20"
+                    interceptor="clientInterceptor"/>
+```
+2. 如果是通过注解的方式配置，直接在注解的的属性指定即可@Refer(interceptor="clientInterceptor")或@Service(interceptor="clientInterceptor")
+       
 # eagle常用配置
 
 ## 注册中心的配置（eagle:registry）
@@ -823,6 +876,7 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
    * base-refer: 公共的refer配置。
    * stats-log: 统计log的名称，如果配置了该名称，则会把接口方法的调用时间、tps等信息写入此log，方便查看接口的性能。
    * mock: 接口失败降级类的全限定名。如果配置了mock，接口调用失败，就会降级调用mock的实现。mock需要实现 eagle.jfaster.org.rpc.Mock接口。
+   * interceptor: 拦截器在spring中bean的名称，多个拦截器用逗号分割，实现ExecutionInterceptor接口，通过CurrentExecutionContext可以在拦截器的各个方法间传递业务参数。
    
 
 ## 服务端配置（eagle:service）
@@ -837,14 +891,16 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
    * export: 服务暴露的协议和端口号，多个用逗号分割，如proto:7000,proto:8000，proto是协议的id。
    * weight: 权重，与权重负载均衡算法联合使用。
    * service-type: 服务调用类型，支持jdk和cglib两种配置，默认是jdk。如果是jdk，采用反射机制调用实现类的方法；如果是cglib，采用cglib索引机制直接调用实现类的方法，性能更好。
+   * interceptor: 拦截器在spring中bean的名称，多个拦截器用逗号分割，实现ExecutionInterceptor接口，通过CurrentExecutionContext可以在拦截器的各个方法间传递业务参数。
+
    
 ## 分布式追踪配置（eagle:trace）
   * 在spring的配置文件中，增加`<eagle:trace/>`配置。配合@Trace注解实现追踪功能。@Trace打在类上，则这个类的所有方法被追踪。打在方法上，则只有这个方法被追踪。只需要在最外层的调用打@Trace注解即可，内层的调用会自动并入当前的调用链中。同一调用链中的日志打印会带有相同的traceId。
 # 后台管理界面
    > eagle 提供可视化的后台管理，方便查看和修改配置。
    > 启动后台的步骤
-   * tar -zxvf eagle-ui-1.6.tar.gz
-   * cd eagle-ui-1.6
+   * tar -zxvf eagle-ui-1.7.tar.gz
+   * cd eagle-ui-1.7
    * vim conf/eagle.conf 修改用户名、密码、jvm参数、日志路径、端口号等
    * sh bin/eagle.sh start
    

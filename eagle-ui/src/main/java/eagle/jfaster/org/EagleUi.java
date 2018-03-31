@@ -27,7 +27,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class EagleUi {
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(EagleUi.class,args);
+        ConfigurableApplicationContext context = SpringApplication.run(EagleUi.class, args);
 
     }
 }

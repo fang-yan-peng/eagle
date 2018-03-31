@@ -23,7 +23,7 @@ import java.lang.management.ManagementFactory;
  */
 public class PidUtil {
 
-    public static int getPid(){
+    public static int getPid() {
         return Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
     }
 }

@@ -32,6 +32,7 @@ import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -48,8 +49,8 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
 
     private final Serialization serialization;
 
-    public NettyDecorder(int maxContentLength,Codec codec,Serialization serialization){
-        super(maxContentLength,0,4,-4,4);
+    public NettyDecorder(int maxContentLength, Codec codec, Serialization serialization) {
+        super(maxContentLength, 0, 4, -4, 4);
         this.codec = codec;
         this.serialization = serialization;
     }
@@ -64,30 +65,30 @@ public class NettyDecorder extends LengthFieldBasedFrameDecoder {
             }
             ByteBuffer byteBuffer = frame.nioBuffer();
             short magicCode = byteBuffer.getShort();
-            if(isNotIllegal(magicCode)){
-                throw new EagleFrameException("Error the type: '%d' is not supported",magicCode);
+            if (isNotIllegal(magicCode)) {
+                throw new EagleFrameException("Error the type: '%d' is not supported", magicCode);
             }
             int opaque = byteBuffer.getInt();
             try {
-                return codec.decode(byteBuffer,serialization,opaque,magicCode);
-            }catch (Throwable e){
-                logger.error("Error codec decode ",e);
+                return codec.decode(byteBuffer, serialization, opaque, magicCode);
+            } catch (Throwable e) {
+                logger.error("Error codec decode ", e);
                 EagleResponse response;
-                if(e instanceof EagleFrameException){
-                    response = buildExceptionResponse(opaque,(Exception)e);
-                }else{
-                    response = buildExceptionResponse(opaque,new EagleFrameException(e.getMessage()));
+                if (e instanceof EagleFrameException) {
+                    response = buildExceptionResponse(opaque, (Exception) e);
+                } else {
+                    response = buildExceptionResponse(opaque, new EagleFrameException(e.getMessage()));
                 }
-                if(isRequest(magicCode)){
+                if (isRequest(magicCode)) {
                     ctx.writeAndFlush(response);
                     return null;
-                }else{
+                } else {
                     return response;
                 }
             }
-        } catch (Throwable e){
-            logger.error("Error decode message ",e);
-            RemotingUtil.closeChannel(ctx.channel(),"NettyEncoder decode");
+        } catch (Throwable e) {
+            logger.error("Error decode message ", e);
+            RemotingUtil.closeChannel(ctx.channel(), "NettyEncoder decode");
             throw ExceptionUtil.handleException(e);
         } finally {
             if (null != frame) {

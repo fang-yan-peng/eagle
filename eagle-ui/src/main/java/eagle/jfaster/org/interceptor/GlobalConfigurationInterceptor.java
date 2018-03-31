@@ -18,11 +18,13 @@
 package eagle.jfaster.org.interceptor;
 
 import com.google.common.base.Optional;
+
 import eagle.jfaster.org.pojo.RegistryCenterConfiguration;
 import eagle.jfaster.org.factory.RegistryCenterFactory;
 import eagle.jfaster.org.service.RegistryCenterConfigurationService;
 import eagle.jfaster.org.service.impl.RegistryCenterConfigurationServiceImpl;
 import eagle.jfaster.org.util.SessionRegistryCenterConfiguration;
+
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;

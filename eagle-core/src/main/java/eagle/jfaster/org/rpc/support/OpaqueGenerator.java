@@ -18,6 +18,7 @@
 package eagle.jfaster.org.rpc.support;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
@@ -46,13 +47,13 @@ public class OpaqueGenerator {
 
     static {
         String ip = System.getProperty("host");
-        if(Strings.isNullOrEmpty(ip)){
+        if (Strings.isNullOrEmpty(ip)) {
             ip = getIp();
-        }else if(!isIllegalIp(ip)){
-            throw new EagleFrameException("Input ip: '%s' is not illegal",ip);
+        } else if (!isIllegalIp(ip)) {
+            throw new EagleFrameException("Input ip: '%s' is not illegal", ip);
         }
         int pid = getPid();
-        logger.info(String.format("Generate distribute id depends on ip: '%s' and pid: '%d'",ip,pid));
+        logger.info(String.format("Generate distribute id depends on ip: '%s' and pid: '%d'", ip, pid));
         String[] segments = ip.split("\\.");
         machineId |= Long.parseLong(segments[0]) << 56;
         machineId |= Long.parseLong(segments[1]) << 48;
@@ -62,20 +63,20 @@ public class OpaqueGenerator {
 
     }
 
-    public static int getOpaque(){
+    public static int getOpaque() {
         return opaque.getAndIncrement();
     }
 
-    public static String getDistributeOpaque(){
-        return String.format("%016x%016x",machineId,generator.nextId());
+    public static String getDistributeOpaque() {
+        return String.format("%016x%016x", machineId, generator.nextId());
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 30 ; ++i){
+        for (int i = 0; i < 30; ++i) {
             String id = getDistributeOpaque();
             System.out.println(id);
             System.out.println(id.getBytes(Charset.forName("UTF-8")).length);
-            System.out.println(new String(id.getBytes(Charset.forName("UTF-8")),Charset.forName("UTF-8")));
+            System.out.println(new String(id.getBytes(Charset.forName("UTF-8")), Charset.forName("UTF-8")));
             System.out.println("=================");
 
         }

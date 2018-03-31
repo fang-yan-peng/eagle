@@ -18,6 +18,7 @@
 package eagle.jfaster.org.parse;
 
 import eagle.jfaster.org.config.ConfigEnum;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -35,10 +36,10 @@ public class ReferBeanParser extends EagleBeanParser {
 
     @Override
     protected void parse(Element element, BeanDefinitionBuilder beanBuilder, ParserContext parserContext) throws ClassNotFoundException {
-        parseInterface(element,beanBuilder);
+        parseInterface(element, beanBuilder);
         String callbackName = element.getAttribute(ConfigEnum.callback.getName());
-        register(callbackName,"invokeCallback",beanBuilder,parserContext);
+        register(callbackName, "invokeCallback", beanBuilder, parserContext);
         String mockName = element.getAttribute(ConfigEnum.mock.getName());
-        register(mockName,"failMock",beanBuilder,parserContext);
+        register(mockName, "failMock", beanBuilder, parserContext);
     }
 }

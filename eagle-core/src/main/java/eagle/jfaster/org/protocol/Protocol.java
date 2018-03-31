@@ -29,9 +29,12 @@ import eagle.jfaster.org.spi.Spi;
  * Created by fangyanpeng1 on 2017/7/31.
  */
 @Spi(scope = Scope.SINGLETON)
-public interface Protocol <T> {
+public interface Protocol<T> {
     Exporter<T> createServer(RemoteInvoke<T> invoker);
-    Refer<T> createRefer(MergeConfig config,Class<T> type);
+
+    Refer<T> createRefer(MergeConfig config, Class<T> type);
+
     void close();
+
     boolean isOpen();
 }

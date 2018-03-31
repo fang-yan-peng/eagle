@@ -17,6 +17,7 @@
 package eagle.jfaster.org.parse;
 
 import eagle.jfaster.org.bean.trace.EagleTraceAutoProxyCreator;
+
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

@@ -31,29 +31,29 @@ public class PathUtil {
 
     private static final String FULL_PATH = "%s/%s";
 
-    public static String getHostByPath(String path){
+    public static String getHostByPath(String path) {
         int pos = path.lastIndexOf("/");
-        if(pos < 0 || pos == path.length() -1){
+        if (pos < 0 || pos == path.length() - 1) {
             return null;
         }
-        return path.substring(pos+1);
+        return path.substring(pos + 1);
     }
 
-    public static String getFullPath(String servicePath,String host){
-        return String.format(FULL_PATH,servicePath,host);
+    public static String getFullPath(String servicePath, String host) {
+        return String.format(FULL_PATH, servicePath, host);
     }
 
-    public static void rebalance(CoordinatorRegistryCenter registryCenter,MergeConfig registryConfig,ServiceChangeListener changeListener,String servicePath){
+    public static void rebalance(CoordinatorRegistryCenter registryCenter, MergeConfig registryConfig, ServiceChangeListener changeListener, String servicePath) {
         List<String> hosts = registryCenter.getChildrenKeys(servicePath);
-        if(hosts == null || hosts.isEmpty()){
-            changeListener.serviceChange(registryConfig,null);
-        }else {
+        if (hosts == null || hosts.isEmpty()) {
+            changeListener.serviceChange(registryConfig, null);
+        } else {
             List<MergeConfig> configs = new ArrayList<>(hosts.size());
-            for(String host : hosts){
-                String serviceConfig = registryCenter.getDirectly(getFullPath(servicePath,host));
+            for (String host : hosts) {
+                String serviceConfig = registryCenter.getDirectly(getFullPath(servicePath, host));
                 configs.add(MergeConfig.decode(serviceConfig));
             }
-            changeListener.serviceChange(registryConfig,configs);
+            changeListener.serviceChange(registryConfig, configs);
         }
     }
 

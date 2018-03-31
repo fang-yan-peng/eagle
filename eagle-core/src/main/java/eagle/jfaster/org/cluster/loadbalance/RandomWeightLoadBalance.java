@@ -47,7 +47,7 @@ public class RandomWeightLoadBalance<T> extends AbstractLoadBalance<T> {
                 sameWeight = false; // 计算所有权重是否一样
             }
         }
-        if (totalWeight > 0 && ! sameWeight) {
+        if (totalWeight > 0 && !sameWeight) {
             // 如果权重不相同且权重大于0则按总权重数随机
             int offset = ThreadLocalRandom.current().nextInt(totalWeight);
             // 并确定随机值落在哪个片断上
@@ -71,7 +71,7 @@ public class RandomWeightLoadBalance<T> extends AbstractLoadBalance<T> {
     }
 
     protected int getWeight(Refer<T> refer) {
-        int weight = refer.getConfig().getExtInt(ConfigEnum.weight.getName(),ConfigEnum.weight.getIntValue());
+        int weight = refer.getConfig().getExtInt(ConfigEnum.weight.getName(), ConfigEnum.weight.getIntValue());
         if (weight > 0) {
             long timestamp = refer.getConfig().getExtLong(ConfigEnum.refreshTimestamp.getName(), ConfigEnum.refreshTimestamp.getIntValue());
             if (timestamp > 0L) {
@@ -85,7 +85,7 @@ public class RandomWeightLoadBalance<T> extends AbstractLoadBalance<T> {
     }
 
     static int calculateWarmupWeight(int uptime, int weight) {
-        int ww = (int) ( (float) uptime / ( (float) WARMUP / (float) weight ) );
+        int ww = (int) ((float) uptime / ((float) WARMUP / (float) weight));
         return ww < 1 ? 1 : (ww > weight ? weight : ww);
     }
 }

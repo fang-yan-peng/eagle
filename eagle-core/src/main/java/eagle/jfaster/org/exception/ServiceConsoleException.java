@@ -24,9 +24,9 @@ package eagle.jfaster.org.exception;
  * @author fangyanpeng
  */
 public final class ServiceConsoleException extends RuntimeException {
-    
+
     private static final long serialVersionUID = 1393957353478034407L;
-    
+
     public ServiceConsoleException(final Exception cause) {
         super(cause);
     }

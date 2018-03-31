@@ -90,6 +90,11 @@
                       <xsd:documentation><![CDATA[ 过滤器配置. ]]></xsd:documentation>
                   </xsd:annotation>
               </xsd:attribute>
+                <xsd:attribute name="interceptor" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation><![CDATA[ 拦截器配置，多个拦截器用逗号隔开. ]]></xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
               <xsd:attribute name="application" type="xsd:string" use="optional">
                   <xsd:annotation>
                       <xsd:documentation><![CDATA[ 应用信息. ]]></xsd:documentation>

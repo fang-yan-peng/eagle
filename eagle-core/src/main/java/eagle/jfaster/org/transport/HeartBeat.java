@@ -26,5 +26,6 @@ import eagle.jfaster.org.config.common.MergeConfig;
  */
 public interface HeartBeat {
     String heartBeat();
+
     MergeConfig getConfig();
 }

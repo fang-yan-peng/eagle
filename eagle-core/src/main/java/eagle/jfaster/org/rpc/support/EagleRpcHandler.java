@@ -26,6 +26,7 @@ import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.ServiceTypeEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.interceptor.ExecutionInterceptor;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.protocol.Protocol;
@@ -36,6 +37,7 @@ import eagle.jfaster.org.rpc.RpcHandler;
 import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.spi.SpiInfo;
 import eagle.jfaster.org.util.RegistryUtil;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
@@ -52,7 +54,7 @@ public class EagleRpcHandler implements RpcHandler {
 
     @Override
     public <T> ReferClusterManage<T> buildClusterManage(Class<T> interfaceClass, MergeConfig refConfig, List<MergeConfig> registryConfigs) {
-        ReferClusterManage<T> clusterManage = new ReferClusterManage<T>(interfaceClass,refConfig,registryConfigs);
+        ReferClusterManage<T> clusterManage = new ReferClusterManage<T>(interfaceClass, refConfig, registryConfigs);
         clusterManage.init();
         return clusterManage;
     }
@@ -60,12 +62,12 @@ public class EagleRpcHandler implements RpcHandler {
     @Override
     public <T> T refer(Class<T> interfaceClass, List<ReferCluster<T>> clusters) {
         AbstractReferInvokeHandler<T> invokeHandler;
-        if(clusters.get(0).getConfig().getInvokeCallBack() == null){
-            invokeHandler = new SyncInvokeHandler<T>(clusters,interfaceClass);
-        }else {
-            invokeHandler = new AsyncInvokeHandler<T>(clusters,interfaceClass);
+        if (clusters.get(0).getConfig().getInvokeCallBack() == null) {
+            invokeHandler = new SyncInvokeHandler<T>(clusters, interfaceClass);
+        } else {
+            invokeHandler = new AsyncInvokeHandler<T>(clusters, interfaceClass);
         }
-        return (T) Proxy.newProxyInstance(EagleRpcHandler.class.getClassLoader(),new Class[]{interfaceClass},invokeHandler);
+        return (T) Proxy.newProxyInstance(EagleRpcHandler.class.getClassLoader(), new Class[]{interfaceClass}, invokeHandler);
     }
 
     @Override
@@ -73,14 +75,14 @@ public class EagleRpcHandler implements RpcHandler {
         try {
             String protoName = serviceConfig.getProtocol();
             Protocol<T> protocol = SpiClassLoader.getClassLoader(Protocol.class).getExtension(protoName);
-            String serviceType = serviceConfig.getExt(ConfigEnum.serviceType.getName(),ConfigEnum.serviceType.getValue());
+            String serviceType = serviceConfig.getExt(ConfigEnum.serviceType.getName(), ConfigEnum.serviceType.getValue());
             //RemoteInvoke<T> invoke = ServiceTypeEnum.typeOf(serviceType) == ServiceTypeEnum.CGLIB ? new EagleRpcCglibRemoteInvoke<T>(interfaceClass,ref,serviceConfig) : new EagleRpcJdkRemoteInvoke<T>(interfaceClass,ref,serviceConfig);
-            RemoteInvoke<T> invoke = ServiceTypeEnum.getRemoteInvoke(serviceType,interfaceClass,ref,serviceConfig);
+            RemoteInvoke<T> invoke = ServiceTypeEnum.getRemoteInvoke(serviceType, interfaceClass, ref, serviceConfig);
             Exporter<T> exporter = protocol.createServer(invoke);
             RegistryCenterManage registryManage;
-            for(MergeConfig regConfig : registryConfigs){
+            for (MergeConfig regConfig : registryConfigs) {
                 registryManage = SpiClassLoader.getClassLoader(RegistryCenterManage.class).getExtension(regConfig.getProtocol());
-                registryManage.registerService(regConfig,serviceConfig);
+                registryManage.registerService(regConfig, serviceConfig);
             }
             return exporter;
         } catch (Exception e) {
@@ -92,17 +94,17 @@ public class EagleRpcHandler implements RpcHandler {
     public <T> void unexport(List<Exporter<T>> exporters, List<MergeConfig> registryConfigs) {
         try {
             RegistryUtil.closeRegistrys(registryConfigs);
-            for(Exporter exporter : exporters){
+            for (Exporter exporter : exporters) {
                 exporter.close();
             }
         } catch (IOException e) {
-            logger.error("EagleRpcHandler.unexport exception",e);
+            logger.error("EagleRpcHandler.unexport exception", e);
         }
     }
 
     @Override
     public <T> void unRef(List<ReferClusterManage<T>> clusterManages) {
-        for (ReferClusterManage manage : clusterManages){
+        for (ReferClusterManage manage : clusterManages) {
             manage.destroy();
         }
     }

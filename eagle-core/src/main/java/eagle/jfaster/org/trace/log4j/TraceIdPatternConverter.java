@@ -19,7 +19,9 @@
 package eagle.jfaster.org.trace.log4j;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.rpc.support.TraceContext;
+
 import org.apache.log4j.helpers.PatternConverter;
 import org.apache.log4j.spi.LoggingEvent;
 

@@ -18,6 +18,7 @@
 package eagle.jfaster.org.rpc.support;
 
 import com.google.common.collect.Maps;
+
 import eagle.jfaster.org.rpc.Response;
 import lombok.Setter;
 
@@ -43,7 +44,7 @@ public class EagleResponse implements Response {
     private boolean needCompress;
 
     @Setter
-    private Map<String,String> attachments;
+    private Map<String, String> attachments;
 
     @Override
     public Object getValue() {
@@ -72,9 +73,9 @@ public class EagleResponse implements Response {
 
     @Override
     public void setAttachment(String name, String value) {
-        if(attachments == null){
+        if (attachments == null) {
             attachments = Maps.newHashMap();
         }
-        attachments.put(name,value);
+        attachments.put(name, value);
     }
 }

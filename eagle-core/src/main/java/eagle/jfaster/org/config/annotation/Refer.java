@@ -27,97 +27,100 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Refer {
 
-   /* String id()default "";*/
+    /* String id()default "";*/
 
-    String protocol()default "";
+    String protocol() default "";
 
     // 注册中心的配置列表
-    String registry()default "";
+    String registry() default "";
 
     // 应用名称
-    String application()default "";
+    String application() default "";
 
     // 模块名称
-    String module()default "";
+    String module() default "";
+
     // 分组
-    String group()default "";
+    String group() default "";
 
     // 服务版本
-    String version()default "";
+    String version() default "";
 
     // 代理类型
-    String proxy()default "";
+    String proxy() default "";
 
     // 过滤器
-    String filter()default "";
+    String filter() default "";
 
     // 最大并发调用
-    String actives()default "";
+    String actives() default "";
 
     // 并发等待时间
-    String activesWait()default "";
+    String activesWait() default "";
 
     // 服务接口的失败mock实现类名
-    String mock()default "";
+    String mock() default "";
 
     // 是否注册
-    String register()default "";
+    String register() default "";
 
     // 是否注册
-    String subscribe()default "";
+    String subscribe() default "";
 
     // 是否记录访问日志，true记录，false不记录
-    String statsLog()default "";
+    String statsLog() default "";
 
     // 是否进行check，如果为true，则在监测失败后抛异常
-    String check()default "";
+    String check() default "";
 
     // 重试次数
-    String retries()default "";
+    String retries() default "";
 
-    String host()default "";
+    String host() default "";
 
     // 请求超时
-    String requestTimeout()default "";
+    String requestTimeout() default "";
 
     // 连接超时
-    String connectTimeout()default "";
+    String connectTimeout() default "";
 
     // client最小连接数
 
-    String minClientConnection()default "";
+    String minClientConnection() default "";
 
     // client最大连接数
 
-    String maxClientConnection()default "";
+    String maxClientConnection() default "";
 
-    String idleTime()default "";
+    String idleTime() default "";
 
-    String maxLifetime()default "";
+    String maxLifetime() default "";
 
-    String maxInvokeError()default "";
+    String maxInvokeError() default "";
 
 
     // 是否开启gzip压缩
-    String compress()default "";
+    String compress() default "";
 
     // 进行gzip压缩的最小阈值，且大于此值时才进行gzip压缩。单位Byte
-    String minCompressSize()default "";
+    String minCompressSize() default "";
 
     // loadbalance 方式
-    String loadbalance()default "";
+    String loadbalance() default "";
 
     // 高可用策略
-    String haStrategy()default "";
+    String haStrategy() default "";
 
-    String baseRefer()default "";
+    String baseRefer() default "";
 
-    String callback()default "";
+    String callback() default "";
 
     String callbackThread() default "";
 
     String callbackQueueSize() default "";
 
     String callbackWaitTime() default "";
+
+    String interceptor() default "";
 
 }

@@ -17,16 +17,24 @@
 
 package eagle.jfaster.org.client;
 
-import eagle.jfaster.org.rpc.MethodInvokeCallBack;
-import eagle.jfaster.org.rpc.ResponseFuture;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import static eagle.jfaster.org.util.InterceptorUtil.onAfter;
+import static eagle.jfaster.org.util.InterceptorUtil.onError;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import eagle.jfaster.org.interceptor.ExecutionInterceptor;
+import eagle.jfaster.org.interceptor.context.CurrentExecutionContext;
+import eagle.jfaster.org.rpc.MethodInvokeCallBack;
+import eagle.jfaster.org.rpc.Request;
+import eagle.jfaster.org.rpc.ResponseFuture;
+import eagle.jfaster.org.rpc.support.TraceContext;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * netty 异步处理future
@@ -34,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by fangyanpeng1 on 2017/8/1.
  */
 @RequiredArgsConstructor
-public class NettyResponseFuture<T> implements ResponseFuture <T> {
+public class NettyResponseFuture<T> implements ResponseFuture<T> {
 
     //请求唯一标识
     @Getter
@@ -49,7 +57,10 @@ public class NettyResponseFuture<T> implements ResponseFuture <T> {
     private final MethodInvokeCallBack<T> callBack;
 
     @Getter
-    private final Map<String,String> attachments;
+    private final Request request;
+
+    @Getter
+    private final CurrentExecutionContext executionContext = CurrentExecutionContext.getContext();
 
     //请求开始时间
     @Getter
@@ -76,12 +87,24 @@ public class NettyResponseFuture<T> implements ResponseFuture <T> {
     private AtomicBoolean executeCallBackOnlyOnce = new AtomicBoolean(false);
 
     @Override
-    public void executeCallback() {
-        if (callBack != null && executeCallBackOnlyOnce.compareAndSet(false,true)) {
-            if(exception != null){
-                callBack.onFail(exception);
-            }else {
-                callBack.onSuccess(value);
+    public void executeCallback(List<ExecutionInterceptor> interceptors) {
+        if (callBack != null && executeCallBackOnlyOnce.compareAndSet(false, true)) {
+            CurrentExecutionContext.setContext(executionContext);
+            Map<String, String> attachments = request.getAttachments();
+            if (attachments != null) {
+                TraceContext.setTraceId(attachments.get(TraceContext.TRACE_KEY));
+            }
+            try {
+                if (exception != null) {
+                    onError(request, interceptors, exception);
+                    callBack.onFail(exception);
+                } else {
+                    onAfter(request, interceptors);
+                    callBack.onSuccess(value);
+                }
+            } finally {
+                CurrentExecutionContext.clean();
+                TraceContext.clear();
             }
         }
     }
@@ -95,20 +118,20 @@ public class NettyResponseFuture<T> implements ResponseFuture <T> {
     @Override
     public T getValue(long timeout) throws Exception {
         this.waiter.await(timeout, TimeUnit.MILLISECONDS);
-        if(exception != null){
+        if (exception != null) {
             throw exception;
         }
         return value;
     }
 
     @Override
-    public void onSuccess(T value){
+    public void onSuccess(T value) {
         this.value = value;
         this.waiter.countDown();
     }
 
     @Override
-    public void onFail(Exception exception){
+    public void onFail(Exception exception) {
         this.exception = exception;
         this.waiter.countDown();
     }

@@ -26,8 +26,12 @@ import eagle.jfaster.org.rpc.Request;
  */
 public interface Client {
     MergeConfig getConfig();
+
     boolean isAlive();
+
     void start();
+
     void shutdown(boolean shutdown);
+
     Object request(Request request);
 }

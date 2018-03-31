@@ -22,6 +22,6 @@ package eagle.jfaster.org.rpc;
  *
  * Created by fangyanpeng on 2017/8/29.
  */
-public interface Mock <T> {
-    T getMockValue(String interfaceName,String methodName, Object[] parameters,Throwable e);
+public interface Mock<T> {
+    T getMockValue(String interfaceName, String methodName, Object[] parameters, Throwable e);
 }

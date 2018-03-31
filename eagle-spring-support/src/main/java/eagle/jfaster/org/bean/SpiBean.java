@@ -19,6 +19,7 @@ package eagle.jfaster.org.bean;
 
 import eagle.jfaster.org.config.SpiConfig;
 import eagle.jfaster.org.spi.SpiClassLoader;
+
 import org.springframework.beans.factory.InitializingBean;
 
 /**

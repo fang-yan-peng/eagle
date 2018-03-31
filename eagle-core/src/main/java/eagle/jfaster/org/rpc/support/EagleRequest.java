@@ -18,6 +18,7 @@
 package eagle.jfaster.org.rpc.support;
 
 import com.google.common.collect.Maps;
+
 import eagle.jfaster.org.rpc.Request;
 import lombok.Setter;
 
@@ -49,7 +50,7 @@ public class EagleRequest implements Request {
     private Object[] parameters;
 
     @Setter
-    private Map<String,String> attachments;
+    private Map<String, String> attachments;
 
     @Override
     public int getOpaque() {
@@ -88,9 +89,9 @@ public class EagleRequest implements Request {
 
     @Override
     public void setAttachment(String name, String value) {
-        if(attachments == null){
+        if (attachments == null) {
             attachments = Maps.newHashMap();
         }
-        attachments.put(name,value);
+        attachments.put(name, value);
     }
 }

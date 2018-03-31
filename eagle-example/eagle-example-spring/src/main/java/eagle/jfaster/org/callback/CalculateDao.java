@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("calculateDao")
 public class CalculateDao {
-    public void insert(){
+    public void insert() {
         System.out.println("-----------insert--------");
     }
 }

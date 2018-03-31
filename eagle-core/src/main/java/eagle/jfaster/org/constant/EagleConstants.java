@@ -16,6 +16,7 @@
  */
 
 package eagle.jfaster.org.constant;
+
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
@@ -55,7 +56,7 @@ public class EagleConstants {
     public static int SOCKET_RCVBUF_SIZE = Integer.parseInt(System.getProperty(EAGLE_JFASTER_ORG_SOCKET_RCVBUF_SIZE, "65535"));
     public static final int DEFAULT_WORKER_THREAD = Runtime.getRuntime().availableProcessors();
     public static final int DEFAULT_QUEUE_SIZE = 200;
-    public static final int GRUOUP_WORKER_THREAD = Runtime.getRuntime().availableProcessors()*2;
+    public static final int GRUOUP_WORKER_THREAD = Runtime.getRuntime().availableProcessors() * 2;
     public static final int NETTY_TIMEOUT_TIMER_PERIOD = 200;
     public static final int ASYNC_TIMEOUT_TIMER_PERIOD = 1000;
     public static final long MAX_LIFETIME = MINUTES.toMillis(30);

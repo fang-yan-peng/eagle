@@ -19,6 +19,7 @@ package eagle.jfaster.org.client;
 
 import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.service.Hello;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class AnnotationClient {
     @Refer(baseRefer = "baseRefer")
     private Hello hello;
 
-    @Refer(baseRefer = "baseRefer",version = "1.1")
+    @Refer(baseRefer = "baseRefer", version = "1.1")
     private Hello hello1;
 
     public static void main(String[] args) {

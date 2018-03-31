@@ -18,10 +18,12 @@
 package eagle.jfaster.org.config;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.cluster.ReferCluster;
 import eagle.jfaster.org.cluster.cluster.ReferClusterManage;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.interceptor.ExecutionInterceptor;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
@@ -38,6 +40,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import static eagle.jfaster.org.constant.EagleConstants.RPC_HANDLER;
 import static eagle.jfaster.org.util.PidUtil.getPid;
 
@@ -93,19 +96,19 @@ public class ReferConfig<T> extends BaseReferConfig {
 
     public T getRef() throws Exception {
         try {
-            if(ref == null){
+            if (ref == null) {
                 initRef();
             }
             return ref;
         } catch (Exception e) {
             stat.set(false);
-            logger.error(String.format("%s getRef error ",interfaceClass.getName()),e);
+            logger.error(String.format("%s getRef error ", interfaceClass.getName()), e);
             throw e;
         }
     }
 
     public void initRef() throws Exception {
-        if(stat.compareAndSet(false,true)){
+        if (stat.compareAndSet(false, true)) {
             if (CollectionUtil.isEmpty(protocols)) {
                 throw new EagleFrameException("%s RefererConfig is malformed, for protocol not set correctly!", interfaceClass.getName());
             }
@@ -113,20 +116,20 @@ public class ReferConfig<T> extends BaseReferConfig {
             clusterManages = new ArrayList<>(protocols.size());
             //检查注册中心
             List<MergeConfig> regConfigs = ConfigUtil.loadRegistryConfigs(getRegistries());
-            if( CollectionUtil.isEmpty(regConfigs)){
+            if (CollectionUtil.isEmpty(regConfigs)) {
                 throw new IllegalStateException("Should set registry config for service:" + interfaceClass.getName());
             }
-            if(Strings.isNullOrEmpty(host) && baseRefer !=null ){
+            if (Strings.isNullOrEmpty(host) && baseRefer != null) {
                 host = baseRefer.getHost();
             }
-            if(NetUtil.isInvalidLocalHost(host)){
+            if (NetUtil.isInvalidLocalHost(host)) {
                 host = ConfigUtil.getLocalHostAddress(regConfigs);
             }
             List<ReferCluster<T>> clusters = new ArrayList<ReferCluster<T>>(protocols.size());
             RpcHandler rpcHandler = SpiClassLoader.getClassLoader(RpcHandler.class).getExtension(RPC_HANDLER);
             for (ProtocolConfig protocol : protocols) {
                 String protocolName = protocol.getName();
-                if(Strings.isNullOrEmpty(protocolName)){
+                if (Strings.isNullOrEmpty(protocolName)) {
                     protocolName = ConfigEnum.protocol.getValue();
                 }
                 MergeConfig referConfig = new MergeConfig();
@@ -134,13 +137,14 @@ public class ReferConfig<T> extends BaseReferConfig {
                 referConfig.setPort(getPid());
                 referConfig.setInterfaceName(interfaceClass.getName());
                 referConfig.setProtocol(protocolName);
-                referConfig.setVersion(Strings.isNullOrEmpty(version)? ConfigEnum.version.getValue() : version);
-                referConfig.addExt(ConfigEnum.refreshTimestamp.getName(),String.valueOf(System.currentTimeMillis()));
+                referConfig.setVersion(Strings.isNullOrEmpty(version) ? ConfigEnum.version.getValue() : version);
+                referConfig.addExt(ConfigEnum.refreshTimestamp.getName(), String.valueOf(System.currentTimeMillis()));
                 referConfig.setInvokeCallBack(getInvokeCallback());
                 referConfig.setMock(getFailMock());
+                referConfig.setInterceptors(determinInterceptors());
                 ConfigUtil.collectConfigParams(referConfig, protocol, baseRefer, this);
                 ConfigUtil.collectMethodConfigParams(referConfig, this.getMethods());
-                ReferClusterManage<T> clusterManage = rpcHandler.buildClusterManage(interfaceClass,referConfig,regConfigs);
+                ReferClusterManage<T> clusterManage = rpcHandler.buildClusterManage(interfaceClass, referConfig, regConfigs);
                 clusterManages.add(clusterManage);
                 clusters.add(clusterManage.getCluster());
             }
@@ -148,13 +152,23 @@ public class ReferConfig<T> extends BaseReferConfig {
         }
     }
 
-    public void unRef(){
-        if(stat.compareAndSet(true,false)){
+    private List<ExecutionInterceptor> determinInterceptors() {
+        if (!CollectionUtil.isEmpty(this.interceptors)) {
+            return this.interceptors;
+        }
+        if (baseRefer != null) {
+            return baseRefer.getInterceptors();
+        }
+        return null;
+    }
+
+    public void unRef() {
+        if (stat.compareAndSet(true, false)) {
             try {
                 RpcHandler rpcHandler = SpiClassLoader.getClassLoader(RpcHandler.class).getExtension(RPC_HANDLER);
                 rpcHandler.unRef(clusterManages);
             } catch (Exception e) {
-                logger.warn(String.format("%s close error ",interfaceClass.getName()),e);
+                logger.warn(String.format("%s close error ", interfaceClass.getName()), e);
             }
         }
     }

@@ -32,6 +32,6 @@ public class SpiBeanParser extends EagleBeanParser {
 
     @Override
     protected void parse(Element element, BeanDefinitionBuilder beanBuilder, ParserContext parserContext) throws ClassNotFoundException {
-        parseInterface(element,beanBuilder);
+        parseInterface(element, beanBuilder);
     }
 }

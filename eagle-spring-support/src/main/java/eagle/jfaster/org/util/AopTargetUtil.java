@@ -17,6 +17,7 @@
 package eagle.jfaster.org.util;
 
 import eagle.jfaster.org.exception.EagleFrameException;
+
 import org.springframework.aop.framework.AdvisedSupport;
 import org.springframework.aop.support.AopUtils;
 
@@ -34,7 +35,7 @@ public class AopTargetUtil {
      * @return 目标对象class
      */
     public static Class<?> getTargetClass(Object proxy) throws Exception {
-        if(!AopUtils.isAopProxy(proxy)) {
+        if (!AopUtils.isAopProxy(proxy)) {
             return proxy.getClass();//不是代理对象
         }
         return AopUtils.getTargetClass(proxy);

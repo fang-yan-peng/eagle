@@ -34,8 +34,7 @@ public class UtilityUtil {
     public static void quietlySleep(final long millis) {
         try {
             Thread.sleep(millis);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
         }
     }
 
@@ -57,8 +56,7 @@ public class UtilityUtil {
             }
             Constructor<?> constructor = loaded.getConstructor(argClasses);
             return clazz.cast(constructor.newInstance(args));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

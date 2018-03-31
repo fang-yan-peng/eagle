@@ -19,6 +19,7 @@ package eagle.jfaster.org.config;
 
 
 import eagle.jfaster.org.interceptor.GlobalConfigurationInterceptor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,7 +34,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public GlobalConfigurationInterceptor globalConfigInterceptor(){
+    public GlobalConfigurationInterceptor globalConfigInterceptor() {
         return new GlobalConfigurationInterceptor();
     }
 }

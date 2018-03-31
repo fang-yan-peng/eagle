@@ -17,11 +17,13 @@
 package eagle.jfaster.org.bean.trace;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.context.ReferContext;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.trace.annotation.Trace;
+
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
@@ -37,7 +39,7 @@ import java.lang.reflect.Method;
 /**
  * Created by fangyanpeng on 2017/12/16.
  */
-public class EagleTraceAutoProxyCreator extends AbstractAutoProxyCreator implements ApplicationContextAware{
+public class EagleTraceAutoProxyCreator extends AbstractAutoProxyCreator implements ApplicationContextAware {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(EagleTraceAutoProxyCreator.class);
 
@@ -50,7 +52,7 @@ public class EagleTraceAutoProxyCreator extends AbstractAutoProxyCreator impleme
 
     @Override
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> aClass, String s, TargetSource targetSource) throws BeansException {
-        if(!needTrace(aClass)){
+        if (!needTrace(aClass)) {
             return DO_NOT_PROXY;
         }
         return new Object[0];
@@ -66,38 +68,37 @@ public class EagleTraceAutoProxyCreator extends AbstractAutoProxyCreator impleme
         if (!proxyFactory.isProxyTargetClass()) {
             if (shouldProxyTargetClass(beanClass, beanName)) {
                 proxyFactory.setProxyTargetClass(true);
-            }
-            else {
+            } else {
                 evaluateProxyInterfaces(beanClass, proxyFactory);
             }
         }
         proxyFactory.setTargetSource(targetSource);
         customizeProxyFactory(proxyFactory);
         proxyFactory.setFrozen(false);
-        injectRefer(beanClass,targetSource);
+        injectRefer(beanClass, targetSource);
         return proxyFactory.getProxy(getProxyClassLoader());
 
     }
 
-    private void injectRefer(final Class<?> beanClass, final TargetSource bean){
+    private void injectRefer(final Class<?> beanClass, final TargetSource bean) {
         try {
-            ReflectionUtils.doWithFields(beanClass,new ReflectionUtils.FieldCallback(){
+            ReflectionUtils.doWithFields(beanClass, new ReflectionUtils.FieldCallback() {
 
                 @Override
                 public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                     Refer refer = field.getAnnotation(Refer.class);
                     ReflectionUtils.makeAccessible(field);
-                    String id = ReferContext.getName(refer,field.getType());
-                    if(!Strings.isNullOrEmpty(id)){
+                    String id = ReferContext.getName(refer, field.getType());
+                    if (!Strings.isNullOrEmpty(id)) {
                         try {
-                            field.set(bean.getTarget(),ctx.getBean(id));
+                            field.set(bean.getTarget(), ctx.getBean(id));
                         } catch (Exception e) {
                             throw new IllegalStateException(e);
                         }
                     }
 
                 }
-            },new ReflectionUtils.FieldFilter(){
+            }, new ReflectionUtils.FieldFilter() {
 
                 @Override
                 public boolean matches(Field field) {
@@ -109,18 +110,18 @@ public class EagleTraceAutoProxyCreator extends AbstractAutoProxyCreator impleme
         }
     }
 
-    private boolean needTrace(Class<?> aClass){
+    private boolean needTrace(Class<?> aClass) {
         boolean traceAllMethods = aClass.isAnnotationPresent(Trace.class);
         boolean trace = traceAllMethods;
         Method[] methods = ReflectionUtils.getAllDeclaredMethods(aClass);
-        for (Method method : methods){
-            if(traceAllMethods || method.isAnnotationPresent(Trace.class)){
-                if(!trace){
+        for (Method method : methods) {
+            if (traceAllMethods || method.isAnnotationPresent(Trace.class)) {
+                if (!trace) {
                     trace = true;
                 }
-                EagleTraceMethodRecods.recordTrace(method,aClass,true);
-            }else {
-                EagleTraceMethodRecods.recordTrace(method,aClass,false);
+                EagleTraceMethodRecods.recordTrace(method, aClass, true);
+            } else {
+                EagleTraceMethodRecods.recordTrace(method, aClass, false);
             }
         }
         return trace;

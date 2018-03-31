@@ -93,7 +93,7 @@ public class IpUtil {
         return ipAddress.getHostAddress().contains(":");
     }
 
-    public static boolean isIllegalIp(String ip){
+    public static boolean isIllegalIp(String ip) {
         return IP_PATTERN.matcher(ip).matches();
     }
 

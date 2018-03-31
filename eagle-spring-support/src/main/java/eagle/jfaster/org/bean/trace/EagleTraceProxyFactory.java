@@ -37,8 +37,7 @@ public class EagleTraceProxyFactory implements AopProxyFactory, Serializable {
                 return new EagleTraceJdkProxy(config);
             }
             return new EagleTraceCglibProxy(config);
-        }
-        else {
+        } else {
             return new EagleTraceJdkProxy(config);
         }
     }

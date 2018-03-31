@@ -55,7 +55,9 @@ public class LongAdder extends Striped64 implements Serializable, LongAddable {
     /**
      * Version of plus for use in retryUpdate
      */
-    final long fn(long v, long x) { return v + x; }
+    final long fn(long v, long x) {
+        return v + x;
+    }
 
     /**
      * Creates a new adder with initial sum of zero.
@@ -69,7 +71,11 @@ public class LongAdder extends Striped64 implements Serializable, LongAddable {
      * @param x the value to add
      */
     public void add(long x) {
-        Cell[] as; long b, v; HashCode hc; Cell a; int n;
+        Cell[] as;
+        long b, v;
+        HashCode hc;
+        Cell a;
+        int n;
         if ((as = cells) != null || !casBase(b = base, b + x)) {
             boolean uncontended = true;
             int h = (hc = threadHashCode.get()).code;
@@ -177,7 +183,7 @@ public class LongAdder extends Striped64 implements Serializable, LongAddable {
      * primitive conversion.
      */
     public int intValue() {
-        return (int)sum();
+        return (int) sum();
     }
 
     /**
@@ -185,7 +191,7 @@ public class LongAdder extends Striped64 implements Serializable, LongAddable {
      * after a widening primitive conversion.
      */
     public float floatValue() {
-        return (float)sum();
+        return (float) sum();
     }
 
     /**
@@ -193,7 +199,7 @@ public class LongAdder extends Striped64 implements Serializable, LongAddable {
      * primitive conversion.
      */
     public double doubleValue() {
-        return (double)sum();
+        return (double) sum();
     }
 
     private void writeObject(ObjectOutputStream s)

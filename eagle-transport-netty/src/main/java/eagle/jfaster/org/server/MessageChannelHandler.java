@@ -45,7 +45,7 @@ public class MessageChannelHandler extends SimpleChannelInboundHandler<EagleRequ
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(MessageChannelHandler.class);
 
 
-    private final InvokeRouter<Request,Response> invokeRouter;
+    private final InvokeRouter<Request, Response> invokeRouter;
 
     private final StandardThreadExecutor threadExecutor;
 
@@ -56,8 +56,8 @@ public class MessageChannelHandler extends SimpleChannelInboundHandler<EagleRequ
             threadExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Map<String,String> attachments = request.getAttachments();
-                    if(attachments != null){
+                    Map<String, String> attachments = request.getAttachments();
+                    if (attachments != null) {
                         TraceContext.setTraceId(attachments.get(TraceContext.TRACE_KEY));
                     }
                     EagleResponse response = (EagleResponse) invokeRouter.routeAndInvoke(request);

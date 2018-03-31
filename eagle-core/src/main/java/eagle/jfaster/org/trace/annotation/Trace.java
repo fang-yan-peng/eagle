@@ -22,7 +22,7 @@ import java.lang.annotation.*;
  * Created by fangyanpeng on 2017/12/15.
  */
 @Documented
-@Target({ElementType.METHOD,ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Trace {
 }

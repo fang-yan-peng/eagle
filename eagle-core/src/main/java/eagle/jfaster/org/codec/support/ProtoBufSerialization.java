@@ -20,9 +20,11 @@ package eagle.jfaster.org.codec.support;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.MessageLite;
+
 import eagle.jfaster.org.codec.Serialization;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.spi.SpiInfo;
+
 import java.io.*;
 import java.lang.reflect.Method;
 

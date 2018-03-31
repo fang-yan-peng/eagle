@@ -18,6 +18,7 @@
 package eagle.jfaster.org.config;
 
 import static eagle.jfaster.org.constant.EagleConstants.*;
+
 import lombok.Getter;
 
 /**
@@ -39,8 +40,8 @@ public enum ConfigEnum {
     maxContentLength("maxContentLength", 10 * 1024 * 1024),
     maxLifetime("maxLifetime", MAX_LIFETIME),
     maxServerConnection("maxServerConnection", 100000),
-    idleTime("idleTime", 15*60*1000l),
-    heartbeat("heartbeat", 5*60),
+    idleTime("idleTime", 15 * 60 * 1000l),
+    heartbeat("heartbeat", 5 * 60),
     compress("compress", false),
     minCompressSize("minCompressSize", 1000), // 进行gz压缩的最小数据大小。超过此阈值才进行gz压缩
     callback("callback", ""),
@@ -57,7 +58,7 @@ public enum ConfigEnum {
 
     group("group", "default_rpc"),
     statsLog("statsLog", ""),
-    useNative("useNative",true),
+    useNative("useNative", true),
 
     // 0为不做并发限制
     actives("actives", 0),
@@ -88,9 +89,8 @@ public enum ConfigEnum {
     host("host", ""),
     port("port", 0),
     workerQueueSize("workerQueueSize", 10),
-    selectThreadSize("selectThread",Runtime.getRuntime().availableProcessors()*2),
+    selectThreadSize("selectThread", Runtime.getRuntime().availableProcessors() * 2),
     filter("filter", ""),
-
 
 
     application("application", APPLICATION_DEFAULT),
@@ -111,22 +111,22 @@ public enum ConfigEnum {
     disable("disable", false);
 
 
-    private ConfigEnum(String name , String value){
+    private ConfigEnum(String name, String value) {
         this.name = name;
         this.value = value;
     }
 
-    private ConfigEnum(String name , int intValue){
+    private ConfigEnum(String name, int intValue) {
         this.name = name;
         this.intValue = intValue;
     }
 
-    private ConfigEnum(String name , long longValue){
+    private ConfigEnum(String name, long longValue) {
         this.name = name;
         this.longValue = longValue;
     }
 
-    private ConfigEnum(String name , boolean boolValue){
+    private ConfigEnum(String name, boolean boolValue) {
         this.name = name;
         this.booleanValue = boolValue;
     }

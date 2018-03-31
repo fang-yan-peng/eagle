@@ -40,8 +40,8 @@ public class HeartBeatTask implements Runnable {
     @Override
     public void run() {
         try {
-            HeartBeatFactory heartBeatFactory = SpiClassLoader.getClassLoader(HeartBeatFactory.class).getExtension(config.getExt(ConfigEnum.heartbeatFactory.getName(),ConfigEnum.heartbeatFactory.getValue()));
-            if(!client.getStat().get() && connPool.getTotalConnections() == 0){
+            HeartBeatFactory heartBeatFactory = SpiClassLoader.getClassLoader(HeartBeatFactory.class).getExtension(config.getExt(ConfigEnum.heartbeatFactory.getName(), ConfigEnum.heartbeatFactory.getValue()));
+            if (!client.getStat().get() && connPool.getTotalConnections() == 0) {
                 client.request(heartBeatFactory.createRequest());
             }
         } catch (Throwable e) {

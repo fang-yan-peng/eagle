@@ -47,12 +47,12 @@ public class Main {
     public static void main(String[] args) {
         try {
             if (args == null || args.length == 0) {
-                String config = System.getProperty(CONTAINER_KEY,DEFAULT_CONTAINER_KEY);
+                String config = System.getProperty(CONTAINER_KEY, DEFAULT_CONTAINER_KEY);
                 args = EagleConstants.COMMA_SPLIT_PATTERN.split(config);
             }
 
             final List<Container> containers = new ArrayList<Container>(args.length);
-            for (int i = 0; i < args.length; i ++) {
+            for (int i = 0; i < args.length; i++) {
                 containers.add(SpiClassLoader.getClassLoader(Container.class).getExtension(args[i]));
             }
             logger.info("Use container type(" + Arrays.toString(args) + ") to run eagle serivce.");

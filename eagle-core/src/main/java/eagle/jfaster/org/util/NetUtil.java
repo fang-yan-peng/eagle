@@ -16,6 +16,7 @@
  */
 
 package eagle.jfaster.org.util;
+
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 
@@ -120,7 +121,8 @@ public class NetUtil {
                 } finally {
                     try {
                         socket.close();
-                    } catch (Throwable e) {}
+                    } catch (Throwable e) {
+                    }
                 }
             } catch (Exception e) {
                 logger.warn(String.format("Failed to retriving local address by connecting to dest host:port(%s:%s) false, e=%s", host,
@@ -176,7 +178,7 @@ public class NetUtil {
 
         if (socketAddress instanceof InetSocketAddress) {
             InetAddress addr = ((InetSocketAddress) socketAddress).getAddress();
-            if(addr != null){
+            if (addr != null) {
                 return addr.getHostAddress();
             }
         }

@@ -20,27 +20,29 @@ package eagle.jfaster.org.util;
 import com.google.common.base.Throwables;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.PrintWriter;
 
 public class Responses {
 
-    private Responses(){}
+    private Responses() {
+    }
 
     /**
      * write json data to response
      */
-    public static boolean writeJson(HttpServletResponse resp, Object msg){
+    public static boolean writeJson(HttpServletResponse resp, Object msg) {
         return write(resp, "application/json", msg);
     }
 
     /**
      * write text data to response
      */
-    public static boolean writeText(HttpServletResponse resp, Object msg){
+    public static boolean writeText(HttpServletResponse resp, Object msg) {
         return write(resp, "text/plain", msg);
     }
 
-    public static boolean write(HttpServletResponse resp, String contentType, Object msg){
+    public static boolean write(HttpServletResponse resp, String contentType, Object msg) {
         resp.setStatus(200);
         resp.setContentType(contentType);
         resp.setCharacterEncoding("utf-8");
@@ -54,13 +56,13 @@ public class Responses {
             Logs.error("failed to writeJson response : {}", Throwables.getStackTraceAsString(e));
             return false;
         } finally {
-            if(out != null) {
+            if (out != null) {
                 out.close();
             }
         }
     }
 
-    public static void disableCache(HttpServletResponse resp){
+    public static void disableCache(HttpServletResponse resp) {
         resp.setHeader("Pragma", "no-cache");
         resp.setDateHeader("Expires", 0);
         resp.setHeader("Cache-Control", "no-cache,no-store");

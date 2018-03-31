@@ -30,6 +30,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 /**
  * netty 连接数管理，超过配置的数量拒绝连接
  *
@@ -57,7 +58,7 @@ public class NettyConnectManage extends ChannelDuplexHandler {
         if (channels.size() > maxChannel) {
             // 超过最大连接数限制，直接close连接
             logger.warn("Connected channel size out of limit: limit={} current={}", maxChannel, channels.size());
-            RemotingUtil.closeChannel(ctx.channel(),"Connected channel too many");
+            RemotingUtil.closeChannel(ctx.channel(), "Connected channel too many");
         } else {
             channels.put(channelKey, channel);
             super.channelActive(ctx);
@@ -73,13 +74,12 @@ public class NettyConnectManage extends ChannelDuplexHandler {
     }
 
 
-
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         Channel channel = ctx.channel();
         String channelKey = getChannelKey((InetSocketAddress) channel.localAddress(), (InetSocketAddress) channel.remoteAddress());
         channels.remove(channelKey);
-        RemotingUtil.closeChannel(ctx.channel(),"NettyConnectManage exceptionCaught");
+        RemotingUtil.closeChannel(ctx.channel(), "NettyConnectManage exceptionCaught");
     }
 
     private String getChannelKey(InetSocketAddress local, InetSocketAddress remote) {
@@ -99,12 +99,12 @@ public class NettyConnectManage extends ChannelDuplexHandler {
         return key;
     }
 
-    public synchronized void close(){
-        for(Map.Entry<String,Channel> entry : channels.entrySet()){
+    public synchronized void close() {
+        for (Map.Entry<String, Channel> entry : channels.entrySet()) {
             try {
-                RemotingUtil.closeChannel(entry.getValue(),"NettyConnectManage close");
+                RemotingUtil.closeChannel(entry.getValue(), "NettyConnectManage close");
             } catch (Exception e) {
-                logger.error("Close NettyConnectManage error ",e);
+                logger.error("Close NettyConnectManage error ", e);
             }
         }
         channels.clear();

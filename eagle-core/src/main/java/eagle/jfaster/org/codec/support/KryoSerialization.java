@@ -20,6 +20,7 @@ package eagle.jfaster.org.codec.support;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 import de.javakaffee.kryoserializers.SynchronizedCollectionsSerializer;
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
@@ -43,21 +44,21 @@ public class KryoSerialization implements Serialization {
     protected static final ThreadLocal<Kryo> kryos = new ThreadLocal<Kryo>() {
         protected Kryo initialValue() {
             Kryo kryo = new Kryo();
-            kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer());
+            kryo.register(CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer());
             UnmodifiableCollectionsSerializer.registerSerializers(kryo);
-            SynchronizedCollectionsSerializer.registerSerializers( kryo );
+            SynchronizedCollectionsSerializer.registerSerializers(kryo);
             kryo.register(Arrays.asList("").getClass(), new ArraysAsListSerializer());
-            ImmutableListSerializer.registerSerializers( kryo );
-            ImmutableSetSerializer.registerSerializers( kryo );
-            ImmutableMapSerializer.registerSerializers( kryo );
-            ImmutableMultimapSerializer.registerSerializers( kryo );
-            ReverseListSerializer.registerSerializers( kryo );
-            UnmodifiableNavigableSetSerializer.registerSerializers( kryo );
-            ArrayListMultimapSerializer.registerSerializers( kryo );
-            HashMultimapSerializer.registerSerializers( kryo );
-            LinkedHashMultimapSerializer.registerSerializers( kryo );
-            LinkedListMultimapSerializer.registerSerializers( kryo );
-            TreeMultimapSerializer.registerSerializers( kryo );
+            ImmutableListSerializer.registerSerializers(kryo);
+            ImmutableSetSerializer.registerSerializers(kryo);
+            ImmutableMapSerializer.registerSerializers(kryo);
+            ImmutableMultimapSerializer.registerSerializers(kryo);
+            ReverseListSerializer.registerSerializers(kryo);
+            UnmodifiableNavigableSetSerializer.registerSerializers(kryo);
+            ArrayListMultimapSerializer.registerSerializers(kryo);
+            HashMultimapSerializer.registerSerializers(kryo);
+            LinkedHashMultimapSerializer.registerSerializers(kryo);
+            LinkedListMultimapSerializer.registerSerializers(kryo);
+            TreeMultimapSerializer.registerSerializers(kryo);
             return kryo;
         }
     };
@@ -67,7 +68,7 @@ public class KryoSerialization implements Serialization {
         Kryo kryo = kryos.get();
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         Output out = new Output(byteOut);
-        kryo.writeClassAndObject(out,obj);
+        kryo.writeClassAndObject(out, obj);
         out.flush();
         return byteOut.toByteArray();
     }

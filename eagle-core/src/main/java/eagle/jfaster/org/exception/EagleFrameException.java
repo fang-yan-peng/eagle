@@ -27,11 +27,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EagleFrameException extends RuntimeException {
 
-    public EagleFrameException(String format,Object... args){
-        super(String.format(format,args));
+    public EagleFrameException(String format, Object... args) {
+        super(String.format(format, args));
     }
 
-    public EagleFrameException(Throwable ex){
+    public EagleFrameException(Throwable ex) {
         super(ex);
     }
 }

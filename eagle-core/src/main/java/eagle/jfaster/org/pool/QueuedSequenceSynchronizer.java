@@ -24,8 +24,7 @@ import java.util.concurrent.locks.AbstractQueuedLongSynchronizer;
  *
  * Created by fangyanpeng1 on 2017/8/2.
  */
-public final class QueuedSequenceSynchronizer
-{
+public final class QueuedSequenceSynchronizer {
     private final Sequence sequence;
     private final Synchronizer synchronizer;
 
@@ -60,8 +59,7 @@ public final class QueuedSequenceSynchronizer
      * 检测是否有线程在等待
      *
      */
-    public boolean hasQueuedThreads()
-    {
+    public boolean hasQueuedThreads() {
         return synchronizer.hasQueuedThreads();
     }
 
@@ -76,8 +74,7 @@ public final class QueuedSequenceSynchronizer
         private static final long serialVersionUID = 104753538004341218L;
 
         @Override
-        protected long tryAcquireShared(final long seq)
-        {
+        protected long tryAcquireShared(final long seq) {
             return sequence.get() - (seq + 1);
         }
 

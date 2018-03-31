@@ -18,11 +18,11 @@
 package eagle.jfaster.org.pool;
 
 import eagle.jfaster.org.pool.number.LongAdder;
+
 /**
  * Created by fangyanpeng1 on 2017/8/2.
  */
-public interface Sequence
-{
+public interface Sequence {
     /**
      * 当前序列加一
      */

@@ -16,7 +16,6 @@
  */
 
 
-
 package eagle.jfaster.org.cluster.loadbalance;
 
 import eagle.jfaster.org.rpc.Refer;
@@ -32,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by fangyanpeng1 on 2017/8/4.
  */
 @SpiInfo(name = "random")
-public class RandomLoadBalance <T> extends AbstractLoadBalance <T> {
+public class RandomLoadBalance<T> extends AbstractLoadBalance<T> {
 
     @Override
     public Refer<T> doSelect(Request request) {

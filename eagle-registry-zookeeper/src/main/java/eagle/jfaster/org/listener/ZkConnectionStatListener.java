@@ -24,6 +24,7 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.registry.ServiceChangeListener;
 import eagle.jfaster.org.util.PathUtil;
 import lombok.RequiredArgsConstructor;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
@@ -52,13 +53,13 @@ public class ZkConnectionStatListener implements ConnectionStateListener {
 
     @Override
     public void stateChanged(CuratorFramework curatorFramework, ConnectionState state) {
-        if(ConnectionState.SUSPENDED == state || ConnectionState.LOST == state){
+        if (ConnectionState.SUSPENDED == state || ConnectionState.LOST == state) {
             logger.info(String.format("%s has lost connection from zookeeper", servicePath));
-        }else if(ConnectionState.RECONNECTED == state){
+        } else if (ConnectionState.RECONNECTED == state) {
             try {
-                PathUtil.rebalance(registryCenter,registryConfig,changeListener,servicePath);
+                PathUtil.rebalance(registryCenter, registryConfig, changeListener, servicePath);
             } catch (Exception e) {
-                logger.error(String.format("%s connection reconnected to rebalance error",servicePath),e);
+                logger.error(String.format("%s connection reconnected to rebalance error", servicePath), e);
             }
         }
     }

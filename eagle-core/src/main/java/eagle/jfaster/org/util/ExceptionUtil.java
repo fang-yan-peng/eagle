@@ -18,6 +18,7 @@
 package eagle.jfaster.org.util;
 
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.exception.EagleTimeoutException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +32,7 @@ import java.io.StringWriter;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ExceptionUtil {
-    
+
     /**
      * 将Throwable异常转换为字符串.
      *
@@ -49,9 +50,12 @@ public final class ExceptionUtil {
         return result.toString();
     }
 
-    public static EagleFrameException handleException(Throwable e){
-        if(e instanceof  EagleFrameException){
-            return (EagleFrameException)e;
+    public static RuntimeException handleException(Throwable e) {
+        if (e instanceof EagleFrameException) {
+            return (EagleFrameException) e;
+        }
+        if (e instanceof EagleTimeoutException) {
+            return (EagleTimeoutException) e;
         }
         return new EagleFrameException(e);
     }

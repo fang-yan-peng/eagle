@@ -22,15 +22,15 @@ package eagle.jfaster.org.exception;
  */
 public class MockException extends RuntimeException {
 
-    public MockException(String format,Object... args){
-        super(String.format(format,args));
+    public MockException(String format, Object... args) {
+        super(String.format(format, args));
     }
 
-    public MockException(Exception e){
+    public MockException(Exception e) {
         super(e);
     }
 
-    public MockException(Throwable e){
+    public MockException(Throwable e) {
         super(e);
     }
 

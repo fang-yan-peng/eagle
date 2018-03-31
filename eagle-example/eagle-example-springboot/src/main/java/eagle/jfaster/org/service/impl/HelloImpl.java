@@ -20,16 +20,16 @@ import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.config.annotation.Service;
 import eagle.jfaster.org.service.City;
 import eagle.jfaster.org.service.Hello;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 /**
  * Created by fangyanpeng on 2017/12/17.
  */
 @Service(baseService = "baseService")
-public class HelloImpl implements Hello{
+public class HelloImpl implements Hello {
 
     private static final Logger logger = LoggerFactory.getLogger(HelloImpl.class);
 
@@ -39,7 +39,7 @@ public class HelloImpl implements Hello{
     @Override
     public String hello(int code) {
         String cityName = city.getCityName(code);
-        logger.info("execute hello {}",cityName);
+        logger.info("execute hello {}", cityName);
         return "hello " + cityName;
     }
 }

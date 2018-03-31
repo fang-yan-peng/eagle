@@ -33,7 +33,7 @@ public class EagleAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EagleBeanFactoryPostProcessor.class)
-    public EagleBeanFactoryPostProcessor eagleBeanFactoryPostProcessor(){
+    public EagleBeanFactoryPostProcessor eagleBeanFactoryPostProcessor() {
         EagleBeanFactoryPostProcessor eagleProcessor = new EagleBeanFactoryPostProcessor();
         return eagleProcessor;
     }

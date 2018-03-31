@@ -26,14 +26,14 @@ import java.util.Map;
  */
 public class ReferContext {
 
-    private static Map<ReferCacheKey,String> refer2Name = new HashMap<>();
+    private static Map<ReferCacheKey, String> refer2Name = new HashMap<>();
 
-    public static void register(Refer refer,Class<?> targetClass,String name){
-        refer2Name.put(new ReferCacheKey(targetClass,refer),name);
+    public static void register(Refer refer, Class<?> targetClass, String name) {
+        refer2Name.put(new ReferCacheKey(targetClass, refer), name);
     }
 
-    public static String getName(Refer refer,Class<?> targetClass){
-        return refer2Name.get(new ReferCacheKey(targetClass,refer));
+    public static String getName(Refer refer, Class<?> targetClass) {
+        return refer2Name.get(new ReferCacheKey(targetClass, refer));
     }
 
 }

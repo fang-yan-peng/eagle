@@ -18,6 +18,7 @@
 package eagle.jfaster.org.callback;
 
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
+
 import javax.annotation.Resource;
 
 /**
@@ -30,7 +31,7 @@ public class CalculateCallBack implements MethodInvokeCallBack<Integer> {
 
     public void onSuccess(Integer response) {
         calculateDao.insert();
-        System.out.println("calculate res:"+response);
+        System.out.println("calculate res:" + response);
     }
 
     public void onFail(Exception e) {

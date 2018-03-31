@@ -18,6 +18,7 @@
 package eagle.jfaster.org.statistic;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.util.UtilityUtil;
@@ -50,7 +51,7 @@ public class EagleStatsManager {
 
     private static final List<StatisticCallback> statsList = new LinkedList<>();
 
-    private static final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(new UtilityUtil.DefaultThreadFactory("EagleServiceStatsThread",true));
+    private static final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(new UtilityUtil.DefaultThreadFactory("EagleServiceStatsThread", true));
 
     static {
         scheduledExecutor.scheduleAtFixedRate(new Runnable() {
@@ -66,7 +67,7 @@ public class EagleStatsManager {
             }
         }, STATISTIC_PEROID, STATISTIC_PEROID, TimeUnit.SECONDS);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 if (!scheduledExecutor.isShutdown()) {
@@ -86,11 +87,11 @@ public class EagleStatsManager {
         return null;
     }
 
-    public synchronized static void registerStatsItem(String key, InternalLogger log){
-        if(!statsTable.containsKey(key)){
-            statsTable.put(key,new StatsItemSet(key,scheduledExecutor,log));
-        }else {
-            logger.warn(String.format("key:%s has already exist",key));
+    public synchronized static void registerStatsItem(String key, InternalLogger log) {
+        if (!statsTable.containsKey(key)) {
+            statsTable.put(key, new StatsItemSet(key, scheduledExecutor, log));
+        } else {
+            logger.warn(String.format("key:%s has already exist", key));
         }
     }
 
@@ -98,11 +99,11 @@ public class EagleStatsManager {
         statsTable.get(key).addValue(methodDesc, excTime, 1);
     }
 
-    public synchronized static void registerStatsCallback(StatisticCallback callback){
-        if(!statsList.contains(callback)){
+    public synchronized static void registerStatsCallback(StatisticCallback callback) {
+        if (!statsList.contains(callback)) {
             statsList.add(callback);
-        }else {
-            logger.warn(String.format("key:%s has already exist",callback));
+        } else {
+            logger.warn(String.format("key:%s has already exist", callback));
         }
     }
 
@@ -119,7 +120,7 @@ public class EagleStatsManager {
             DecimalFormat percentFormat = new DecimalFormat("#0.0");
             memoryUsedPct = Double.parseDouble(percentFormat.format(percentUsed));
             //当内存使用率大于50%时开始打印内存监控日志
-            if(memoryUsedPct < 50.0){
+            if (memoryUsedPct < 50.0) {
                 return;
             }
             StringBuilder sb = new StringBuilder();
@@ -130,11 +131,11 @@ public class EagleStatsManager {
         }
     }
 
-    public static void logCpuStatistic(){
+    public static void logCpuStatistic() {
         try {
 
         } catch (Throwable e) {
-            logger.error("EagleStatsManager logCpuStatistic error: ",e);
+            logger.error("EagleStatsManager logCpuStatistic error: ", e);
         }
     }
 
@@ -152,11 +153,11 @@ public class EagleStatsManager {
         }
     }
 
-    public static double getMemoryUsedPct(){
+    public static double getMemoryUsedPct() {
         return memoryUsedPct;
     }
 
-    public static double getCpuUsedPct(){
+    public static double getCpuUsedPct() {
         return cpuUsedPct;
     }
 

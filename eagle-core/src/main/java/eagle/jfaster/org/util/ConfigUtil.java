@@ -21,6 +21,7 @@ import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
 import eagle.jfaster.org.config.*;
 import eagle.jfaster.org.config.annotation.ConfigDesc;
 import eagle.jfaster.org.config.common.MergeConfig;
@@ -28,6 +29,7 @@ import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.registry.RegistryCenter;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -50,25 +52,25 @@ public class ConfigUtil {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(ConfigUtil.class);
 
 
-    private static LoadingCache<RegistryConfig,MergeConfig> regCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build(
+    private static LoadingCache<RegistryConfig, MergeConfig> regCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build(
             new CacheLoader<RegistryConfig, MergeConfig>() {
                 @Override
                 public MergeConfig load(RegistryConfig regConfig) throws Exception {
                     String protocol = regConfig.getProtocol();
                     String address = regConfig.getAddress();
-                    if(Strings.isNullOrEmpty(protocol) || Strings.isNullOrEmpty(address)){
+                    if (Strings.isNullOrEmpty(protocol) || Strings.isNullOrEmpty(address)) {
                         return null;
                     }
                     String[] addrs = REGISTRY_SPLIT_PATTERN.split(address);
-                    if(address == null || address.length() == 0){
+                    if (address == null || address.length() == 0) {
                         return null;
                     }
-                    for (String addr : addrs){
+                    for (String addr : addrs) {
                         String[] singleAddrs = COMMA_SPLIT_PATTERN.split(addr);
                         Arrays.sort(singleAddrs);
                         String singleAddr = singleAddrs[0];
                         String[] hostInfo = HOST_SPLIT_PATTERN.split(singleAddr);
-                        if(hostInfo == null || hostInfo.length != 2){
+                        if (hostInfo == null || hostInfo.length != 2) {
                             continue;
                         }
                         MergeConfig config = new MergeConfig();
@@ -77,17 +79,17 @@ public class ConfigUtil {
                         config.setVersion(ConfigEnum.version.getValue());
                         config.setHost(hostInfo[0]);
                         config.setPort(Integer.parseInt(hostInfo[1]));
-                        collectConfigParams(config,regConfig);
-                        config.addExt(ConfigEnum.address.getName(),addr);
+                        collectConfigParams(config, regConfig);
+                        config.addExt(ConfigEnum.address.getName(), addr);
                         return config;
                     }
                     return null;
                 }
             });
 
-    public static void collectConfigParams(MergeConfig data,AbstractConfig... configs) throws Exception {
-        for(AbstractConfig config : configs){
-            collectConfigParams(data,config);
+    public static void collectConfigParams(MergeConfig data, AbstractConfig... configs) throws Exception {
+        for (AbstractConfig config : configs) {
+            collectConfigParams(data, config);
         }
     }
 
@@ -97,39 +99,39 @@ public class ConfigUtil {
         }
         for (MethodConfig mc : methodConfigs) {
             if (mc != null) {
-                collectConfigParams(data,mc,mc.getName()+"("+mc.getArgumentTypes()+")");
+                collectConfigParams(data, mc, mc.getName() + "(" + mc.getArgumentTypes() + ")");
             }
         }
     }
 
     public static List<MergeConfig> loadRegistryConfigs(List<RegistryConfig> regConfigs) throws Exception {
-        if(CollectionUtil.isEmpty(regConfigs)){
+        if (CollectionUtil.isEmpty(regConfigs)) {
             return null;
         }
         List<MergeConfig> configs = new ArrayList<>(2);
-        for(RegistryConfig regConfig : regConfigs){
+        for (RegistryConfig regConfig : regConfigs) {
             MergeConfig config = regCache.get(regConfig);
-            if(config != null){
+            if (config != null) {
                 configs.add(config);
             }
         }
         return configs;
     }
 
-    public static void collectConfigParams(MergeConfig data,AbstractConfig config) throws Exception {
-        collectConfigParams(data,config,null);
+    public static void collectConfigParams(MergeConfig data, AbstractConfig config) throws Exception {
+        collectConfigParams(data, config, null);
     }
 
-    public static void collectConfigParams(MergeConfig data,AbstractConfig config,String prefix) throws Exception {
+    public static void collectConfigParams(MergeConfig data, AbstractConfig config, String prefix) throws Exception {
         try {
-            if(config == null){
+            if (config == null) {
                 return;
             }
             BeanInfo beanInfo = Introspector.getBeanInfo(config.getClass());
             PropertyDescriptor[] pros = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor pro : pros){
+            for (PropertyDescriptor pro : pros) {
                 Method rdM = pro.getReadMethod();
-                if( rdM != null && isPrimitive(rdM.getReturnType())){
+                if (rdM != null && isPrimitive(rdM.getReturnType())) {
                     ConfigDesc configDesc = rdM.getAnnotation(ConfigDesc.class);
                     if (configDesc != null && configDesc.excluded()) {
                         continue;
@@ -139,17 +141,17 @@ public class ConfigUtil {
                         key = configDesc.key();
                     }
                     Object value = rdM.invoke(config);
-                    if(value == null || Strings.isNullOrEmpty(String.valueOf(value))){
-                        if(configDesc != null && configDesc.required()){
-                            throw new EagleFrameException("parameter:%s is not allow null or empty",key);
+                    if (value == null || Strings.isNullOrEmpty(String.valueOf(value))) {
+                        if (configDesc != null && configDesc.required()) {
+                            throw new EagleFrameException("parameter:%s is not allow null or empty", key);
                         }
                         continue;
                     }
-                    data.addExt(Strings.isNullOrEmpty(prefix) ? key : String.format("%s.%s",prefix,key),String.valueOf(value));
+                    data.addExt(Strings.isNullOrEmpty(prefix) ? key : String.format("%s.%s", prefix, key), String.valueOf(value));
                 }
             }
         } catch (Exception e) {
-            logger.error("ConfigUtil.collectConfigParams",e);
+            logger.error("ConfigUtil.collectConfigParams", e);
             throw e;
         }
     }
@@ -179,13 +181,13 @@ public class ConfigUtil {
                             continue;
                         }
                         if (hasMethod != null) {
-                            throw new EagleFrameException("The interface:%s has more than one method:%s, must set argumentTypes attribute.",interfaceClass.getName(),methodName);
+                            throw new EagleFrameException("The interface:%s has more than one method:%s, must set argumentTypes attribute.", interfaceClass.getName(), methodName);
                         }
                         hasMethod = method;
                     }
                 }
                 if (hasMethod == null) {
-                    throw new EagleFrameException("The interface:%s not found method:%s",interfaceClass.getName(),methodName);
+                    throw new EagleFrameException("The interface:%s not found method:%s", interfaceClass.getName(), methodName);
                 }
                 methodBean.setArgumentTypes(ReflectUtil.getMethodParamDesc(hasMethod));
             }
@@ -206,7 +208,7 @@ public class ConfigUtil {
             if (ppDetail.length == 2) {
                 protocol2Ports.add(new ProAndPort(ppDetail[0], Integer.parseInt(ppDetail[1])));
             } else {
-                throw new EagleFrameException("Export is malformed :%s" , export);
+                throw new EagleFrameException("Export is malformed :%s", export);
             }
         }
         return protocol2Ports;
@@ -233,11 +235,11 @@ public class ConfigUtil {
         return type.isPrimitive() || type == String.class || type == Character.class || type == Boolean.class || type == Byte.class || type == Short.class || type == Integer.class || type == Long.class || type == Float.class || type == Double.class;
     }
 
-    public static <M> List<M> check(List<M> regList,Map<String,M> regMap,String ex){
-        if(!CollectionUtil.isEmpty(regList)){
-           return regList;
+    public static <M> List<M> check(List<M> regList, Map<String, M> regMap, String ex) {
+        if (!CollectionUtil.isEmpty(regList)) {
+            return regList;
         }
-        if(!CollectionUtil.isEmpty(regMap)){
+        if (!CollectionUtil.isEmpty(regMap)) {
             return new ArrayList<>(regMap.values());
         }
         throw new EagleFrameException(ex);

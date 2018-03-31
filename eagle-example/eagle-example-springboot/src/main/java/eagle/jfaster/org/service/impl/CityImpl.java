@@ -18,6 +18,7 @@ package eagle.jfaster.org.service.impl;
 
 import eagle.jfaster.org.config.annotation.Service;
 import eagle.jfaster.org.service.City;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,23 +29,23 @@ import java.util.Map;
  * Created by fangyanpeng on 2017/12/17.
  */
 @Service(baseService = "baseService")
-public class CityImpl implements City{
+public class CityImpl implements City {
 
     private static final Logger logger = LoggerFactory.getLogger(CityImpl.class);
 
 
-    private Map<Integer,String> cityNames = new HashMap(){
+    private Map<Integer, String> cityNames = new HashMap() {
         {
-            this.put(1,"北京");
-            this.put(2,"上海");
-            this.put(3,"广州");
-            this.put(4,"深圳");
+            this.put(1, "北京");
+            this.put(2, "上海");
+            this.put(3, "广州");
+            this.put(4, "深圳");
         }
     };
 
     @Override
     public String getCityName(int code) {
-        logger.info("execute get city name by {}",code);
+        logger.info("execute get city name by {}", code);
         return cityNames.get(code);
     }
 }

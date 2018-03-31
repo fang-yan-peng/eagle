@@ -19,6 +19,7 @@ package eagle.jfaster.org.spi;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
 import static eagle.jfaster.org.constant.EagleConstants.*;
 
 import eagle.jfaster.org.cache.CacheLoader;
@@ -44,21 +45,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * Created by fangyanpeng1 on 2017/7/28.
  */
-public class SpiClassLoader <T> {
+public class SpiClassLoader<T> {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(SpiClassLoader.class);
 
 
-    private static DoubleCheckCache<Class<?>,SpiClassLoader<?>> spiClassLoaders = new DoubleCheckCache<>(new CacheLoader<Class<?>, SpiClassLoader<?>>() {
+    private static DoubleCheckCache<Class<?>, SpiClassLoader<?>> spiClassLoaders = new DoubleCheckCache<>(new CacheLoader<Class<?>, SpiClassLoader<?>>() {
         @Override
         public SpiClassLoader<?> load(Class<?> type) {
             return new SpiClassLoader(type);
         }
     });
 
-    private Map<String,T> singletonObjects = null;
+    private Map<String, T> singletonObjects = null;
 
-    private Map<String,Class<T>> spiClasses = null;
+    private Map<String, Class<T>> spiClasses = null;
 
     private Class<T> type;
 
@@ -68,22 +69,22 @@ public class SpiClassLoader <T> {
 
     private ClassLoader classLoader;
 
-    public SpiClassLoader(Class<T> type){
-        this(type,Thread.currentThread().getContextClassLoader());
+    public SpiClassLoader(Class<T> type) {
+        this(type, Thread.currentThread().getContextClassLoader());
     }
 
-    public SpiClassLoader(Class<T> type,ClassLoader loader){
+    public SpiClassLoader(Class<T> type, ClassLoader loader) {
         this.type = type;
         this.classLoader = loader;
     }
 
     private void checkInit() {
-        if (init.compareAndSet(false,true)) {
+        if (init.compareAndSet(false, true)) {
             loadExtensionClasses();
         }
     }
 
-    public static <T> SpiClassLoader<T> getClassLoader(Class<T> type){
+    public static <T> SpiClassLoader<T> getClassLoader(Class<T> type) {
         checkInterfaceType(type);
         return (SpiClassLoader<T>) spiClassLoaders.get(type);
     }
@@ -104,11 +105,11 @@ public class SpiClassLoader <T> {
                 }
                 //解决依赖，但不能解决循环依赖。
                 SpiInfo info = clz.getAnnotation(SpiInfo.class);
-                if(!Strings.isNullOrEmpty(info.dependency()) && info.dependencyType()!= Spi.class){
+                if (!Strings.isNullOrEmpty(info.dependency()) && info.dependencyType() != Spi.class) {
                     Object depend = SpiClassLoader.getClassLoader(info.dependencyType()).getExtension(info.dependency());
-                    if(depend != null){
+                    if (depend != null) {
                         Constructor cto = clz.getConstructor(depend.getClass());
-                        if(cto != null){
+                        if (cto != null) {
                             return (T) cto.newInstance(depend);
                         }
                     }
@@ -116,7 +117,7 @@ public class SpiClassLoader <T> {
                 return clz.newInstance();
             }
         } catch (Exception e) {
-            throw new  EagleFrameException(e);
+            throw new EagleFrameException(e);
         }
     }
 
@@ -146,11 +147,11 @@ public class SpiClassLoader <T> {
         }
 
         if (!clz.isInterface()) {
-            throw new EagleFrameException("Error %s is not a interface",clz.getName());
+            throw new EagleFrameException("Error %s is not a interface", clz.getName());
         }
 
         if (!isSpiType(clz)) {
-            throw new EagleFrameException("Error %s is not spi type",clz.getName());
+            throw new EagleFrameException("Error %s is not spi type", clz.getName());
         }
     }
 
@@ -164,13 +165,13 @@ public class SpiClassLoader <T> {
 
     private void checkClassInherit(Class<T> clz) {
         if (!type.isAssignableFrom(clz)) {
-            throw new EagleFrameException("Error %s is not instanceof %s ",clz.getName(),type.getName());
+            throw new EagleFrameException("Error %s is not instanceof %s ", clz.getName(), type.getName());
         }
     }
 
     private void checkClassPublic(Class<T> clz) {
         if (!Modifier.isPublic(clz.getModifiers())) {
-            throw new EagleFrameException("Error %s is not a public class ",clz.getName());
+            throw new EagleFrameException("Error %s is not a public class ", clz.getName());
         }
     }
 
@@ -178,7 +179,7 @@ public class SpiClassLoader <T> {
         Constructor<?>[] constructors = clz.getConstructors();
 
         if (constructors == null || constructors.length == 0) {
-            throw new EagleFrameException("Error %s has no public no-args constructor",clz.getName());
+            throw new EagleFrameException("Error %s has no public no-args constructor", clz.getName());
         }
     }
 
@@ -199,7 +200,7 @@ public class SpiClassLoader <T> {
 
         synchronized (spiClasses) {
             if (spiClasses.containsKey(spiName)) {
-                throw new EagleFrameException("%s:Error spiName:%s already exist " , clz.getName(), spiName);
+                throw new EagleFrameException("%s:Error spiName:%s already exist ", clz.getName(), spiName);
             } else {
                 spiClasses.put(spiName, clz);
             }
@@ -265,7 +266,7 @@ public class SpiClassLoader <T> {
                 String spiName = getSpiName(clz);
 
                 if (map.containsKey(spiName)) {
-                    throw new  EagleFrameException("%s:Error spiName already exist %s",clz.getName(),spiName);
+                    throw new EagleFrameException("%s:Error spiName already exist %s", clz.getName(), spiName);
                 } else {
                     map.put(spiName, clz);
                 }
@@ -328,18 +329,18 @@ public class SpiClassLoader <T> {
         }
 
         if ((line.indexOf(' ') >= 0) || (line.indexOf('\t') >= 0)) {
-            throw new EagleFrameException( "Illegal spi:%s configuration-file syntax lineNmber:%d url:%s",type.getName(), lineNumber,url.getPath());
+            throw new EagleFrameException("Illegal spi:%s configuration-file syntax lineNmber:%d url:%s", type.getName(), lineNumber, url.getPath());
         }
 
         int cp = line.codePointAt(0);
         if (!Character.isJavaIdentifierStart(cp)) {
-            throw new EagleFrameException("Illegal spi provider-class name:%s,url:%s,lineNumber:%d,line:%s" ,type.getName(), url.getPath(), lineNumber,line);
+            throw new EagleFrameException("Illegal spi provider-class name:%s,url:%s,lineNumber:%d,line:%s", type.getName(), url.getPath(), lineNumber, line);
         }
 
         for (int i = Character.charCount(cp); i < line.length(); i += Character.charCount(cp)) {
             cp = line.codePointAt(i);
             if (!Character.isJavaIdentifierPart(cp) && (cp != '.')) {
-                throw new EagleFrameException("Illegal spi provider-class name:%s,url:%s,lineNumber:%d,line:%s " ,type.getName(), url.getPath(), lineNumber, line);
+                throw new EagleFrameException("Illegal spi provider-class name:%s,url:%s,lineNumber:%d,line:%s ", type.getName(), url.getPath(), lineNumber, line);
             }
         }
 

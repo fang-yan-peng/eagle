@@ -34,9 +34,9 @@ public class AsyncInvokeHandler<T> extends AbstractReferInvokeHandler<T> {
     }
 
     @Override
-    protected Object handle(Method method,Request request) {
+    protected Object handle(Method method, Request request) {
         Object ret = this.defaultCluster.call(request);
-        if(ret != null){
+        if (ret != null) {
             return ret;
         }
         return ReflectUtil.getDefaultReturnValue(method.getReturnType());

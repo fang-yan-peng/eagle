@@ -17,11 +17,13 @@
 package eagle.jfaster.org.bean.trace;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.support.OpaqueGenerator;
 import eagle.jfaster.org.rpc.support.TraceContext;
+
 import org.aopalliance.aop.Advice;
 import org.springframework.aop.framework.*;
 import org.springframework.aop.support.AopUtils;
@@ -161,20 +163,17 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
 
             // Generate the proxy class and create a proxy instance.
             return createProxyClassAndInstance(enhancer, callbacks);
-        }
-        catch (CodeGenerationException ex) {
+        } catch (CodeGenerationException ex) {
             throw new AopConfigException("Could not generate CGLIB subclass of class [" +
                     this.advised.getTargetClass() + "]: " +
                     "Common causes of this problem include using a final class or a non-visible class",
                     ex);
-        }
-        catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             throw new AopConfigException("Could not generate CGLIB subclass of class [" +
                     this.advised.getTargetClass() + "]: " +
                     "Common causes of this problem include using a final class or a non-visible class",
                     ex);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             // TargetSource.getTarget() failed
             throw new AopConfigException("Unexpected AOP exception", ex);
         }
@@ -215,8 +214,7 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
                     if (Modifier.isFinal(mod)) {
                         logger.info("Unable to proxy method [" + method + "] because it is final: " +
                                 "All calls to this method via a proxy will NOT be routed to the target instance.");
-                    }
-                    else if (!Modifier.isPublic(mod) && !Modifier.isProtected(mod) && !Modifier.isPrivate(mod) &&
+                    } else if (!Modifier.isPublic(mod) && !Modifier.isProtected(mod) && !Modifier.isPrivate(mod) &&
                             proxyClassLoader != null && proxySuperClass.getClassLoader() != proxyClassLoader) {
                         logger.info("Unable to proxy method [" + method + "] because it is package-visible " +
                                 "across different ClassLoaders: All calls to this method via a proxy will " +
@@ -314,8 +312,7 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
             try {
                 Object retVal = methodProxy.invoke(target, args);
                 return processReturnType(proxy, target, method, retVal);
-            }
-            finally {
+            } finally {
                 this.targetSource.releaseTarget(target);
             }
         }
@@ -364,8 +361,7 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
                 }
                 AdvisedSupport otherAdvised = ((EagleTraceCglibProxy.EqualsInterceptor) callback).advised;
                 return AopProxyUtils.equalsInProxy(this.advised, otherAdvised);
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -414,28 +410,27 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
                     targetClass = target.getClass();
                 }
                 Object retVal;
-                if(EagleTraceMethodRecods.needTrace(method,targetClass)){
+                if (EagleTraceMethodRecods.needTrace(method, targetClass)) {
                     boolean clear = Strings.isNullOrEmpty(TraceContext.getTraceId());
                     try {
-                        if(clear){
+                        if (clear) {
                             TraceContext.setTraceId(OpaqueGenerator.getDistributeOpaque());
                         }
                         retVal = methodProxy.invoke(target, args);
-                    } catch (Throwable e){
-                        logger.error("Eagle trace error: ",e);
+                    } catch (Throwable e) {
+                        logger.error("Eagle trace error: ", e);
                         throw new EagleFrameException(e);
                     } finally {
-                        if(clear){
+                        if (clear) {
                             TraceContext.clear();
                         }
                     }
-                }else {
+                } else {
                     retVal = methodProxy.invoke(target, args);
                 }
                 retVal = processReturnType(proxy, target, method, retVal);
                 return retVal;
-            }
-            finally {
+            } finally {
                 if (target != null) {
                     releaseTarget(target);
                 }
@@ -529,15 +524,13 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
                     // FixedStaticChainInterceptors.
                     int index = this.fixedInterceptorMap.get(key);
                     return (index + this.fixedInterceptorOffset);
-                }
-                else {
+                } else {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Unable to apply any optimisations to advised method: " + method);
                     }
                     return AOP_PROXY;
                 }
-            }
-            else {
+            } else {
                 // See if the return type of the method is outside the class hierarchy
                 // of the target type. If so we know it never needs to have return type
                 // massage and can use a dispatcher.
@@ -554,15 +547,13 @@ public class EagleTraceCglibProxy implements AopProxy, Serializable {
                                 "has return type same as target type (may return this) - using INVOKE_TARGET");
                     }
                     return INVOKE_TARGET;
-                }
-                else if (returnType.isPrimitive() || !returnType.isAssignableFrom(targetClass)) {
+                } else if (returnType.isPrimitive() || !returnType.isAssignableFrom(targetClass)) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Method " + method +
                                 " has return type that ensures this cannot be returned- using DISPATCH_TARGET");
                     }
                     return DISPATCH_TARGET;
-                }
-                else {
+                } else {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Method " + method +
                                 "has return type that is assignable from the target type (may return this) - " +

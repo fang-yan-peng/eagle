@@ -21,13 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author  fangyanpeng
+ * @author fangyanpeng
  */
 public class AuthenticatUtil {
 
     private static final String AUTH_PREFIX = "Basic ";
 
-    public static void authenticateSuccess(final HttpServletResponse response,String user) {
+    public static void authenticateSuccess(final HttpServletResponse response, String user) {
         response.setStatus(200);
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-store");

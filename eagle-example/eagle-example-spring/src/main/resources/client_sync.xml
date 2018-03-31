@@ -26,7 +26,9 @@
 
     <eagle:base-refer id="baseRefer1" request-timeout="300" actives="20000" actives-wait="300" loadbalance="roundrobin" ha-strategy="failfast" protocol="eagle" registry="regCenter" compress="false" group="eagleGroup" connect-timeout="10000"/>
 
-    <eagle:refer id="calculate1" interface="eagle.jfaster.org.service.Calculate" base-refer="baseRefer1" max-invoke-error="10" max-client-connection="20" stats-log="eagle-stats" mock="eagle.jfaster.org.mock.CalculateMock"/>
+    <eagle:refer id="calculate1" interface="eagle.jfaster.org.service.Calculate"
+                 base-refer="baseRefer1" max-invoke-error="10" max-client-connection="20"
+                 stats-log="eagle-stats" mock="eagle.jfaster.org.mock.CalculateMock" interceptor="clientInterceptor"/>
 
     <eagle:refer id="notify1" interface="eagle.jfaster.org.service.Notify" base-refer="baseRefer1" actives="5000" actives-wait="1000"/>
 

@@ -17,43 +17,28 @@
 
 package eagle.jfaster.org.rpc.support;
 
-import com.google.common.collect.Maps;
+import java.lang.reflect.Method;
+
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
-import eagle.jfaster.org.logging.InternalLogger;
-import eagle.jfaster.org.logging.InternalLoggerFactory;
-import eagle.jfaster.org.rpc.RemoteInvoke;
 import eagle.jfaster.org.rpc.Request;
-import eagle.jfaster.org.rpc.Response;
-import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.ReflectUtil;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodProxy;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
 /**
- * 远端调用实现
+ * 远端调用cglib实现
  *
  * Created by fangyanpeng1 on 2017/7/29.
  */
-public class EagleRpcCglibRemoteInvoke<T> implements RemoteInvoke<T> {
-
-    private InternalLogger logger = InternalLoggerFactory.getInstance(EagleRpcCglibRemoteInvoke.class);
-
-    private final Class<T> interfaceClz;
-
-    private final T invokeImpl;
-
-    private final MergeConfig config;
-
-    private final Map<String,MethodProxy> methodInvoke = Maps.newHashMap();
+public class EagleRpcCglibRemoteInvoke<T> extends AbstractRemoteInvoke<T, MethodProxy> {
 
     public EagleRpcCglibRemoteInvoke(Class<T> interfaceClz, T invokeImpl, MergeConfig config) {
-        this.interfaceClz = interfaceClz;
-        this.invokeImpl = invokeImpl;
-        this.config = config;
+        super(interfaceClz, invokeImpl, config);
+    }
+
+    @Override
+    protected void init() {
         Enhancer enhancer = new Enhancer();
         enhancer.setCallback(new EagleMethodInterceptor(methodInvoke));
         enhancer.setInterfaces(new Class[]{interfaceClz});
@@ -61,39 +46,15 @@ public class EagleRpcCglibRemoteInvoke<T> implements RemoteInvoke<T> {
     }
 
     @Override
-    public Response invoke(Request request) {
-        String methodDesc = ReflectUtil.getMethodDesc(request.getMethodName(), request.getParameterDesc());
-        MethodProxy methodProxy = methodInvoke.get(methodDesc);
-        EagleResponse response = new EagleResponse();
-        if(methodProxy == null){
-            response.setException(new EagleFrameException("Error - invoke method '%s' is not exist",methodDesc));
-            return response;
-        }
-        try {
-            Object value = methodProxy.invoke(invokeImpl,request.getParameters());
-            response.setValue(value);
-        } catch (Throwable e) {
-            logger.error(String.format("%s EagleRpcJdkRemoteInvoke invoke error",request.getOpaque()),e);
-            response.setException(new EagleFrameException(e.getMessage()));
-        }
-        return response;
-    }
-
-    @Override
-    public MergeConfig getConfig() {
-        return config;
-    }
-
-    @Override
-    public Class<T> getInterface() {
-        return interfaceClz;
+    protected Object invoke(Request request, MethodProxy method) throws Throwable {
+        return method.invoke(invokeImpl, request.getParameters());
     }
 
     private void initMethodInvoke(T proxy) {
         try {
             Method[] methods = interfaceClz.getMethods();
             for (Method method : methods) {
-                method.invoke(proxy,ReflectUtil.getParameterDefaultVals(method));
+                method.invoke(proxy, ReflectUtil.getParameterDefaultVals(method));
             }
         } catch (Exception e) {
             throw new EagleFrameException(e);

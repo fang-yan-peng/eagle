@@ -18,6 +18,7 @@
 package eagle.jfaster.org.cluster.proxy;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.cluster.ReferCluster;
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.logging.InternalLogger;
@@ -27,6 +28,7 @@ import eagle.jfaster.org.rpc.support.EagleRequest;
 import eagle.jfaster.org.rpc.support.OpaqueGenerator;
 import eagle.jfaster.org.rpc.support.TraceContext;
 import eagle.jfaster.org.util.ReflectUtil;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -58,20 +60,20 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         this.clz = clz;
         this.interfaceName = clz.getName();
         selectDefaultCluster();
-        this.compress = defaultCluster.getConfig().getExtBoolean(ConfigEnum.compress.getName(),ConfigEnum.compress.isBooleanValue());
+        this.compress = defaultCluster.getConfig().getExtBoolean(ConfigEnum.compress.getName(), ConfigEnum.compress.isBooleanValue());
     }
 
-    private void selectDefaultCluster(){
-        for(ReferCluster<T> cluster : clusters){
-            if(cluster.getConfig().getExtBoolean(ConfigEnum.useDefault.getName(),ConfigEnum.useDefault.isBooleanValue())){
-                if(this.defaultCluster != cluster){
+    private void selectDefaultCluster() {
+        for (ReferCluster<T> cluster : clusters) {
+            if (cluster.getConfig().getExtBoolean(ConfigEnum.useDefault.getName(), ConfigEnum.useDefault.isBooleanValue())) {
+                if (this.defaultCluster != cluster) {
                     defaultCluster = cluster;
                     break;
                 }
             }
         }
         this.defaultCluster = (defaultCluster == null ? clusters.get(0) : defaultCluster);
-        logger.info(String.format("Interface:%s to use protocol:%s",interfaceName,defaultCluster.getConfig().identity()));
+        logger.info(String.format("Interface:%s to use protocol:%s", interfaceName, defaultCluster.getConfig().identity()));
     }
 
     @Override
@@ -92,8 +94,8 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         EagleRequest request = new EagleRequest();
         request.setInterfaceName(interfaceName);
         String traceId = TraceContext.getTraceId();
-        if(!Strings.isNullOrEmpty(traceId)){
-            request.setAttachment(TraceContext.TRACE_KEY,traceId);
+        if (!Strings.isNullOrEmpty(traceId)) {
+            request.setAttachment(TraceContext.TRACE_KEY, traceId);
         }
         request.setOpaque(OpaqueGenerator.getOpaque());
         request.setParameters(args);
@@ -101,25 +103,25 @@ public abstract class AbstractReferInvokeHandler<T> implements InvocationHandler
         request.setNeedCompress(compress);
         request.setParameterDesc(ReflectUtil.getMethodParamDesc(method));
         try {
-            return handle(method,request);
+            return handle(method, request);
         } catch (Throwable e) {
             ReferCluster<T> tmp = this.defaultCluster;
             selectDefaultCluster();
-            if(tmp != defaultCluster){
-                logger.info(String.format("ReferInvokeHandler invoke,interface: '%s',from '%s' to '%s'",interfaceName,tmp.getConfig().identity(),defaultCluster.getConfig().identity()));
+            if (tmp != defaultCluster) {
+                logger.info(String.format("ReferInvokeHandler invoke,interface: '%s',from '%s' to '%s'", interfaceName, tmp.getConfig().identity(), defaultCluster.getConfig().identity()));
                 try {
-                    return handle(method,request);
+                    return handle(method, request);
                 } catch (Throwable e1) {
-                    logger.error(String.format("ReferInvokeHandler invoke,interface: '%s',protocol: '%s'",interfaceName,defaultCluster.getConfig().identity()),e1);
+                    logger.error(String.format("ReferInvokeHandler invoke,interface: '%s',protocol: '%s'", interfaceName, defaultCluster.getConfig().identity()), e1);
                     throw e1;
                 }
-            }else {
-                logger.error(String.format("ReferInvokeHandler invoke,interface: '%s',protocol: '%s'",interfaceName,defaultCluster.getConfig().identity()),e);
+            } else {
+                logger.error(String.format("ReferInvokeHandler invoke,interface: '%s',protocol: '%s'", interfaceName, defaultCluster.getConfig().identity()), e);
                 throw e;
             }
 
         }
     }
 
-    protected abstract Object handle(Method method,Request request);
+    protected abstract Object handle(Method method, Request request);
 }

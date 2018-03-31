@@ -19,6 +19,7 @@ package eagle.jfaster.org.cluster.proxy;
 
 import eagle.jfaster.org.cluster.ReferCluster;
 import eagle.jfaster.org.rpc.Request;
+
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class SyncInvokeHandler<T> extends AbstractReferInvokeHandler<T> {
     }
 
     @Override
-    protected Object handle(Method method,Request request) {
+    protected Object handle(Method method, Request request) {
         return this.defaultCluster.call(request);
     }
 }

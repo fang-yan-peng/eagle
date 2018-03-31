@@ -27,6 +27,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.RequiredArgsConstructor;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -47,11 +48,11 @@ public class NettyEncoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext ctx, Object message, ByteBuf byteBuf) throws Exception {
         try {
-            ByteBuffer data = codec.encode(message,serialization);
+            ByteBuffer data = codec.encode(message, serialization);
             byteBuf.writeBytes(data);
         } catch (Throwable e) {
-            logger.error("Error encode message "+RemotingUtil.parseChannelRemoteAddr(ctx.channel()),e);
-            RemotingUtil.closeChannel(ctx.channel(),"NettyEncoder encode");
+            logger.error("Error encode message " + RemotingUtil.parseChannelRemoteAddr(ctx.channel()), e);
+            RemotingUtil.closeChannel(ctx.channel(), "NettyEncoder encode");
             throw ExceptionUtil.handleException(e);
         }
     }

@@ -1,11 +1,13 @@
 package eagle.jfaster.org.bean.trace;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.support.OpaqueGenerator;
 import eagle.jfaster.org.rpc.support.TraceContext;
+
 import org.springframework.aop.AopInvocationException;
 import org.springframework.aop.RawTargetAccess;
 import org.springframework.aop.TargetSource;
@@ -37,7 +39,7 @@ public class EagleTraceJdkProxy implements AopProxy, InvocationHandler, Serializ
 
     private boolean hashCodeDefined;
 
-    private final ConcurrentHashMap<MethodCacheKey,Boolean> traces = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<MethodCacheKey, Boolean> traces = new ConcurrentHashMap<>();
 
     public EagleTraceJdkProxy(AdvisedSupport config) throws AopConfigException {
         Assert.notNull(config, "AdvisedSupport must not be null");
@@ -111,23 +113,23 @@ public class EagleTraceJdkProxy implements AopProxy, InvocationHandler, Serializ
                 targetClass = target.getClass();
             }
 
-            if(EagleTraceMethodRecods.needTrace(method,targetClass)){
+            if (EagleTraceMethodRecods.needTrace(method, targetClass)) {
                 boolean clear = Strings.isNullOrEmpty(TraceContext.getTraceId());
                 try {
-                    if(clear){
+                    if (clear) {
                         TraceContext.setTraceId(OpaqueGenerator.getDistributeOpaque());
                     }
                     retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);
-                } catch (Throwable e){
-                    logger.error("Eagle trace error:  ",e);
+                } catch (Throwable e) {
+                    logger.error("Eagle trace error:  ", e);
                     throw new EagleFrameException(e);
                 } finally {
-                    if(clear){
+                    if (clear) {
                         TraceContext.clear();
                     }
                 }
 
-            }else {
+            } else {
                 retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);
             }
 
@@ -136,13 +138,11 @@ public class EagleTraceJdkProxy implements AopProxy, InvocationHandler, Serializ
             if (retVal != null && retVal == target && returnType.isInstance(proxy) &&
                     !RawTargetAccess.class.isAssignableFrom(method.getDeclaringClass())) {
                 retVal = proxy;
-            }
-            else if (retVal == null && returnType != Void.TYPE && returnType.isPrimitive()) {
+            } else if (retVal == null && returnType != Void.TYPE && returnType.isPrimitive()) {
                 throw new AopInvocationException("Null return value from advice does not match primitive return type for: " + method);
             }
             return retVal;
-        }
-        finally {
+        } finally {
             if (target != null && !targetSource.isStatic()) {
                 // Must have come from TargetSource.
                 targetSource.releaseTarget(target);
@@ -162,15 +162,13 @@ public class EagleTraceJdkProxy implements AopProxy, InvocationHandler, Serializ
         EagleTraceJdkProxy otherProxy;
         if (other instanceof EagleTraceJdkProxy) {
             otherProxy = (EagleTraceJdkProxy) other;
-        }
-        else if (Proxy.isProxyClass(other.getClass())) {
+        } else if (Proxy.isProxyClass(other.getClass())) {
             InvocationHandler ih = Proxy.getInvocationHandler(other);
             if (!(ih instanceof EagleTraceJdkProxy)) {
                 return false;
             }
             otherProxy = (EagleTraceJdkProxy) ih;
-        }
-        else {
+        } else {
             // Not a valid comparison...
             return false;
         }

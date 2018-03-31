@@ -30,10 +30,12 @@ import eagle.jfaster.org.pool.ConcurrentBag.IBagStateListener;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.Getter;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import static eagle.jfaster.org.client.pool.NettyPoolEntry.LASTACCESS_COMPARABLE;
 import static eagle.jfaster.org.pool.ConcurrentBag.IConcurrentBagEntry.STATE_IN_USE;
 import static eagle.jfaster.org.pool.ConcurrentBag.IConcurrentBagEntry.STATE_NOT_IN_USE;
@@ -48,7 +50,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  *
  * Created by fangyanpeng1 on 2017/8/2.
  */
-public class NettySharedConnPool implements IBagStateListener{
+public class NettySharedConnPool implements IBagStateListener {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(NettySharedConnPool.class);
 
@@ -85,17 +87,17 @@ public class NettySharedConnPool implements IBagStateListener{
     private final String poolName;
 
     private final NettyClient client;
-    
+
     private AtomicInteger poolNum = new AtomicInteger(0);
 
-    public NettySharedConnPool(MergeConfig config,NettyClient client){
-        poolName = "eagleClientPool-"+poolNum.getAndIncrement();
+    public NettySharedConnPool(MergeConfig config, NettyClient client) {
+        poolName = "eagleClientPool-" + poolNum.getAndIncrement();
         this.config = config;
         this.client = client;
         totalConnections = new AtomicInteger(0);
         connectionBag = new ConcurrentBag<>(this);
         ThreadFactory threadFactory = new DefaultThreadFactory(poolName + " housekeeper", true);
-        int maxClientConnection = config.getExtInt(ConfigEnum.maxClientConnection.getName(),ConfigEnum.maxClientConnection.getIntValue());
+        int maxClientConnection = config.getExtInt(ConfigEnum.maxClientConnection.getName(), ConfigEnum.maxClientConnection.getIntValue());
         this.addConnectionExecutor = createThreadPoolExecutor(maxClientConnection, poolName + " connection adder", threadFactory, new ThreadPoolExecutor.DiscardPolicy());
         this.closeConnectionExecutor = createThreadPoolExecutor(maxClientConnection, poolName + " connection closer", threadFactory, new ThreadPoolExecutor.CallerRunsPolicy());
         this.houseKeepingExecutorService = new ScheduledThreadPoolExecutor(1, threadFactory, new ThreadPoolExecutor.DiscardPolicy());
@@ -105,8 +107,8 @@ public class NettySharedConnPool implements IBagStateListener{
         fillPool();
     }
 
-    public final AbstractNettyChannel getConnection(){
-        long connectionTimeout = config.getExtLong(ConfigEnum.connectTimeout.getName(),ConfigEnum.connectTimeout.getLongValue());
+    public final AbstractNettyChannel getConnection() {
+        long connectionTimeout = config.getExtLong(ConfigEnum.connectTimeout.getName(), ConfigEnum.connectTimeout.getLongValue());
         final long startTime = clockSource.currentTime();
 
         try {
@@ -120,18 +122,17 @@ public class NettySharedConnPool implements IBagStateListener{
                 if (poolEntry.isMarkedEvicted() || (clockSource.elapsedMillis(poolEntry.lastAccessed, now) > ALIVE_BYPASS_WINDOW_MS && !connectionAlive(poolEntry.connection))) {
                     closeConnection(poolEntry);
                     timeout = connectionTimeout - clockSource.elapsedMillis(startTime);
-                }
-                else {
+                } else {
                     return poolEntry.getConnection();
                 }
             } while (timeout > 0L);
         } catch (InterruptedException e) {
             throw new EagleFrameException(poolName + " - Interrupted during connection acquisition", e);
         }
-        throw new EagleFrameException("get connection timeout,timeout:%d",connectionTimeout);
+        throw new EagleFrameException("get connection timeout,timeout:%d", connectionTimeout);
     }
 
-    public final void release(AbstractNettyChannel connection){
+    public final void release(AbstractNettyChannel connection) {
         NettyPoolEntry poolEntry = connection.getPoolEntry();
         poolEntry.lastAccessed = clockSource.currentTime();
         connectionBag.requite(poolEntry);
@@ -139,8 +140,8 @@ public class NettySharedConnPool implements IBagStateListener{
     }
 
     private void fillPool() {
-        int maxClientConnection = config.getExtInt(ConfigEnum.maxClientConnection.getName(),ConfigEnum.maxClientConnection.getIntValue());
-        int minClientConnection = config.getExtInt(ConfigEnum.minClientConnection.getName(),ConfigEnum.minClientConnection.getIntValue());
+        int maxClientConnection = config.getExtInt(ConfigEnum.maxClientConnection.getName(), ConfigEnum.maxClientConnection.getIntValue());
+        int minClientConnection = config.getExtInt(ConfigEnum.minClientConnection.getName(), ConfigEnum.minClientConnection.getIntValue());
         final int connectionsToAdd = Math.min(maxClientConnection - totalConnections.get(), minClientConnection - getIdleConnections())
                 - addConnectionExecutor.getQueue().size();
         for (int i = 0; i < connectionsToAdd; i++) {
@@ -148,7 +149,7 @@ public class NettySharedConnPool implements IBagStateListener{
         }
     }
 
-    private boolean connectionAlive(AbstractNettyChannel channel){
+    private boolean connectionAlive(AbstractNettyChannel channel) {
         return channel.getChannel() != null && channel.getChannel().isActive();
     }
 
@@ -174,27 +175,26 @@ public class NettySharedConnPool implements IBagStateListener{
         if (owner || connectionBag.reserve(poolEntry)) {
             poolEntry.markEvicted();
             closeConnection(poolEntry);
-        }
-        else {
+        } else {
             poolEntry.markEvicted();
         }
     }
 
-    public void invalidateConnection(AbstractNettyChannel channel){
-        softEvictConnection(channel.getPoolEntry(),false);
+    public void invalidateConnection(AbstractNettyChannel channel) {
+        softEvictConnection(channel.getPoolEntry(), false);
     }
 
-    public void invalidateConnection(Channel channel){
-        for (NettyPoolEntry poolEntry : connectionBag.values()){
-            if(channel.equals(poolEntry.getConnection().getChannel())){
-                softEvictConnection(poolEntry,false);
+    public void invalidateConnection(Channel channel) {
+        for (NettyPoolEntry poolEntry : connectionBag.values()) {
+            if (channel.equals(poolEntry.getConnection().getChannel())) {
+                softEvictConnection(poolEntry, false);
                 return;
             }
         }
         logger.warn("invalidateConnection not find channel to evict");
     }
-    public void softEvictConnections()
-    {
+
+    public void softEvictConnections() {
         for (NettyPoolEntry poolEntry : connectionBag.values()) {
             softEvictConnection(poolEntry, false);
         }
@@ -203,20 +203,19 @@ public class NettySharedConnPool implements IBagStateListener{
     private NettyPoolEntry createPoolEntry() {
         try {
             final NettyPoolEntry poolEntry = newPoolEntry();
-            final long maxLifetime = config.getExtLong(ConfigEnum.maxLifetime.getName(),ConfigEnum.maxLifetime.getLongValue());
+            final long maxLifetime = config.getExtLong(ConfigEnum.maxLifetime.getName(), ConfigEnum.maxLifetime.getLongValue());
             if (maxLifetime > 0) {
-                final long variance = maxLifetime > 10_000 ? ThreadLocalRandom.current().nextLong( maxLifetime / 40 ) : 0;
+                final long variance = maxLifetime > 10_000 ? ThreadLocalRandom.current().nextLong(maxLifetime / 40) : 0;
                 final long lifetime = maxLifetime - variance;
                 poolEntry.setFutureEol(houseKeepingExecutorService.schedule(new Runnable() {
                     @Override
                     public void run() {
-                        softEvictConnection(poolEntry,  false);
+                        softEvictConnection(poolEntry, false);
                     }
                 }, lifetime, MILLISECONDS));
             }
             return poolEntry;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (poolState == POOL_NORMAL) {
                 logger.info("{} - Cannot acquire connection", poolName, e);
             }
@@ -226,7 +225,7 @@ public class NettySharedConnPool implements IBagStateListener{
 
     private NettyPoolEntry newPoolEntry() throws Exception {
         AbstractNettyChannel channel = newConnection();
-        NettyPoolEntry poolEntry =  new NettyPoolEntry(channel, this);
+        NettyPoolEntry poolEntry = new NettyPoolEntry(channel, this);
         channel.setPoolEntry(poolEntry);
         return poolEntry;
     }
@@ -237,7 +236,7 @@ public class NettySharedConnPool implements IBagStateListener{
             connection = client.newChannel();
             return connection;
         } catch (Exception e) {
-            if(connection != null){
+            if (connection != null) {
                 connection.close();
             }
             throw e;
@@ -256,8 +255,7 @@ public class NettySharedConnPool implements IBagStateListener{
         return connectionBag.size() - connectionBag.getCount(STATE_REMOVED);
     }
 
-    public final int getThreadsAwaitingConnection()
-    {
+    public final int getThreadsAwaitingConnection() {
         return connectionBag.getPendingQueue();
     }
 
@@ -266,10 +264,9 @@ public class NettySharedConnPool implements IBagStateListener{
     public Future<Boolean> addBagItem() {
         return addConnectionExecutor.submit(POOL_ENTRY_CREATOR);
     }
-    
 
-    public final synchronized void shutdown() throws InterruptedException
-    {
+
+    public final synchronized void shutdown() throws InterruptedException {
         try {
             poolState = POOL_SHUTDOWN;
             logger.info("{} - Close initiated...", poolName);
@@ -288,9 +285,10 @@ public class NettySharedConnPool implements IBagStateListener{
             //等待5秒钟，等待应用归还连接。
             do {
                 softEvictConnections();
-            } while (getTotalConnections() > 0 && clockSource.elapsedMillis(start) < SECONDS.toMillis(5));
+            }
+            while (getTotalConnections() > 0 && clockSource.elapsedMillis(start) < SECONDS.toMillis(5));
 
-            for(NettyPoolEntry poolEntry : connectionBag.values()){
+            for (NettyPoolEntry poolEntry : connectionBag.values()) {
                 closeConnection(poolEntry);
             }
 
@@ -298,8 +296,7 @@ public class NettySharedConnPool implements IBagStateListener{
                 closeConnectionExecutor.shutdown();
                 closeConnectionExecutor.awaitTermination(5L, SECONDS);
             }
-        }
-        finally {
+        } finally {
             logger.info("{} - Closed.", poolName);
         }
     }
@@ -311,7 +308,7 @@ public class NettySharedConnPool implements IBagStateListener{
         @Override
         public void run() {
             try {
-                long idleTimeout = config.getExtLong(ConfigEnum.idleTime.getName(),ConfigEnum.idleTime.getLongValue());
+                long idleTimeout = config.getExtLong(ConfigEnum.idleTime.getName(), ConfigEnum.idleTime.getLongValue());
                 final long now = clockSource.currentTime();
                 if (clockSource.plusMillis(now, 128) < clockSource.plusMillis(previous, HOUSEKEEPING_PERIOD_MS)) {
                     logger.warn("{} - Retrograde clock change detected (housekeeper delta={}), soft-evicting connections from pool.",
@@ -320,14 +317,13 @@ public class NettySharedConnPool implements IBagStateListener{
                     softEvictConnections();
                     fillPool();
                     return;
-                }
-                else if (now > clockSource.plusMillis(previous, (3 * HOUSEKEEPING_PERIOD_MS) / 2)) {
+                } else if (now > clockSource.plusMillis(previous, (3 * HOUSEKEEPING_PERIOD_MS) / 2)) {
                     logger.warn("{} - Thread starvation or clock leap detected (housekeeper delta={}).", clockSource.elapsedDisplayString(previous, now), poolName);
                 }
                 previous = now;
                 if (idleTimeout > 0L) {
                     final List<NettyPoolEntry> idleList = connectionBag.values(STATE_NOT_IN_USE);
-                    int minClientConnection = config.getExtInt(ConfigEnum.minClientConnection.getName(),ConfigEnum.minClientConnection.getIntValue());
+                    int minClientConnection = config.getExtInt(ConfigEnum.minClientConnection.getName(), ConfigEnum.minClientConnection.getIntValue());
                     int removable = idleList.size() - minClientConnection;
                     if (removable > 0) {
                         Collections.sort(idleList, LASTACCESS_COMPARABLE);
@@ -349,13 +345,12 @@ public class NettySharedConnPool implements IBagStateListener{
     }
 
 
-    private class PoolEntryCreator implements Callable<Boolean>
-    {
+    private class PoolEntryCreator implements Callable<Boolean> {
         @Override
         public Boolean call() throws Exception {
             long sleepBackoff = 250L;
-            int maxClientConnection = config.getExtInt(ConfigEnum.maxClientConnection.getName(),ConfigEnum.maxClientConnection.getIntValue());
-            long connectionTimeout = config.getExtLong(ConfigEnum.connectTimeout.getName(),ConfigEnum.connectTimeout.getLongValue());
+            int maxClientConnection = config.getExtInt(ConfigEnum.maxClientConnection.getName(), ConfigEnum.maxClientConnection.getIntValue());
+            long connectionTimeout = config.getExtLong(ConfigEnum.connectTimeout.getName(), ConfigEnum.connectTimeout.getLongValue());
             while (poolState == POOL_NORMAL && totalConnections.get() < maxClientConnection) {
                 final NettyPoolEntry poolEntry = createPoolEntry();
                 if (poolEntry != null) {

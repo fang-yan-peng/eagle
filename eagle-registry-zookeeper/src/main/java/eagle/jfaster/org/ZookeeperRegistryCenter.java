@@ -20,12 +20,14 @@ package eagle.jfaster.org;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import lombok.RequiredArgsConstructor;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.ACLProvider;
@@ -38,6 +40,7 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,18 +68,18 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
 
     @Override
     public void init() {
-        if(!stat.compareAndSet(false,true)){
+        if (!stat.compareAndSet(false, true)) {
             return;
         }
-        String address = registryConfig.getExt(ConfigEnum.address.getName(),ConfigEnum.address.getValue());
+        String address = registryConfig.getExt(ConfigEnum.address.getName(), ConfigEnum.address.getValue());
         logger.info("zookeeper registry center init, server lists is: {}.", address);
-        String namespace = registryConfig.getExt(ConfigEnum.namespace.getName(),ConfigEnum.namespace.getValue());
-        int baseSleepTimeMilliseconds = registryConfig.getExtInt(ConfigEnum.baseSleepTimeMilliseconds.getName(),ConfigEnum.baseSleepTimeMilliseconds.getIntValue());
-        int maxSleepTimeMilliseconds = registryConfig.getExtInt(ConfigEnum.maxSleepTimeMilliseconds.getName(),ConfigEnum.maxSleepTimeMilliseconds.getIntValue());
-        int maxRetries = registryConfig.getExtInt(ConfigEnum.maxRetries.getName(),ConfigEnum.maxRetries.getIntValue());
-        int sessionTimeoutMilliseconds = registryConfig.getExtInt(ConfigEnum.sessionTimeoutMilliseconds.getName(),ConfigEnum.sessionTimeoutMilliseconds.getIntValue());
-        int connectionTimeoutMilliseconds = registryConfig.getExtInt(ConfigEnum.connectionTimeoutMilliseconds.getName(),ConfigEnum.connectionTimeoutMilliseconds.getIntValue());
-        String digest = registryConfig.getExt(ConfigEnum.digest.getName(),ConfigEnum.digest.getValue());
+        String namespace = registryConfig.getExt(ConfigEnum.namespace.getName(), ConfigEnum.namespace.getValue());
+        int baseSleepTimeMilliseconds = registryConfig.getExtInt(ConfigEnum.baseSleepTimeMilliseconds.getName(), ConfigEnum.baseSleepTimeMilliseconds.getIntValue());
+        int maxSleepTimeMilliseconds = registryConfig.getExtInt(ConfigEnum.maxSleepTimeMilliseconds.getName(), ConfigEnum.maxSleepTimeMilliseconds.getIntValue());
+        int maxRetries = registryConfig.getExtInt(ConfigEnum.maxRetries.getName(), ConfigEnum.maxRetries.getIntValue());
+        int sessionTimeoutMilliseconds = registryConfig.getExtInt(ConfigEnum.sessionTimeoutMilliseconds.getName(), ConfigEnum.sessionTimeoutMilliseconds.getIntValue());
+        int connectionTimeoutMilliseconds = registryConfig.getExtInt(ConfigEnum.connectionTimeoutMilliseconds.getName(), ConfigEnum.connectionTimeoutMilliseconds.getIntValue());
+        String digest = registryConfig.getExt(ConfigEnum.digest.getName(), ConfigEnum.digest.getValue());
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
                 .connectString(address)
                 .retryPolicy(new ExponentialBackoffRetry(baseSleepTimeMilliseconds, maxRetries, maxSleepTimeMilliseconds))
@@ -119,14 +122,14 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
 
     @Override
     public void close() {
-        if(!stat.compareAndSet(true,false)){
+        if (!stat.compareAndSet(true, false)) {
             return;
         }
         for (Map.Entry<String, PathChildrenCache> each : childrenCaches.entrySet()) {
             try {
                 each.getValue().close();
             } catch (IOException e) {
-                logger.error("",e);
+                logger.error("", e);
                 throw new EagleFrameException(e);
             }
         }
@@ -183,7 +186,7 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
     @Override
     public List<String> getChildrenKeys(final String key) {
         try {
-            if(!isExisted(key)){
+            if (!isExisted(key)) {
                 return Collections.emptyList();
             }
             List<String> result = client.getChildren().forPath(key);
@@ -198,7 +201,7 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
             //CHECKSTYLE:OFF
         } catch (final Exception ex) {
             //CHECKSTYLE:ON
-            logger.error("ZookeeperRegistryCenter.getChildrenKeys fail ",ex);
+            logger.error("ZookeeperRegistryCenter.getChildrenKeys fail ", ex);
             return Collections.emptyList();
         }
     }
@@ -219,7 +222,7 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
     }
 
     private String getNameSpace() {
-        String namespace = registryConfig.getExt(ConfigEnum.namespace.getName(),ConfigEnum.namespace.getValue());
+        String namespace = registryConfig.getExt(ConfigEnum.namespace.getName(), ConfigEnum.namespace.getValue());
         return Strings.isNullOrEmpty(namespace) ? "" : "/" + namespace;
     }
 
@@ -330,11 +333,11 @@ public class ZookeeperRegistryCenter implements CoordinatorRegistryCenter {
     }
 
     @Override
-    public PathChildrenCache addChildrenCacheData(final String cachePath,boolean cacheData) {
-        if(childrenCaches.containsKey(cachePath)){
+    public PathChildrenCache addChildrenCacheData(final String cachePath, boolean cacheData) {
+        if (childrenCaches.containsKey(cachePath)) {
             return childrenCaches.get(cachePath);
         }
-        PathChildrenCache cache = new PathChildrenCache(client, cachePath,cacheData);
+        PathChildrenCache cache = new PathChildrenCache(client, cachePath, cacheData);
         try {
             cache.start();
             //CHECKSTYLE:OFF

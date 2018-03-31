@@ -31,7 +31,7 @@ public class BaseServiceConfig extends AbstractInterfaceConfig {
 
     @Setter
     @Getter
-    protected  Integer weight;
+    protected Integer weight;
 
     @Setter
     @Getter

@@ -17,39 +17,34 @@
 
 package eagle.jfaster.org.task;
 
-import eagle.jfaster.org.client.NettyResponseFuture;
+import java.util.List;
+
+import eagle.jfaster.org.interceptor.ExecutionInterceptor;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.ResponseFuture;
-import eagle.jfaster.org.rpc.support.TraceContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Map;
 
 /**
  * Created by fangyanpeng on 2017/8/22.
  */
 @RequiredArgsConstructor
-public class AsyncCallbackTask implements Runnable{
+public class AsyncCallbackTask implements Runnable {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(AsyncCallbackTask.class);
 
     @Getter
     private final ResponseFuture responseFuture;
 
+    private final List<ExecutionInterceptor> interceptors;
+
     @Override
     public void run() {
         try {
-            Map<String,String> attachments = ((NettyResponseFuture)responseFuture).getAttachments();
-            if(attachments != null){
-                TraceContext.setTraceId(attachments.get(TraceContext.TRACE_KEY));
-            }
-            responseFuture.executeCallback();
+            responseFuture.executeCallback(interceptors);
         } catch (Throwable e) {
             logger.info("execute callback in executor exception, and callback throw", e);
-        }finally {
-            TraceContext.clear();
         }
     }
 }

@@ -18,6 +18,7 @@
 package eagle.jfaster.org.bean;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.config.ProAndPort;
 import eagle.jfaster.org.config.ProtocolConfig;
 import eagle.jfaster.org.config.RegistryConfig;
@@ -25,18 +26,20 @@ import eagle.jfaster.org.config.ServiceConfig;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.util.CollectionUtil;
 import eagle.jfaster.org.util.ConfigUtil;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+
 import java.util.*;
 
 /**
  * Created by fangyanpeng1 on 2017/8/8.
  */
-public class ServiceBean<T> extends ServiceConfig<T> implements ApplicationContextAware, InitializingBean,DisposableBean,ApplicationListener<ContextRefreshedEvent> {
+public class ServiceBean<T> extends ServiceConfig<T> implements ApplicationContextAware, InitializingBean, DisposableBean, ApplicationListener<ContextRefreshedEvent> {
 
     private ApplicationContext appCtx;
 
@@ -59,7 +62,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements ApplicationConte
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if(event.getApplicationContext().getParent() == null){
+        if (event.getApplicationContext().getParent() == null) {
             try {
                 export();
             } catch (Exception e) {
@@ -68,27 +71,27 @@ public class ServiceBean<T> extends ServiceConfig<T> implements ApplicationConte
         }
     }
 
-    private void checkRegistries(){
-        if(CollectionUtil.isEmpty(getRegistries())){
-            if(getBaseService() != null && !CollectionUtil.isEmpty(getBaseService().getRegistries())){
+    private void checkRegistries() {
+        if (CollectionUtil.isEmpty(getRegistries())) {
+            if (getBaseService() != null && !CollectionUtil.isEmpty(getBaseService().getRegistries())) {
                 setRegistries(getBaseService().getRegistries());
             }
         }
-        List<RegistryConfig> registryConfigs = ConfigUtil.check(getRegistries(),BeanFactoryUtils.beansOfTypeIncludingAncestors(this.appCtx, RegistryConfig.class, false, false),String.format("Error %s not config registries",getInterface().getName()));
+        List<RegistryConfig> registryConfigs = ConfigUtil.check(getRegistries(), BeanFactoryUtils.beansOfTypeIncludingAncestors(this.appCtx, RegistryConfig.class, false, false), String.format("Error %s not config registries", getInterface().getName()));
         setRegistries(registryConfigs);
     }
 
-    private void checkExports(){
-        if(Strings.isNullOrEmpty(getExport())){
-            if(getBaseService() == null || Strings.isNullOrEmpty(getBaseService().getExport())){
-                throw new EagleFrameException("%s not config export",getInterface().getName());
+    private void checkExports() {
+        if (Strings.isNullOrEmpty(getExport())) {
+            if (getBaseService() == null || Strings.isNullOrEmpty(getBaseService().getExport())) {
+                throw new EagleFrameException("%s not config export", getInterface().getName());
             }
             setExport(getBaseService().getExport());
         }
         Set<ProAndPort> proAndPorts = ConfigUtil.parseExport(getExport());
         Set<ProtocolConfig> protocols = new HashSet<>();
-        for(ProAndPort proAndPort : proAndPorts){
-            protocols.add(appCtx.getBean(proAndPort.getProtocolId(),ProtocolConfig.class));
+        for (ProAndPort proAndPort : proAndPorts) {
+            protocols.add(appCtx.getBean(proAndPort.getProtocolId(), ProtocolConfig.class));
         }
         setProtocols(new ArrayList<>(protocols));
     }

@@ -24,6 +24,7 @@ import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.registry.ServiceChangeListener;
 import eagle.jfaster.org.util.PathUtil;
 import lombok.RequiredArgsConstructor;
+
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 
 /**
@@ -50,11 +51,11 @@ public class ServiceListener extends AbstractChildrenDataListener {
 
     @Override
     protected void dataChanged(String path, PathChildrenCacheEvent.Type eventType, String data) {
-        if(eventType == PathChildrenCacheEvent.Type.CHILD_ADDED || eventType == PathChildrenCacheEvent.Type.CHILD_REMOVED || eventType == PathChildrenCacheEvent.Type.CHILD_UPDATED){
+        if (eventType == PathChildrenCacheEvent.Type.CHILD_ADDED || eventType == PathChildrenCacheEvent.Type.CHILD_REMOVED || eventType == PathChildrenCacheEvent.Type.CHILD_UPDATED) {
             try {
-                PathUtil.rebalance(registryCenter,registryConfig,changeListener,servicePath);
+                PathUtil.rebalance(registryCenter, registryConfig, changeListener, servicePath);
             } catch (Exception e) {
-                logger.error("Zookeeper service listener failed ",e);
+                logger.error("Zookeeper service listener failed ", e);
             }
         }
     }

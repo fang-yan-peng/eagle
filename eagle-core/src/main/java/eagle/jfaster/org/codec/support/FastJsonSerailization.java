@@ -21,10 +21,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.SerializeWriter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+
 import static eagle.jfaster.org.constant.EagleConstants.*;
 
 import eagle.jfaster.org.codec.Serialization;
 import eagle.jfaster.org.spi.SpiInfo;
+
 import java.io.IOException;
 
 /**
@@ -47,6 +49,6 @@ public class FastJsonSerailization implements Serialization {
 
     @Override
     public <T> T deserialize(byte[] data, Class<T> clz) throws IOException {
-        return JSON.parseObject(new String(data,CHARSET_UTF8), clz);
+        return JSON.parseObject(new String(data, CHARSET_UTF8), clz);
     }
 }

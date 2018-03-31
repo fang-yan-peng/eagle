@@ -17,6 +17,29 @@
 
 package eagle.jfaster.org.client;
 
+import static eagle.jfaster.org.constant.EagleConstants.ASYNC_TIMEOUT_TIMER_PERIOD;
+import static eagle.jfaster.org.constant.EagleConstants.GRUOUP_WORKER_THREAD;
+import static eagle.jfaster.org.constant.EagleConstants.NETTY_TIMEOUT_TIMER_PERIOD;
+import static eagle.jfaster.org.constant.EagleConstants.SOCKET_RCVBUF_SIZE;
+import static eagle.jfaster.org.constant.EagleConstants.SOCKET_SNDBUF_SIZE;
+import static eagle.jfaster.org.util.InterceptorUtil.onAfter;
+import static eagle.jfaster.org.util.InterceptorUtil.onBefore;
+import static eagle.jfaster.org.util.InterceptorUtil.onError;
+
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+
 import eagle.jfaster.org.client.channel.AbstractNettyChannel;
 import eagle.jfaster.org.client.channel.AsyncNettyChannel;
 import eagle.jfaster.org.client.channel.SyncNettyChannel;
@@ -29,15 +52,14 @@ import eagle.jfaster.org.coder.NettyDecorder;
 import eagle.jfaster.org.coder.NettyEncoder;
 import eagle.jfaster.org.config.ConfigEnum;
 import eagle.jfaster.org.config.common.MergeConfig;
-import static eagle.jfaster.org.constant.EagleConstants.*;
-
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.interceptor.ExecutionInterceptor;
+import eagle.jfaster.org.interceptor.context.CurrentExecutionContext;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
 import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.rpc.ResponseFuture;
-import eagle.jfaster.org.rpc.support.TraceContext;
 import eagle.jfaster.org.spi.SpiClassLoader;
 import eagle.jfaster.org.statistic.EagleStatsManager;
 import eagle.jfaster.org.statistic.StatisticCallback;
@@ -50,7 +72,11 @@ import eagle.jfaster.org.transport.Client;
 import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -62,19 +88,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * netty 客户端
  *
  * Created by fangyanpeng1 on 2017/8/1.
  */
 @RequiredArgsConstructor
-public class NettyClient implements Client,StatisticCallback {
+public class NettyClient implements Client, StatisticCallback {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(NettyClient.class);
 
@@ -82,6 +102,8 @@ public class NettyClient implements Client,StatisticCallback {
 
     @Getter
     private final MethodInvokeCallBack callBack;
+
+    private final List<ExecutionInterceptor> interceptors;
 
     private EventLoopGroup workerGroup;
 
@@ -100,7 +122,7 @@ public class NettyClient implements Client,StatisticCallback {
     private AtomicLong errorCount = new AtomicLong(0);
 
     @Getter
-    private Map<Integer,NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
+    private Map<Integer, NettyResponseFuture> callbackMap = new ConcurrentHashMap(256);
 
     private ScheduledFuture<?> asyncCallbackMonitorFuture = null;
 
@@ -129,53 +151,53 @@ public class NettyClient implements Client,StatisticCallback {
     @Override
     public void start() {
         try {
-            if(init.compareAndSet(false,true)){
-                remoteAddress = new InetSocketAddress(config.getHost(),config.getPort());
-                maxInvokeError = config.getExtInt(ConfigEnum.maxInvokeError.getName(),ConfigEnum.maxInvokeError.getIntValue());
-                if(callBack != null){
-                    int callbackWorkerThread = config.getExtInt(ConfigEnum.callbackThread.getName(),ConfigEnum.callbackThread.getIntValue());
-                    int callbackQueueSize = config.getExtInt(ConfigEnum.callbackQueueSize.getName(),ConfigEnum.callbackQueueSize.getIntValue());
+            if (init.compareAndSet(false, true)) {
+                remoteAddress = new InetSocketAddress(config.getHost(), config.getPort());
+                maxInvokeError = config.getExtInt(ConfigEnum.maxInvokeError.getName(), ConfigEnum.maxInvokeError.getIntValue());
+                if (callBack != null) {
+                    int callbackWorkerThread = config.getExtInt(ConfigEnum.callbackThread.getName(), ConfigEnum.callbackThread.getIntValue());
+                    int callbackQueueSize = config.getExtInt(ConfigEnum.callbackQueueSize.getName(), ConfigEnum.callbackQueueSize.getIntValue());
                     callbackQueue = new LinkedBlockingQueue<>(callbackQueueSize);
-                    callbackExecutor = new AsyncCallbackExecutor(callbackWorkerThread,callbackWorkerThread,10*60*1000,TimeUnit.MILLISECONDS, callbackQueue, new DefaultThreadFactory("Method callback exec-"+config.getInterfaceName()+"-"));
+                    callbackExecutor = new AsyncCallbackExecutor(callbackWorkerThread, callbackWorkerThread, 10 * 60 * 1000, TimeUnit.MILLISECONDS, callbackQueue, new DefaultThreadFactory("Method callback exec-" + config.getInterfaceName() + "-"));
                     callbackExecutor.allowCoreThreadTimeOut(true);
-                    asyncCallbackMonitorFuture = commonExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(this),ASYNC_TIMEOUT_TIMER_PERIOD,ASYNC_TIMEOUT_TIMER_PERIOD,TimeUnit.MILLISECONDS);
+                    asyncCallbackMonitorFuture = commonExecutor.scheduleWithFixedDelay(new AsyncCallbackMonitor(this), ASYNC_TIMEOUT_TIMER_PERIOD, ASYNC_TIMEOUT_TIMER_PERIOD, TimeUnit.MILLISECONDS);
                 }
-                boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(),ConfigEnum.useNative.isBooleanValue());
-                if(useNative){
-                    workerGroup = new EpollEventLoopGroup(GRUOUP_WORKER_THREAD,new DefaultThreadFactory("Method invoke exec-"+config.getInterfaceName()+"-"));
-                }else {
-                    workerGroup = new NioEventLoopGroup(GRUOUP_WORKER_THREAD,new DefaultThreadFactory("Method invoke exec-"+config.getInterfaceName()+"-"));
+                boolean useNative = RemotingUtil.isLinuxPlatform() && config.getExtBoolean(ConfigEnum.useNative.getName(), ConfigEnum.useNative.isBooleanValue());
+                if (useNative) {
+                    workerGroup = new EpollEventLoopGroup(GRUOUP_WORKER_THREAD, new DefaultThreadFactory("Method invoke exec-" + config.getInterfaceName() + "-"));
+                } else {
+                    workerGroup = new NioEventLoopGroup(GRUOUP_WORKER_THREAD, new DefaultThreadFactory("Method invoke exec-" + config.getInterfaceName() + "-"));
                 }
                 bootstrap = new Bootstrap();
-                final int maxContentLen = config.getExtInt(ConfigEnum.maxContentLength.getName(),ConfigEnum.maxContentLength.getIntValue());
-                final Codec codec = SpiClassLoader.getClassLoader(Codec.class).getExtension(config.getExt(ConfigEnum.codec.getName(),ConfigEnum.codec.getValue()));
-                final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialization.getName(),ConfigEnum.serialization.getValue()));
-                final int heartBeatInterval = config.getExtInt(ConfigEnum.heartbeat.getName(),ConfigEnum.heartbeat.getIntValue());
+                final int maxContentLen = config.getExtInt(ConfigEnum.maxContentLength.getName(), ConfigEnum.maxContentLength.getIntValue());
+                final Codec codec = SpiClassLoader.getClassLoader(Codec.class).getExtension(config.getExt(ConfigEnum.codec.getName(), ConfigEnum.codec.getValue()));
+                final Serialization serialization = SpiClassLoader.getClassLoader(Serialization.class).getExtension(config.getExt(ConfigEnum.serialization.getName(), ConfigEnum.serialization.getValue()));
+                final int heartBeatInterval = config.getExtInt(ConfigEnum.heartbeat.getName(), ConfigEnum.heartbeat.getIntValue());
                 bootstrap.group(workerGroup).channel(useNative ? EpollSocketChannel.class : NioSocketChannel.class)
-                        .option(ChannelOption.TCP_NODELAY,true)
-                        .option(ChannelOption.SO_KEEPALIVE,false)
-                        .option(ChannelOption.SO_SNDBUF,SOCKET_SNDBUF_SIZE)
-                        .option(ChannelOption.SO_RCVBUF,SOCKET_RCVBUF_SIZE)
+                        .option(ChannelOption.TCP_NODELAY, true)
+                        .option(ChannelOption.SO_KEEPALIVE, false)
+                        .option(ChannelOption.SO_SNDBUF, SOCKET_SNDBUF_SIZE)
+                        .option(ChannelOption.SO_RCVBUF, SOCKET_RCVBUF_SIZE)
                         .handler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel sc) throws Exception {
-                                sc.pipeline().addLast(new NettyEncoder(codec,serialization))
-                                        .addLast(new NettyDecorder(maxContentLen,codec,serialization))
-                                        .addLast(new IdleStateHandler(0,0,heartBeatInterval))
-                                        .addLast(new NettyConnectionManager(config,connPool,NettyClient.this))
+                                sc.pipeline().addLast(new NettyEncoder(codec, serialization))
+                                        .addLast(new NettyDecorder(maxContentLen, codec, serialization))
+                                        .addLast(new IdleStateHandler(0, 0, heartBeatInterval))
+                                        .addLast(new NettyConnectionManager(config, connPool, NettyClient.this))
                                         .addLast(NettyClient.this.callBack == null ? new SyncMessageHandler(NettyClient.this) : new AsyncMessageHandler(NettyClient.this));
                             }
                         });
                 //定时扫描超时的请求
-                callbackCancelFuture = callbackCancelExecutor.scheduleWithFixedDelay(new TimeoutMonitorTask(this),NETTY_TIMEOUT_TIMER_PERIOD,NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
-                connPool = new NettySharedConnPool(config,this);
-                heartBeatTaskFuture = commonExecutor.scheduleWithFixedDelay(new HeartBeatTask(config,connPool,this),heartBeatInterval,heartBeatInterval,TimeUnit.SECONDS);
+                callbackCancelFuture = callbackCancelExecutor.scheduleWithFixedDelay(new TimeoutMonitorTask(this), NETTY_TIMEOUT_TIMER_PERIOD, NETTY_TIMEOUT_TIMER_PERIOD, TimeUnit.MICROSECONDS);
+                connPool = new NettySharedConnPool(config, this);
+                heartBeatTaskFuture = commonExecutor.scheduleWithFixedDelay(new HeartBeatTask(config, connPool, this), heartBeatInterval, heartBeatInterval, TimeUnit.SECONDS);
                 EagleStatsManager.registerStatsCallback(this);
                 stat.set(true);
 
             }
         } catch (Throwable e) {
-            logger.error("Error start netty client ",e);
+            logger.error("Error start netty client ", e);
             throw new EagleFrameException(e.getMessage());
         }
     }
@@ -184,23 +206,23 @@ public class NettyClient implements Client,StatisticCallback {
     public AbstractNettyChannel newChannel() throws InterruptedException {
         ChannelFuture channelFuture = bootstrap.connect(remoteAddress).sync();
         Channel channel = channelFuture.channel();
-        return this.callBack == null ? new SyncNettyChannel(this,channel) : new AsyncNettyChannel(this,channel);
+        return this.callBack == null ? new SyncNettyChannel(this, channel) : new AsyncNettyChannel(this, channel);
     }
 
-    public NettyResponseFuture removeCallBack(Integer opaque){
+    public NettyResponseFuture removeCallBack(Integer opaque) {
         return callbackMap.remove(opaque);
     }
 
-    public void addCallBack(Integer opaque,NettyResponseFuture future){
-        callbackMap.put(opaque,future);
+    public void addCallBack(Integer opaque, NettyResponseFuture future) {
+        callbackMap.put(opaque, future);
     }
 
     public void executeInvokeCallback(final ResponseFuture responseFuture) {
         boolean runInThisThread = false;
         if (callbackExecutor != null) {
             try {
-                callbackExecutor.submit(new AsyncCallbackTask(responseFuture));
-            } catch (Exception e) {
+                callbackExecutor.submit(new AsyncCallbackTask(responseFuture, interceptors));
+            } catch (Throwable e) {
                 runInThisThread = true;
                 logger.info("execute callback in executor exception, maybe executor busy", e);
             }
@@ -209,15 +231,9 @@ public class NettyClient implements Client,StatisticCallback {
         }
         if (runInThisThread) {
             try {
-                Map<String,String> attachments = ((NettyResponseFuture)responseFuture).getAttachments();
-                if(attachments != null){
-                    TraceContext.setTraceId(attachments.get(TraceContext.TRACE_KEY));
-                }
-                responseFuture.executeCallback();
+                responseFuture.executeCallback(interceptors);
             } catch (Throwable e) {
                 logger.info("executeInvokeCallback Exception", e);
-            }finally {
-                TraceContext.clear();
             }
         }
     }
@@ -236,22 +252,22 @@ public class NettyClient implements Client,StatisticCallback {
     @Override
     public void shutdown(boolean shutdown) {
         try {
-            if(init.compareAndSet(true,false)){
+            if (init.compareAndSet(true, false)) {
                 workerGroup.shutdownGracefully();
                 //不能关闭callBackCancleExecutor，因为是多个client公用的。
                 callbackCancelFuture.cancel(true);
-                if(shutdown){
+                if (shutdown) {
                     callbackCancelExecutor.shutdownNow();
                 }
 
-                if(callbackExecutor != null){
+                if (callbackExecutor != null) {
                     callbackExecutor.shutdownNow();
                 }
-                if(asyncCallbackMonitorFuture != null){
+                if (asyncCallbackMonitorFuture != null) {
                     asyncCallbackMonitorFuture.cancel(true);
                 }
                 heartBeatTaskFuture.cancel(true);
-                if(shutdown){
+                if (shutdown) {
                     commonExecutor.shutdownNow();
                 }
                 callbackMap.clear();
@@ -259,24 +275,35 @@ public class NettyClient implements Client,StatisticCallback {
                 logger.info("Netty client normal shutdown");
             }
         } catch (Throwable e) {
-            logger.error("Netty client shutdown ",e);
+            logger.error("Netty client shutdown ", e);
         }
     }
 
     @Override
     public Object request(Request request) {
         AbstractNettyChannel channel = null;
+        Throwable ex = null;
         try {
+            onBefore(request, interceptors);
             channel = connPool.getConnection();
-            return channel.request(request,connPool);
+            return channel.request(request, connPool);
         } catch (Throwable e) {
-            logger.error("NettyClient request error, interface: '"+config.getInterfaceName()+"', host: '" + config.identity() + "'",e);
-            if(channel != null){
+            ex = e;
+            logger.error("NettyClient request error, interface: '" + config.getInterfaceName() + "', host: '" + config.identity() + "'", e);
+            if (channel != null) {
                 connPool.invalidateConnection(channel);
             }
             throw ExceptionUtil.handleException(e);
+        } finally {
+            if (ex != null) {
+                onError(request, interceptors, ex);
+            } else if (callBack == null) { //同步调用直接执行onAfter
+                onAfter(request, interceptors);
+            }
+            CurrentExecutionContext.clean();
         }
     }
+
 
     /**
      * 联系调用失败超过配置的次数，将该client设置为无效
@@ -285,7 +312,7 @@ public class NettyClient implements Client,StatisticCallback {
         long count = errorCount.incrementAndGet();
         // 如果节点是可用状态，同时当前连续失败的次数超过限制maxClientConnection次，那么把该节点标示为不可用
         if (count >= maxInvokeError && stat.get()) {
-            if(stat.compareAndSet(true,false)){
+            if (stat.compareAndSet(true, false)) {
                 logger.error("NettyClient unavailable Error: config='" + config.getInterfaceName() + "' '" + config.identity() + "'");
             }
         }
@@ -296,23 +323,23 @@ public class NettyClient implements Client,StatisticCallback {
      */
     public void resetErrorCount() {
         errorCount.set(0);
-        if(!stat.get() && init.get() && errorCount.intValue() < maxInvokeError && stat.compareAndSet(false,true)){
+        if (!stat.get() && init.get() && errorCount.intValue() < maxInvokeError && stat.compareAndSet(false, true)) {
             logger.info("NettyClient recover available: interfaceName='" + config.getInterfaceName() + "' '" + config.identity() + "'");
         }
     }
 
     @Override
     public String statistic() {
-        if(callbackQueue == null){
-            if(callbackMap.size() < 100){
+        if (callbackQueue == null) {
+            if (callbackMap.size() < 100) {
                 return null;
             }
-        }else {
-            if(callbackMap.size() < 100 && callbackQueue.size() < 100){
+        } else {
+            if (callbackMap.size() < 100 && callbackQueue.size() < 100) {
                 return null;
             }
         }
-        return String.format("[%s] callbackMapSize: '%d' asyncCallbackQueueSize: '%d'",config.identity(), callbackMap.size(), callbackQueue == null ? 0 : callbackQueue.size());
+        return String.format("[%s] callbackMapSize: '%d' asyncCallbackQueueSize: '%d'", config.identity(), callbackMap.size(), callbackQueue == null ? 0 : callbackQueue.size());
     }
 
 }

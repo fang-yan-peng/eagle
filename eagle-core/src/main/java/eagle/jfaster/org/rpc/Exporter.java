@@ -22,6 +22,8 @@ package eagle.jfaster.org.rpc;
  */
 public interface Exporter<T> {
     RemoteInvoke<T> getInvoker();
+
     void init();
+
     void close();
 }

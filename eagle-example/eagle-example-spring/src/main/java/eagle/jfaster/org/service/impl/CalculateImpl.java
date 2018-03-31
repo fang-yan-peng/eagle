@@ -18,6 +18,7 @@
 package eagle.jfaster.org.service.impl;
 
 import eagle.jfaster.org.service.Calculate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,17 +34,17 @@ public class CalculateImpl implements Calculate {
 
     @Override
     public int add(int a, int b) {
-        logger.info(String.format("execute %d + %d",a,b));
-        return a+b;
+        logger.info(String.format("execute %d + %d", a, b));
+        return a + b;
     }
 
     @Override
     public int sub(int a, int b) {
-        return a-b;
+        return a - b;
     }
 
     @Override
     public int div(int a, int b) {
-        return a/b;
+        return a / b;
     }
 }

@@ -30,6 +30,7 @@ import eagle.jfaster.org.rpc.Request;
 import eagle.jfaster.org.spi.SpiInfo;
 import eagle.jfaster.org.util.ExceptionUtil;
 import eagle.jfaster.org.util.ReferUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -72,7 +73,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
 
     @Override
     public void setHaStrategy(HaStrategy<T> haStrategy) {
-        this.haStrategy= haStrategy;
+        this.haStrategy = haStrategy;
     }
 
     @Override
@@ -109,7 +110,7 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
 
     @Override
     public Class<T> getInterface() {
-        if(refers == null || refers.isEmpty()){
+        if (refers == null || refers.isEmpty()) {
             return null;
         }
         return refers.get(0).getType();
@@ -118,19 +119,19 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
     @Override
     public Object call(Request request) {
         try {
-            return haStrategy.call(request,loadBalance);
+            return haStrategy.call(request, loadBalance);
         } catch (Throwable e) {
-            return dealCallFail(request,e);
+            return dealCallFail(request, e);
         }
     }
 
     @Override
     public void destroy() {
-        if(stat.compareAndSet(true,false)){
-            if(refers == null){
+        if (stat.compareAndSet(true, false)) {
+            if (refers == null) {
                 return;
             }
-            for(Refer<T> refer : refers){
+            for (Refer<T> refer : refers) {
                 refer.close(true);
             }
         }
@@ -147,12 +148,12 @@ public class EagleReferCluster<T> implements ReferCluster<T> {
         return config;
     }
 
-    private Object dealCallFail(Request request,Throwable e)  {
-        if(mock != null ){
+    private Object dealCallFail(Request request, Throwable e) {
+        if (mock != null) {
             try {
-                return mock.getMockValue(request.getInterfaceName(),request.getMethodName(),request.getParameters(),e);
+                return mock.getMockValue(request.getInterfaceName(), request.getMethodName(), request.getParameters(), e);
             } catch (Throwable e1) {
-                logger.error("Execute mock fail",e1);
+                logger.error("Execute mock fail", e1);
                 throw new MockException(e);
             }
         }

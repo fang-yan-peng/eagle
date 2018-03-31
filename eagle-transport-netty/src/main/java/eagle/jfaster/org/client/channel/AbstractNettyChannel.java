@@ -28,6 +28,7 @@ import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
 import eagle.jfaster.org.rpc.Request;
+import eagle.jfaster.org.rpc.support.EagleRequest;
 import eagle.jfaster.org.util.RemotingUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -70,14 +71,14 @@ public abstract class AbstractNettyChannel {
     }
 
     public Object request(Request request, NettySharedConnPool connPool) throws Exception {
-        int timeout = config.getExtInt(ConfigEnum.requestTimeout.getName(),ConfigEnum.requestTimeout.getIntValue());
+        int timeout = config.getExtInt(ConfigEnum.requestTimeout.getName(), ConfigEnum.requestTimeout.getIntValue());
         final int opaque = request.getOpaque();
-        final NettyResponseFuture responseFuture = new NettyResponseFuture(opaque,timeout,callBack,request.getAttachments());
+        final NettyResponseFuture responseFuture = new NettyResponseFuture(opaque, timeout, callBack, request);
         try {
-            if(timeout < 0){
-                throw new EagleFrameException("The request timeout of %s is not allowed to set 0",timeout);
+            if (timeout < 0) {
+                throw new EagleFrameException("The request timeout of %s is not allowed to set 0", timeout);
             }
-            client.addCallBack(opaque,responseFuture);
+            client.addCallBack(opaque, responseFuture);
             final SocketAddress addr = channel.remoteAddress();
             channel.writeAndFlush(request).addListener(new ChannelFutureListener() {
                 @Override
@@ -93,10 +94,10 @@ public abstract class AbstractNettyChannel {
 
                     client.removeCallBack(opaque);
                     Exception e = new EagleFrameException(f.cause().getMessage());
-                    if (!sync){
+                    if (!sync) {
                         responseFuture.setException(e);
                         client.executeInvokeCallback(responseFuture);
-                    }else {
+                    } else {
                         responseFuture.onFail(e);
                     }
                     logger.warn("send a request command to channel <" + addr + "> failed.");
@@ -105,17 +106,17 @@ public abstract class AbstractNettyChannel {
         } finally {
             connPool.release(this);
         }
-        return handle(timeout,responseFuture);
+        return handle(timeout, responseFuture);
 
     }
 
-    protected abstract Object handle(long timeout,NettyResponseFuture responseFuture) throws Exception;
+    protected abstract Object handle(long timeout, NettyResponseFuture responseFuture) throws Exception;
 
-    public void close(){
+    public void close() {
         try {
-            RemotingUtil.closeChannel(channel,"AbstractNettyChannel close");
+            RemotingUtil.closeChannel(channel, "AbstractNettyChannel close");
         } catch (Exception e) {
-            logger.info("Close channel error ",e);
+            logger.info("Close channel error ", e);
         }
     }
 }

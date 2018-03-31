@@ -174,7 +174,7 @@ public class StatsItemSet {
         if (null == statsItem) {
             synchronized (getLock(statsKey)) {
                 statsItem = this.statsItemTable.get(statsKey);
-                if(statsItem == null){
+                if (statsItem == null) {
                     statsItem = new StatsItem(this.statsName, statsKey, this.log);
                     statsItemTable.put(statsKey, statsItem);
                 }
@@ -195,6 +195,7 @@ public class StatsItemSet {
         }
         return lock;
     }
+
     public StatsSnapshot getStatsDataInMinute(final String statsKey) {
         StatsItem statsItem = this.statsItemTable.get(statsKey);
         if (null != statsItem) {

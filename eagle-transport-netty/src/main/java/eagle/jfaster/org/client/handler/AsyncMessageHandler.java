@@ -16,6 +16,7 @@
  */
 
 package eagle.jfaster.org.client.handler;
+
 import eagle.jfaster.org.client.NettyClient;
 import eagle.jfaster.org.client.NettyResponseFuture;
 import eagle.jfaster.org.rpc.Response;
@@ -32,10 +33,10 @@ public class AsyncMessageHandler extends AbstractMessageChannelHandler {
     }
 
     @Override
-    protected void handle(Response response,NettyResponseFuture future) {
-        if(response.getException() != null){
+    protected void handle(Response response, NettyResponseFuture future) {
+        if (response.getException() != null) {
             future.setException(response.getException());
-        }else {
+        } else {
             future.setValue(response.getValue());
         }
         client.executeInvokeCallback(future);

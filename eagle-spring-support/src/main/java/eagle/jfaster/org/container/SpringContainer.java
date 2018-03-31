@@ -18,9 +18,11 @@
 package eagle.jfaster.org.container;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.spi.SpiInfo;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

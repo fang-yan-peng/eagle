@@ -15,6 +15,7 @@
  * </p>
  */
 package eagle.jfaster.org.bean.trace;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,18 +25,18 @@ import java.util.Map;
  */
 public class EagleTraceMethodRecods {
 
-    private static Map<MethodCacheKey,Boolean> traces = new HashMap<>();
+    private static Map<MethodCacheKey, Boolean> traces = new HashMap<>();
 
-    public static boolean needTrace(Method method,Class<?> targetClass){
-        Boolean trace = traces.get(new MethodCacheKey(method,targetClass));
-        if(trace == null){
+    public static boolean needTrace(Method method, Class<?> targetClass) {
+        Boolean trace = traces.get(new MethodCacheKey(method, targetClass));
+        if (trace == null) {
             return false;
         }
         return trace;
     }
 
-    public static synchronized void recordTrace(Method method,Class<?> targetClass,boolean trace){
-        traces.put(new MethodCacheKey(method,targetClass),trace);
+    public static synchronized void recordTrace(Method method, Class<?> targetClass, boolean trace) {
+        traces.put(new MethodCacheKey(method, targetClass), trace);
     }
 
 

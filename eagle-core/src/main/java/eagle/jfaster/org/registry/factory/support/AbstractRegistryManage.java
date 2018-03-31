@@ -23,6 +23,7 @@ import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.registry.RegistryCenter;
 import eagle.jfaster.org.registry.factory.RegistryCenterManage;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -46,14 +47,14 @@ public abstract class AbstractRegistryManage implements RegistryCenterManage {
         try {
             rdwrLock.readLock().lock();
             center = registries.get(registryKey);
-            if(center == null){
+            if (center == null) {
                 try {
                     rdwrLock.readLock().unlock();
                     rdwrLock.writeLock().lock();
                     center = registries.get(registryKey);
-                    if(center == null){
+                    if (center == null) {
                         center = createRegistry(registryConfig);
-                        registries.put(registryKey,center);
+                        registries.put(registryKey, center);
                     }
                 } finally {
                     rdwrLock.readLock().lock();
@@ -61,7 +62,7 @@ public abstract class AbstractRegistryManage implements RegistryCenterManage {
                 }
             }
         } catch (Exception e) {
-            logger.error("Error getRegistry ",e);
+            logger.error("Error getRegistry ", e);
             throw new EagleFrameException(e);
         } finally {
             rdwrLock.readLock().unlock();

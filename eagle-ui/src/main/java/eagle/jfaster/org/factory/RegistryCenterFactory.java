@@ -22,6 +22,7 @@ import com.google.common.base.Optional;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
+
 import eagle.jfaster.org.CoordinatorRegistryCenter;
 import eagle.jfaster.org.ZookeeperRegistryCenter;
 import eagle.jfaster.org.config.ConfigEnum;
@@ -38,9 +39,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RegistryCenterFactory {
-    
+
     private static final ConcurrentHashMap<HashCode, CoordinatorRegistryCenter> REG_CENTER_REGISTRY = new ConcurrentHashMap<>();
-    
+
     /**
      * 创建注册中心.
      *
@@ -50,7 +51,7 @@ public final class RegistryCenterFactory {
      * @return 注册中心对象
      */
     public static CoordinatorRegistryCenter createCoordinatorRegistryCenter(final String connectString, final String namespace, final Optional<String> digest) {
-        Hasher hasher =  Hashing.md5().newHasher().putString(connectString, Charsets.UTF_8).putString(namespace, Charsets.UTF_8);
+        Hasher hasher = Hashing.md5().newHasher().putString(connectString, Charsets.UTF_8).putString(namespace, Charsets.UTF_8);
         if (digest.isPresent()) {
             hasher.putString(digest.get(), Charsets.UTF_8);
         }
@@ -60,10 +61,10 @@ public final class RegistryCenterFactory {
             return result;
         }
         MergeConfig zkConfig = new MergeConfig();
-        zkConfig.addExt(ConfigEnum.address.getName(),connectString);
-        zkConfig.addExt(ConfigEnum.namespace.getName(),namespace);
+        zkConfig.addExt(ConfigEnum.address.getName(), connectString);
+        zkConfig.addExt(ConfigEnum.namespace.getName(), namespace);
         if (digest.isPresent()) {
-            zkConfig.addExt(ConfigEnum.digest.getName(),digest.get());
+            zkConfig.addExt(ConfigEnum.digest.getName(), digest.get());
         }
         result = new ZookeeperRegistryCenter(zkConfig);
         result.init();

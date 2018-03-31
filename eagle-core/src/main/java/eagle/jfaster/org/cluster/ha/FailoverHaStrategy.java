@@ -31,23 +31,23 @@ import eagle.jfaster.org.spi.SpiInfo;
  * Created by fangyanpeng1 on 2017/8/4.
  */
 @SpiInfo(name = "failover")
-public class FailoverHaStrategy<T> extends AbstractHaStrategy<T>  {
+public class FailoverHaStrategy<T> extends AbstractHaStrategy<T> {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(FailoverHaStrategy.class);
 
     @Override
     public Object call(Request request, LoadBalance<T> loadBalance) {
-        int retry = config.getExtInt(ConfigEnum.retries.getName(),ConfigEnum.retries.getIntValue());
+        int retry = config.getExtInt(ConfigEnum.retries.getName(), ConfigEnum.retries.getIntValue());
         retry = retry < 0 ? 1 : retry;
-        for(int i = 0;i <= retry ;++i){
+        for (int i = 0; i <= retry; ++i) {
             Refer<T> refer = loadBalance.select(request);
             try {
                 return refer.request(request);
             } catch (Throwable e) {
-                if(i > retry){
+                if (i > retry) {
                     throw e;
                 }
-                logger.warn(String.format("Failover call fail for interface: '%s',cause: '%s'",request.getInterfaceName(),e.getMessage()));
+                logger.warn(String.format("Failover call fail for interface: '%s',cause: '%s'", request.getInterfaceName(), e.getMessage()));
             }
         }
         throw new EagleFrameException("Failover call can'nt run here!");

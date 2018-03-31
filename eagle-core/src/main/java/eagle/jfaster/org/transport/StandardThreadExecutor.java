@@ -42,8 +42,8 @@ public class StandardThreadExecutor extends ThreadPoolExecutor {
     public static final int DEFAULT_MAX_THREADS = 200;
     public static final int DEFAULT_MAX_IDLE_TIME = 60 * 1000; // 1 minutes
 
-    protected AtomicInteger submittedTasksCount;	// 正在处理的任务数
-    private int maxSubmittedTaskCount;				// 最大允许同时处理的任务数
+    protected AtomicInteger submittedTasksCount;    // 正在处理的任务数
+    private int maxSubmittedTaskCount;                // 最大允许同时处理的任务数
 
     public StandardThreadExecutor() {
         this(DEFAULT_MIN_THREADS, DEFAULT_MAX_THREADS);

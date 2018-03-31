@@ -19,23 +19,25 @@ package eagle.jfaster.org.service.impl;
 
 import eagle.jfaster.org.config.annotation.Service;
 import eagle.jfaster.org.service.Calculate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by fangyanpeng1 on 2017/8/9.
  */
-@Service(baseService = "baseService",export = "proto1:29001")
+@Service(baseService = "baseService", export = "proto1:29001")
 public class CalculateImpl implements Calculate {
 
     private static final Logger logger = LoggerFactory.getLogger(CalculateImpl.class);
+
     public int add(int a, int b) {
-        logger.info("execute {} + {}",a,b);
+        logger.info("execute {} + {}", a, b);
         return a + b;
     }
 
     public int sub(int a, int b) {
-        logger.info("execute {} - {}",a,b);
+        logger.info("execute {} - {}", a, b);
         return a - b;
     }
 }

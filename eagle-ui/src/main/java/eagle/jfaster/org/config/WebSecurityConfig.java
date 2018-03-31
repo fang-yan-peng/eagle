@@ -41,10 +41,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
-            .antMatchers("/registry-center/**/*").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .httpBasic();
+                .antMatchers("/registry-center/**/*").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic();
     }
 
     @Autowired

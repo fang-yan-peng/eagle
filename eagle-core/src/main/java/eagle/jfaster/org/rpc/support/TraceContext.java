@@ -21,22 +21,21 @@ package eagle.jfaster.org.rpc.support;
  */
 public class TraceContext {
 
-    public static String TRACE_KEY="traceId";
+    public static String TRACE_KEY = "traceId";
 
     private static InheritableThreadLocal<String> traceIdManager = new InheritableThreadLocal<>();
 
-    public static String getTraceId(){
+    public static String getTraceId() {
         return traceIdManager.get();
     }
 
-    public static void setTraceId(String traceId){
+    public static void setTraceId(String traceId) {
         traceIdManager.set(traceId);
     }
 
-    public static void clear(){
+    public static void clear() {
         traceIdManager.remove();
     }
-
 
 
 }

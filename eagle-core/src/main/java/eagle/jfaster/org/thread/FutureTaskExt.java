@@ -26,7 +26,7 @@ import java.util.concurrent.FutureTask;
  *
  * Created by fangyanpeng on 2017/8/21.
  */
-public class FutureTaskExt<V> extends FutureTask<V>{
+public class FutureTaskExt<V> extends FutureTask<V> {
 
     private final Runnable runnable;
 

@@ -57,11 +57,11 @@ public class NettyConnectionManager extends ChannelDuplexHandler {
             if (event.state().equals(IdleState.ALL_IDLE)) {
                 final String remoteAddress = RemotingUtil.parseChannelRemoteAddr(ctx.channel());
                 logger.warn("NETTY CLIENT PIPELINE: IDLE exception [{}]", remoteAddress);
-                HeartBeatFactory heartBeatFactory = SpiClassLoader.getClassLoader(HeartBeatFactory.class).getExtension(config.getExt(ConfigEnum.heartbeatFactory.getName(),ConfigEnum.heartbeatFactory.getValue()));
+                HeartBeatFactory heartBeatFactory = SpiClassLoader.getClassLoader(HeartBeatFactory.class).getExtension(config.getExt(ConfigEnum.heartbeatFactory.getName(), ConfigEnum.heartbeatFactory.getValue()));
                 ctx.writeAndFlush(heartBeatFactory.createRequest()).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
-                        if(future.isSuccess()){
+                        if (future.isSuccess()) {
                             client.resetErrorCount();
                         }
                     }

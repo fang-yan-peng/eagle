@@ -22,5 +22,6 @@ package eagle.jfaster.org.transport;
  */
 public interface Server {
     void start();
+
     void shutdown();
 }

@@ -21,9 +21,11 @@ import eagle.jfaster.org.client.channel.AbstractNettyChannel;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.util.ClockSource;
+
 import java.util.Comparator;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import eagle.jfaster.org.pool.ConcurrentBag.IConcurrentBagEntry;
 import lombok.Getter;
 
@@ -64,8 +66,7 @@ public final class NettyPoolEntry implements IConcurrentBagEntry {
     }
 
 
-    public void setFutureEol(final ScheduledFuture<?> endOfLife)
-    {
+    public void setFutureEol(final ScheduledFuture<?> endOfLife) {
         this.endOfLife = endOfLife;
     }
 
@@ -127,16 +128,16 @@ public final class NettyPoolEntry implements IConcurrentBagEntry {
 
     private String stateToString() {
         switch (state.get()) {
-        case STATE_IN_USE:
-            return "IN_USE";
-        case STATE_NOT_IN_USE:
-            return "NOT_IN_USE";
-        case STATE_REMOVED:
-            return "REMOVED";
-        case STATE_RESERVED:
-            return "RESERVED";
-        default:
-            return "Invalid";
+            case STATE_IN_USE:
+                return "IN_USE";
+            case STATE_NOT_IN_USE:
+                return "NOT_IN_USE";
+            case STATE_REMOVED:
+                return "REMOVED";
+            case STATE_RESERVED:
+                return "RESERVED";
+            default:
+                return "Invalid";
         }
     }
 }

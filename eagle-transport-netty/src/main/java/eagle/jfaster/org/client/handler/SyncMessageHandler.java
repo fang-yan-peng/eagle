@@ -23,7 +23,7 @@ import eagle.jfaster.org.rpc.Response;
 
 /**
  * 同步处理response
- * 
+ *
  * Created by fangyanpeng1 on 2017/8/7.
  */
 public class SyncMessageHandler extends AbstractMessageChannelHandler {
@@ -34,9 +34,9 @@ public class SyncMessageHandler extends AbstractMessageChannelHandler {
 
     @Override
     protected void handle(Response response, NettyResponseFuture future) {
-        if(response.getException() != null){
+        if (response.getException() != null) {
             future.onFail(response.getException());
-        }else {
+        } else {
             future.onSuccess(response.getValue());
         }
     }

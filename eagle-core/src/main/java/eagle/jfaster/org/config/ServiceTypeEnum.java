@@ -18,6 +18,7 @@
 package eagle.jfaster.org.config;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.config.common.MergeConfig;
 import eagle.jfaster.org.rpc.RemoteInvoke;
 import eagle.jfaster.org.rpc.support.EagleRpcCglibRemoteInvoke;
@@ -33,9 +34,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public enum ServiceTypeEnum {
 
-    JDK("jdk", EagleRpcJdkRemoteInvoke.class),CGLIB("cglib", EagleRpcCglibRemoteInvoke.class);
+    JDK("jdk", EagleRpcJdkRemoteInvoke.class), CGLIB("cglib", EagleRpcCglibRemoteInvoke.class);
 
-    ServiceTypeEnum(String type,Class<?> invokeClass){
+    ServiceTypeEnum(String type, Class<?> invokeClass) {
         this.type = type;
         this.invokeClass = invokeClass;
     }
@@ -46,23 +47,23 @@ public enum ServiceTypeEnum {
     @Getter
     private Class<?> invokeClass;
 
-    public static ServiceTypeEnum typeOf(String type){
-        if(Strings.isNullOrEmpty(type)){
+    public static ServiceTypeEnum typeOf(String type) {
+        if (Strings.isNullOrEmpty(type)) {
             return JDK;
         }
-        for (ServiceTypeEnum typeEnum : ServiceTypeEnum.values()){
-            if(typeEnum.type.equalsIgnoreCase(type)){
+        for (ServiceTypeEnum typeEnum : ServiceTypeEnum.values()) {
+            if (typeEnum.type.equalsIgnoreCase(type)) {
                 return typeEnum;
             }
         }
         return JDK;
     }
 
-    public static <T> RemoteInvoke<T> getRemoteInvoke(String type,Class<T> interfaceClass, T ref, MergeConfig serviceConfig) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> RemoteInvoke<T> getRemoteInvoke(String type, Class<T> interfaceClass, T ref, MergeConfig serviceConfig) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         ServiceTypeEnum serviceType = typeOf(type);
         Class<T> clz = (Class<T>) serviceType.getInvokeClass();
-        Constructor invokeCtor = clz.getConstructor(Class.class,Object.class, MergeConfig.class);
-        return (RemoteInvoke<T>) invokeCtor.newInstance(interfaceClass,ref,serviceConfig);
+        Constructor invokeCtor = clz.getConstructor(Class.class, Object.class, MergeConfig.class);
+        return (RemoteInvoke<T>) invokeCtor.newInstance(interfaceClass, ref, serviceConfig);
     }
 
 }

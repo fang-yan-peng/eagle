@@ -19,6 +19,7 @@ package eagle.jfaster.org.codec.support;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
+
 import eagle.jfaster.org.codec.Serialization;
 import eagle.jfaster.org.spi.SpiInfo;
 
@@ -31,7 +32,7 @@ import java.io.IOException;
  *
  * Created by fangyanpeng1 on 2017/7/29.
  */
-@SpiInfo(name="hessian")
+@SpiInfo(name = "hessian")
 public class HessianSerialization implements Serialization {
     @Override
     public byte[] serialize(Object data) throws IOException {

@@ -27,23 +27,23 @@ public class ClientServiceInfo implements ServiceCommonSetter {
 
     @Setter
     @Getter
-    String protocol ;
+    String protocol;
 
     @Setter
     @Getter
-    String serialization ;
+    String serialization;
 
     @Setter
     @Getter
-    String group ;
+    String group;
 
     @Setter
     @Getter
-    String serviceName ;
+    String serviceName;
 
     @Setter
     @Getter
-    String host ;
+    String host;
 
     @Setter
     @Getter
@@ -55,87 +55,87 @@ public class ClientServiceInfo implements ServiceCommonSetter {
 
     @Setter
     @Getter
-    String codec ;
+    String codec;
 
     @Setter
     @Getter
-    Integer actives ;
+    Integer actives;
 
     @Setter
     @Getter
-    Integer maxContentLength ;
+    Integer maxContentLength;
 
     @Setter
     @Getter
-    Long activesWait ;
+    Long activesWait;
 
     @Setter
     @Getter
-    Boolean check ;
+    Boolean check;
 
     @Setter
     @Getter
-    Boolean useNative ;
+    Boolean useNative;
 
     @Setter
     @Getter
-    Boolean compress ;
+    Boolean compress;
 
     @Setter
     @Getter
-    Boolean useDefault ;
+    Boolean useDefault;
 
     @Setter
     @Getter
-    String cluster ;
+    String cluster;
 
     @Setter
     @Getter
-    String heartbeatFactory ;
+    String heartbeatFactory;
 
     @Setter
     @Getter
-    Integer heartbeat ;
+    Integer heartbeat;
 
     @Setter
     @Getter
-    String version ;
+    String version;
 
     @Setter
     @Getter
-    String statsLog ;
+    String statsLog;
 
     @Setter
     @Getter
-    Integer retries ;
+    Integer retries;
 
     @Setter
     @Getter
-    Integer callbackThread ;
+    Integer callbackThread;
 
     @Setter
     @Getter
-    Integer callbackQueueSize ;
+    Integer callbackQueueSize;
 
     @Setter
     @Getter
-    Integer callbackWaitTime ;
+    Integer callbackWaitTime;
 
     @Setter
     @Getter
-    Integer requestTimeout ;
+    Integer requestTimeout;
 
     @Setter
     @Getter
-    Integer connectTimeout ;
+    Integer connectTimeout;
 
     @Setter
     @Getter
-    Long idleTime ;
+    Long idleTime;
 
     @Setter
     @Getter
-    Integer minClientConnection ;
+    Integer minClientConnection;
 
     @Setter
     @Getter
@@ -143,19 +143,19 @@ public class ClientServiceInfo implements ServiceCommonSetter {
 
     @Setter
     @Getter
-    Integer maxInvokeError ;
+    Integer maxInvokeError;
 
     @Setter
     @Getter
-    String loadbalance ;
+    String loadbalance;
 
     @Setter
     @Getter
-    String haStrategy ;
+    String haStrategy;
 
     @Setter
     @Getter
-    Long maxLifetime ;
+    Long maxLifetime;
 
     @Setter
     @Getter

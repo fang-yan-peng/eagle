@@ -34,20 +34,20 @@ public class SyncNettyChannel extends AbstractNettyChannel {
     }
 
     @Override
-    protected Object handle(long timeout,NettyResponseFuture responseFuture) throws Exception {
+    protected Object handle(long timeout, NettyResponseFuture responseFuture) throws Exception {
         Object ret = null;
         try {
             ret = responseFuture.getValue(timeout + 100);
         } finally {
             client.removeCallBack(responseFuture.getOpaque());
         }
-        if(ret != null){
+        if (ret != null) {
             return ret;
         }
-        if(responseFuture.isSendRequestOK() && !responseFuture.isTimeout()){
+        if (responseFuture.isSendRequestOK() && !responseFuture.isTimeout()) {
             return ret;
-        }else {
-            throw new EagleFrameException("Request timeout,timeout: [%d]",timeout);
+        } else {
+            throw new EagleFrameException("Request timeout,timeout: [%d]", timeout);
         }
     }
 }

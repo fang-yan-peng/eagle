@@ -23,7 +23,7 @@ import lombok.Setter;
 /**
  * Created by fangyanpeng1 on 2017/8/7.
  */
-public abstract class AbstractConfig{
+public abstract class AbstractConfig {
 
     @Setter
     private String id;

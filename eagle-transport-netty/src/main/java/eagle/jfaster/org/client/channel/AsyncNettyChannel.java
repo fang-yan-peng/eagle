@@ -33,7 +33,7 @@ public class AsyncNettyChannel extends AbstractNettyChannel {
     }
 
     @Override
-    protected Object handle(long timeout,NettyResponseFuture responseFuture) {
+    protected Object handle(long timeout, NettyResponseFuture responseFuture) {
         return null;
     }
 }

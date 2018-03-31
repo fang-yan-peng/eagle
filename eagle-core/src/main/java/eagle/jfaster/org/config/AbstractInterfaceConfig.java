@@ -18,6 +18,7 @@
 package eagle.jfaster.org.config;
 
 import eagle.jfaster.org.config.annotation.ConfigDesc;
+import eagle.jfaster.org.interceptor.ExecutionInterceptor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,6 +39,10 @@ public class AbstractInterfaceConfig extends AbstractConfig {
     @Setter
     // 注册中心的配置列表
     protected List<RegistryConfig> registries;
+
+    @Getter
+    @Setter
+    protected List<ExecutionInterceptor> interceptors;
 
     @Getter
     @Setter

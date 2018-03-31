@@ -71,12 +71,12 @@ public class ServiceConfigUtil {
         config.setInterfaceName(target.getServiceName());
         config.setHost(target.getHost());
         config.setPort(target.getPort());
-        if(config.getPort() == null || config.getPort() == 0){
+        if (config.getPort() == null || config.getPort() == 0) {
             config.setPort(target.getProcess());
         }
         BeanInfo beanInfo = Introspector.getBeanInfo(targetClass);
         PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
-        for(PropertyDescriptor descriptor : descriptors){
+        for (PropertyDescriptor descriptor : descriptors) {
             String name = descriptor.getName();
             if (ignore(name)) {
                 continue;
@@ -84,16 +84,16 @@ public class ServiceConfigUtil {
             Method readM = descriptor.getReadMethod();
             ConfigEnum configEnum = ConfigEnum.valueOf(name);
             Object val = readM.invoke(target);
-            if(val != null){
+            if (val != null) {
                 String varStr = String.valueOf(val);
-                if(!varStr.trim().isEmpty()){
-                    config.addExt(configEnum.getName(),varStr);
+                if (!varStr.trim().isEmpty()) {
+                    config.addExt(configEnum.getName(), varStr);
                 }
             }
         }
     }
 
-    private static boolean ignore(String name){
+    private static boolean ignore(String name) {
         return ("host".equals(name) || "class".equals(name) || "process".equals(name) || "serviceName".equals(name) || "protocol".equals(name) || "version".equals(name) || "port".equals(name));
     }
 }

@@ -18,6 +18,7 @@
 package eagle.jfaster.org.controller;
 
 import eagle.jfaster.org.util.AuthenticatUtil;
+
 import org.assertj.core.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.AbstractErrorController;
@@ -34,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author  fangyanpeng
+ * @author fangyanpeng
  */
 @Controller
 public class ConsoleIndex extends AbstractErrorController {
@@ -45,21 +46,21 @@ public class ConsoleIndex extends AbstractErrorController {
     }
 
     @RequestMapping("/")
-    public String index(){
+    public String index() {
         return "redirect:/index.html";
     }
 
     @ResponseBody
     @RequestMapping("/error")
-    public String error(HttpServletRequest request, HttpServletResponse response){
+    public String error(HttpServletRequest request, HttpServletResponse response) {
 
         HttpStatus status = super.getStatus(request);
 
-        if (status == HttpStatus.NOT_FOUND){
+        if (status == HttpStatus.NOT_FOUND) {
             return "wrong";
         }
 
-        if (status == HttpStatus.FORBIDDEN || status == HttpStatus.UNAUTHORIZED){
+        if (status == HttpStatus.FORBIDDEN || status == HttpStatus.UNAUTHORIZED) {
             AuthenticatUtil.needAuthenticate(response);
             return "";
         }
@@ -68,15 +69,15 @@ public class ConsoleIndex extends AbstractErrorController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/user",method = RequestMethod.HEAD)
-    public void getLoginUser(HttpServletResponse response){
+    @RequestMapping(value = "/user", method = RequestMethod.HEAD)
+    public void getLoginUser(HttpServletResponse response) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userName = userDetails.getUsername();
-        if(Strings.isNullOrEmpty(userName)){
+        if (Strings.isNullOrEmpty(userName)) {
             AuthenticatUtil.needAuthenticate(response);
             return;
         }
-        AuthenticatUtil.authenticateSuccess(response,userName);
+        AuthenticatUtil.authenticateSuccess(response, userName);
     }
 
     @Override

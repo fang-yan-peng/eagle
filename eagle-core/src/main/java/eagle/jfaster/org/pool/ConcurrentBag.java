@@ -60,7 +60,9 @@ public class ConcurrentBag<T extends IConcurrentBagEntry> implements AutoCloseab
         int STATE_RESERVED = -2;
 
         boolean compareAndSet(int expectState, int newState);
+
         void lazySet(int newState);
+
         int getState();
     }
 
@@ -77,12 +79,10 @@ public class ConcurrentBag<T extends IConcurrentBagEntry> implements AutoCloseab
         this.synchronizer = new QueuedSequenceSynchronizer();
         if (weakThreadLocals) {
             this.threadList = new ThreadLocal<>();
-        }
-        else {
+        } else {
             this.threadList = new ThreadLocal<List<Object>>() {
                 @Override
-                protected List<Object> initialValue()
-                {
+                protected List<Object> initialValue() {
                     return new FastList<>(IConcurrentBagEntry.class, 16);
                 }
             };
@@ -132,9 +132,9 @@ public class ConcurrentBag<T extends IConcurrentBagEntry> implements AutoCloseab
                 }
 
                 timeout = originTimeout - (System.nanoTime() - startScan);
-            } while (timeout > 10_000L && synchronizer.waitUntilSequenceExceeded(startSeq, timeout));
-        }
-        finally {
+            }
+            while (timeout > 10_000L && synchronizer.waitUntilSequenceExceeded(startSeq, timeout));
+        } finally {
             waiters.decrementAndGet();
         }
 
@@ -210,8 +210,7 @@ public class ConcurrentBag<T extends IConcurrentBagEntry> implements AutoCloseab
     public void unreserve(final T bagEntry) {
         if (bagEntry.compareAndSet(STATE_RESERVED, STATE_NOT_IN_USE)) {
             synchronizer.signal();
-        }
-        else {
+        } else {
             logger.warn("Attempt to relinquish an object to the bag that was not reserved: {}", bagEntry);
         }
     }
@@ -250,8 +249,7 @@ public class ConcurrentBag<T extends IConcurrentBagEntry> implements AutoCloseab
             }
 
             return getClass().getClassLoader() != ClassLoader.getSystemClassLoader();
-        }
-        catch (SecurityException se) {
+        } catch (SecurityException se) {
             return true;
         }
     }

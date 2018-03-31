@@ -17,10 +17,12 @@
 package eagle.jfaster.org.bean;
 
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.context.ReferContext;
 import eagle.jfaster.org.exception.EagleFrameException;
 import eagle.jfaster.org.util.AopTargetUtil;
+
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -34,7 +36,7 @@ import java.lang.reflect.Field;
 /**
  * Created by fangyanpeng on 2017/10/24.
  */
-public class ReferInjectPostProcessor implements BeanPostProcessor,ApplicationContextAware {
+public class ReferInjectPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
     private ConfigurableApplicationContext ctx;
 
@@ -53,23 +55,23 @@ public class ReferInjectPostProcessor implements BeanPostProcessor,ApplicationCo
         try {
             final Class<?> targetClass = AopTargetUtil.getTargetClass(bean);
             final Object targetBean = AopTargetUtil.getTarget(bean);
-            if(AopUtils.isAopProxy(targetBean)){
+            if (AopUtils.isAopProxy(targetBean)) {
                 return bean;
             }
             try {
-                ReflectionUtils.doWithFields(targetClass,new ReflectionUtils.FieldCallback(){
+                ReflectionUtils.doWithFields(targetClass, new ReflectionUtils.FieldCallback() {
 
                     @Override
                     public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                         Refer refer = field.getAnnotation(Refer.class);
                         ReflectionUtils.makeAccessible(field);
-                        String id = ReferContext.getName(refer,field.getType());
-                        if(!Strings.isNullOrEmpty(id) && field.get(targetBean) == null){
-                            field.set(targetBean,ctx.getBean(id));
+                        String id = ReferContext.getName(refer, field.getType());
+                        if (!Strings.isNullOrEmpty(id) && field.get(targetBean) == null) {
+                            field.set(targetBean, ctx.getBean(id));
                         }
 
                     }
-                },new ReflectionUtils.FieldFilter(){
+                }, new ReflectionUtils.FieldFilter() {
 
                     @Override
                     public boolean matches(Field field) {

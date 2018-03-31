@@ -17,9 +17,10 @@
 
 package eagle.jfaster.org.service.impl;
 
+import org.springframework.stereotype.Service;
+
 import eagle.jfaster.org.Pong;
 import eagle.jfaster.org.service.Notify;
-import org.springframework.stereotype.Service;
 
 /**
  * Created by fangyanpeng1 on 2017/8/9.

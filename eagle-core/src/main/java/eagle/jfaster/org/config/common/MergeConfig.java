@@ -20,7 +20,9 @@ package eagle.jfaster.org.config.common;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
 import eagle.jfaster.org.config.ConfigEnum;
+import eagle.jfaster.org.interceptor.ExecutionInterceptor;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import eagle.jfaster.org.rpc.MethodInvokeCallBack;
@@ -28,7 +30,10 @@ import eagle.jfaster.org.rpc.Mock;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 import java.util.Map;
+
 import static eagle.jfaster.org.constant.EagleConstants.GROUP_SPLIT_PATTERN;
 
 /**
@@ -64,45 +69,49 @@ public class MergeConfig {
 
     @Getter
     @Setter
+    private Map<String, String> extFeilds = Maps.newHashMapWithExpectedSize(32);
+
+    @Getter
+    @Setter
     private transient MethodInvokeCallBack invokeCallBack;
 
     @Getter
     @Setter
     private transient Mock mock;
 
-    @Getter
     @Setter
-    private Map<String,String> extFeilds = Maps.newHashMapWithExpectedSize(32);
+    @Getter
+    private transient List<ExecutionInterceptor> interceptors;
 
     @Getter
     @Setter
     private volatile transient Map<String, Number> numbers = Maps.newHashMapWithExpectedSize(32);
 
-    public void addExt(String name,String value){
-        this.extFeilds.put(name,value);
+    public void addExt(String name, String value) {
+        this.extFeilds.put(name, value);
     }
 
-    public void addExts(Map<String,String> exts){
+    public void addExts(Map<String, String> exts) {
         this.extFeilds.putAll(exts);
     }
 
-    public String getExt(String name,String defaultExt){
-        String value =  extFeilds.get(name);
-        if(Strings.isNullOrEmpty(value)){
+    public String getExt(String name, String defaultExt) {
+        String value = extFeilds.get(name);
+        if (Strings.isNullOrEmpty(value)) {
             return defaultExt;
         }
         return value;
     }
 
-    public Boolean getExtBoolean(String name,boolean defaultExt){
-        String value =  extFeilds.get(name);
-        if(Strings.isNullOrEmpty(value)){
+    public Boolean getExtBoolean(String name, boolean defaultExt) {
+        String value = extFeilds.get(name);
+        if (Strings.isNullOrEmpty(value)) {
             return defaultExt;
         }
         return Boolean.parseBoolean(value);
     }
 
-    public int getExtInt(String name,int defaultExt){
+    public int getExtInt(String name, int defaultExt) {
         Number n = getNumbers().get(name);
         if (n != null) {
             return n.intValue();
@@ -116,7 +125,7 @@ public class MergeConfig {
         return i;
     }
 
-    public long getExtLong(String name,long defaultExt){
+    public long getExtLong(String name, long defaultExt) {
         Number n = getNumbers().get(name);
         if (n != null) {
             return n.longValue();
@@ -130,7 +139,7 @@ public class MergeConfig {
         return l;
     }
 
-    public Double getExtDouble(String name,double defaultExt){
+    public Double getExtDouble(String name, double defaultExt) {
         Number n = getNumbers().get(name);
         if (n != null) {
             return n.doubleValue();
@@ -144,48 +153,48 @@ public class MergeConfig {
         return l;
     }
 
-    public void update(MergeConfig config){
+    public void update(MergeConfig config) {
         this.addExts(config.getExtFeilds());
         this.version = config.getVersion();
         this.numbers.clear();
     }
 
-    public boolean disable(){
-        return getExtBoolean(ConfigEnum.disable.getName(),ConfigEnum.disable.isBooleanValue());
+    public boolean disable() {
+        return getExtBoolean(ConfigEnum.disable.getName(), ConfigEnum.disable.isBooleanValue());
     }
 
-    public boolean isSupport(MergeConfig other){
+    public boolean isSupport(MergeConfig other) {
         //比较版本
         String version = getVersion();
         String refVersion = other.getVersion();
         if (!version.equals(refVersion)) {
-            logger.info(String.format("Not support version:%s,current support version:%s",version,refVersion));
+            logger.info(String.format("Not support version:%s,current support version:%s", version, refVersion));
             return false;
         }
         //比较序列化
         String serialize = getExt(ConfigEnum.serialization.getName(), ConfigEnum.serialization.getValue());
         String refSerialize = other.getExt(ConfigEnum.serialization.getName(), ConfigEnum.serialization.getValue());
         if (!serialize.equals(refSerialize)) {
-            logger.info(String.format("Not support serializeType:%s,current support serializeType:%s",serialize,refSerialize));
+            logger.info(String.format("Not support serializeType:%s,current support serializeType:%s", serialize, refSerialize));
             return false;
         }
         //比较group
         String group = getExt(ConfigEnum.group.getName(), ConfigEnum.group.getValue());
         String refGroup = other.getExt(ConfigEnum.group.getName(), ConfigEnum.group.getValue());
-        if(!compareGroup(refGroup,group)){
-            logger.info(String.format("Not support group:%s,current support group:%s",group,refGroup));
+        if (!compareGroup(refGroup, group)) {
+            logger.info(String.format("Not support group:%s,current support group:%s", group, refGroup));
             return false;
         }
         return true;
     }
 
-    private boolean compareGroup(String refGroup,String serGroup){
+    private boolean compareGroup(String refGroup, String serGroup) {
         String[] refGroups = GROUP_SPLIT_PATTERN.split(refGroup);
         String[] serGroups = GROUP_SPLIT_PATTERN.split(serGroup);
-        for(String ref : refGroups){
+        for (String ref : refGroups) {
             String refr = ref.trim();
-            for(String ser : serGroups){
-                if(refr.equals(ser.trim())){
+            for (String ser : serGroups) {
+                if (refr.equals(ser.trim())) {
                     return true;
                 }
             }
@@ -193,15 +202,15 @@ public class MergeConfig {
         return false;
     }
 
-    public static MergeConfig decode(final String data){
-        return JSON.parseObject(data,MergeConfig.class);
+    public static MergeConfig decode(final String data) {
+        return JSON.parseObject(data, MergeConfig.class);
     }
 
-    public String encode(){
+    public String encode() {
         return JSON.toJSONString(this, false);
     }
 
-    public MergeConfig copy(){
+    public MergeConfig copy() {
         MergeConfig config = new MergeConfig();
         config.setHost(this.host);
         config.setPort(this.port);
@@ -213,14 +222,14 @@ public class MergeConfig {
 
     private final String IDENTITY_FORMATE = "%s://%s:%d/%s";
 
-    public String identity(){
-        return String.format(IDENTITY_FORMATE,protocol,host,port,interfaceName);
+    public String identity() {
+        return String.format(IDENTITY_FORMATE, protocol, host, port, interfaceName);
     }
 
     private final String HOST_FORMATE = "%s:%d";
 
-    public String hostPort(){
-        return String.format(HOST_FORMATE,host,port);
+    public String hostPort() {
+        return String.format(HOST_FORMATE, host, port);
     }
 
     @Override

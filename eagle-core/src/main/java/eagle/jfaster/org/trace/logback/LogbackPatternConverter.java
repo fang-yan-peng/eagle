@@ -18,7 +18,9 @@ package eagle.jfaster.org.trace.logback;
 
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+
 import com.google.common.base.Strings;
+
 import eagle.jfaster.org.rpc.support.TraceContext;
 
 /**

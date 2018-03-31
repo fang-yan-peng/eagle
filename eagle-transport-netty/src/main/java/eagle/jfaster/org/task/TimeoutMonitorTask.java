@@ -20,6 +20,7 @@ package eagle.jfaster.org.task;
 import eagle.jfaster.org.client.NettyClient;
 import eagle.jfaster.org.client.NettyResponseFuture;
 import eagle.jfaster.org.exception.EagleFrameException;
+import eagle.jfaster.org.exception.EagleTimeoutException;
 import eagle.jfaster.org.logging.InternalLogger;
 import eagle.jfaster.org.logging.InternalLoggerFactory;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +46,12 @@ public class TimeoutMonitorTask implements Runnable {
             Map.Entry<Integer, NettyResponseFuture> next = it.next();
             NettyResponseFuture rep = next.getValue();
             if ((rep.getBeginTimestamp() + rep.getTimeoutMillis() + 300) <= System.currentTimeMillis()) {
-                if(rep.getCallBack() == null){
-                    rep.onFail(new EagleFrameException("%s request timeout，requestid:%d,timeout:%d ms", client.getConfig().getInterfaceName(),rep.getOpaque(),rep.getTimeoutMillis()));
-                }else {
-                    rep.setException(new EagleFrameException("%s request timeout，requestid:%d,timeout:%d ms", client.getConfig().getInterfaceName(),rep.getOpaque(),rep.getTimeoutMillis()));
+                if (rep.getCallBack() == null) {
+                    rep.onFail(new EagleTimeoutException("%s request timeout，requestid:%d,timeout:%d ms", client
+                            .getConfig().getInterfaceName(), rep.getOpaque(), rep.getTimeoutMillis()));
+                } else {
+                    rep.setException(new EagleTimeoutException("%s request timeout，requestid:%d,timeout:%d ms",
+                            client.getConfig().getInterfaceName(), rep.getOpaque(), rep.getTimeoutMillis()));
                     client.executeInvokeCallback(rep);
                 }
                 it.remove();

@@ -18,6 +18,7 @@
 package eagle.jfaster.org.parse;
 
 import eagle.jfaster.org.bean.ReferInjectPostProcessor;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -50,20 +51,21 @@ public abstract class AbstractScanBeanParser implements BeanDefinitionParser {
 
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
-        if(!register){
+        if (!register) {
             register = true;
             BeanDefinitionBuilder injectReferBuilder = BeanDefinitionBuilder.rootBeanDefinition(ReferInjectPostProcessor.class);
-            parserContext.getRegistry().registerBeanDefinition(ReferInjectPostProcessor.class.getName(),injectReferBuilder.getBeanDefinition());
+            parserContext.getRegistry().registerBeanDefinition(ReferInjectPostProcessor.class.getName(), injectReferBuilder.getBeanDefinition());
         }
         String[] basePackages = StringUtils.tokenizeToStringArray(element.getAttribute(PACKAGE), ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-        for(String basePackage : basePackages){
-            registerCandidateComponents(element,basePackage,parserContext);
+        for (String basePackage : basePackages) {
+            registerCandidateComponents(element, basePackage, parserContext);
         }
         return null;
     }
 
-    protected String resolveBasePackage(String basePackage,Environment environment) {
+    protected String resolveBasePackage(String basePackage, Environment environment) {
         return ClassUtils.convertClassNameToResourcePath(environment.resolveRequiredPlaceholders(basePackage));
     }
-    public abstract void registerCandidateComponents(Element element, String basePackage,ParserContext parserContext);
+
+    public abstract void registerCandidateComponents(Element element, String basePackage, ParserContext parserContext);
 }

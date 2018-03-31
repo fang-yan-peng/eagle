@@ -20,6 +20,7 @@ import eagle.jfaster.org.config.annotation.Refer;
 import eagle.jfaster.org.service.Calculate;
 import eagle.jfaster.org.service.Hello;
 import eagle.jfaster.org.trace.annotation.Trace;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,10 +44,10 @@ public class TraceController {
 
     @Trace
     @RequestMapping("/cal")
-    public String cal(@RequestParam int a, @RequestParam int b,@RequestParam int code){
+    public String cal(@RequestParam int a, @RequestParam int b, @RequestParam int code) {
         logger.info(hello.hello(code));
         int res = calculate.add(a, b);
-        logger.info("calculate {}",res);
+        logger.info("calculate {}", res);
         return String.valueOf(res);
     }
 }
