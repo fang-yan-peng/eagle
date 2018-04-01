@@ -773,6 +773,8 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
 
 ## 拦截器的使用
 > 调用端和服务端都可以使用，以记录方法的远程调用执行时间为例。通过CurrentExecutionContext可以在拦截器的各个方法之间传递参数。
+> 异步调用由于方法调用立即返回，真正的处理逻辑在回调函数中，所以onAfter方法会在结果返回之后，回调方法调用之前执行。onBefore方法在执行调用之前执行，onAfter
+方法会在调用方法之后执行，onError方法在发生异常时执行。
 ### 实现ExecutionInterceptor接口
 
 `src/main/java/eagle/jfaster/org/interceptor/ClientInterceptor.java`
