@@ -1,7 +1,10 @@
 # Eagle
 
 # 概要
-Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追踪，支持[Kryo][kryo]、[Hessian][hessian]等序列化协议，默认序列化使用kryo。提供Spring和SpringBoot插件，方便与Spring和SpringBoot集成。
+Eagle是一个分布式的RPC框架，支持灵活的配置，支持分布式追踪，支持[Kryo][kryo]、[Hessian][hessian]、[Protobuf][protobuf]
+等序列化协议，默认序列化使用kryo
+。提供Spring
+和SpringBoot插件，方便与Spring和SpringBoot集成。
 
 # 特点
 - 借助[Zookeeper][zookeeper]实现服务注册和发现。
@@ -918,5 +921,6 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d [%T] %-5p %c{1}:%L - %m%n
 [zookeeper]:http://zookeeper.apache.org
 [kryo]:https://github.com/EsotericSoftware/kryo
 [hessian]:http://hessian.caucho.com/
+[protobuf]:https://developers.google.com/protocol-buffers/
 
 
