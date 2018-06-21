@@ -91,7 +91,7 @@ public class EagleCodec implements Codec {
         int dataLen = 10;//totalLen+magic+opaque 4+2+4
         ByteBuffer content;
         if (response.getException() != null) {
-            content = encodeResponseCommon(response.getException(), dataLen, magicCode, response.getOpaque(), serialization, false, EAGLE_RESPONSE_EXCEPTION);
+            content = encodeResponseCommon(response.getException(), dataLen, magicCode, response.getOpaque(), serialization, response.isNeedCompress(), EAGLE_RESPONSE_EXCEPTION);
         } else if (response.getValue() != null) {
             content = encodeResponseCommon(response.getValue(), dataLen, magicCode, response.getOpaque(), serialization, response.isNeedCompress(), EAGLE_RESPONSE_NORMAL);
         } else {
