@@ -47,6 +47,7 @@ import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -201,7 +202,7 @@ public class EagleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
                 MetadataReader reader = metadataReaderFactory.getMetadataReader(r);
                 AnnotationMetadata annotationMD = reader.getAnnotationMetadata();
                 ClassMetadata clazzMD = reader.getClassMetadata();
-                final Class<?> clz = Class.forName(clazzMD.getClassName());
+                final Class<?> clz = ClassUtils.getDefaultClassLoader().loadClass(clazzMD.getClassName());
                 if (annotationMD.hasAnnotation(Service.class.getName())) {
                     if (clz.isInterface()) {
                         throw new EagleFrameException("registried service should not be a interface");

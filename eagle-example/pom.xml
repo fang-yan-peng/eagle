@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jfaster.eagle</groupId>
   <artifactId>eagle-example</artifactId>
-  <version>1.7</version>
+  <version>1.8</version>
   <modules>
     <module>eagle-example-spring</module>
     <module>eagle-example-springboot</module>
