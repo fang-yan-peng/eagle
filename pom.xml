@@ -55,7 +55,7 @@
     <springframework.version>4.1.1.RELEASE</springframework.version>
     <servlet.version>3.1.0</servlet.version>
     <common-pool.version>1.6</common-pool.version>
-    <thriftlib.version>0.9.3</thriftlib.version>
+    <thriftlib.version>0.14.0</thriftlib.version>
     <lombok.version>1.16.4</lombok.version>
     <guava.version>18.0</guava.version>
     <curator.version>2.10.0</curator.version>
