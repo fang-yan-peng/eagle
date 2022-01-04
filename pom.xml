@@ -66,7 +66,7 @@
     <common.loggin.version>1.2</common.loggin.version>
     <java.version>1.7</java.version>
     <serialize.hessian.version>4.0.38</serialize.hessian.version>
-    <netty.version>4.1.6.Final</netty.version>
+    <netty.version>4.1.42.Final</netty.version>
     <junit.version>3.8.1</junit.version>
     <fast-json.version>1.2.28</fast-json.version>
     <hessian.version>4.0.38</hessian.version>
