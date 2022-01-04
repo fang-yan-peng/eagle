@@ -62,7 +62,7 @@
     <slf4j.version>1.7.7</slf4j.version>
     <logback.version>1.1.2</logback.version>
     <log4j.version>1.2.17</log4j.version>
-    <appache.log4j.version>2.16.0</appache.log4j.version>
+    <appache.log4j.version>2.17.0</appache.log4j.version>
     <common.loggin.version>1.2</common.loggin.version>
     <java.version>1.7</java.version>
     <serialize.hessian.version>4.0.38</serialize.hessian.version>
