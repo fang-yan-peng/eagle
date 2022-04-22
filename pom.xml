@@ -52,7 +52,7 @@
     <project.build.locale>zh_CN</project.build.locale>
     <swift.version>0.23.1</swift.version>
     <gson.version>2.6.1</gson.version>
-    <springframework.version>4.3.21.RELEASE</springframework.version>
+    <springframework.version>5.3.19</springframework.version>
     <servlet.version>3.1.0</servlet.version>
     <common-pool.version>1.6</common-pool.version>
     <thriftlib.version>0.9.3</thriftlib.version>
